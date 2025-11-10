@@ -15,7 +15,11 @@ import {
   AlertCircle,
   TrendingUp,
   Users,
+  RefreshCw,
 } from "lucide-react";
+
+const API_URL = "/api/reports"; // Untuk production Vercel
+// const API_URL = 'http://localhost:3000/api/reports'; // Untuk development
 
 export default function LaporanPekerjaan() {
   const [reports, setReports] = useState([]);
@@ -24,6 +28,7 @@ export default function LaporanPekerjaan() {
   const [filterStatus, setFilterStatus] = useState("semua");
   const [editingId, setEditingId] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
 
   const [formData, setFormData] = useState({
@@ -45,27 +50,19 @@ export default function LaporanPekerjaan() {
   const loadReports = async () => {
     try {
       setLoading(true);
-      const result = await window.storage.get("laporan-data-shared", true);
-      if (result && result.value) {
-        setReports(JSON.parse(result.value));
+      const response = await fetch(API_URL);
+      const result = await response.json();
+
+      if (result.success) {
+        setReports(result.data);
+      } else {
+        console.error("Gagal memuat data:", result.message);
       }
     } catch (error) {
-      console.log("Belum ada data tersimpan");
+      console.error("Error memuat data:", error);
+      alert("Gagal memuat data. Silakan refresh halaman.");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const saveReports = async (newReports) => {
-    try {
-      await window.storage.set(
-        "laporan-data-shared",
-        JSON.stringify(newReports),
-        true
-      );
-    } catch (error) {
-      console.error("Gagal menyimpan data:", error);
-      alert("Gagal menyimpan data. Silakan coba lagi.");
     }
   };
 
@@ -89,38 +86,70 @@ export default function LaporanPekerjaan() {
       return;
     }
 
-    if (editingId) {
-      const updatedReports = reports.map((report) =>
-        report.id === editingId
-          ? { ...formData, id: editingId, updatedAt: new Date().toISOString() }
-          : report
-      );
-      setReports(updatedReports);
-      await saveReports(updatedReports);
-      setEditingId(null);
-    } else {
-      const newReport = {
-        ...formData,
-        id: Date.now(),
-        createdAt: new Date().toISOString(),
-      };
-      const updatedReports = [newReport, ...reports];
-      setReports(updatedReports);
-      await saveReports(updatedReports);
-    }
+    setSaving(true);
 
-    setFormData({
-      tanggal: "",
-      lokasi: "",
-      namaProyek: "",
-      jenisKegiatan: "",
-      deskripsi: "",
-      status: "berlangsung",
-      jamMulai: "",
-      jamSelesai: "",
-      catatan: "",
-    });
-    setShowForm(false);
+    try {
+      if (editingId) {
+        // Update existing report
+        const response = await fetch(API_URL, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...formData,
+            id: editingId,
+            updatedAt: new Date().toISOString(),
+          }),
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          await loadReports(); // Reload data
+          setEditingId(null);
+        } else {
+          alert("Gagal mengupdate data: " + result.message);
+        }
+      } else {
+        // Add new report
+        const newReport = {
+          ...formData,
+          id: Date.now().toString(),
+          createdAt: new Date().toISOString(),
+        };
+
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newReport),
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          await loadReports(); // Reload data
+        } else {
+          alert("Gagal menyimpan data: " + result.message);
+        }
+      }
+
+      setFormData({
+        tanggal: "",
+        lokasi: "",
+        namaProyek: "",
+        jenisKegiatan: "",
+        deskripsi: "",
+        status: "berlangsung",
+        jamMulai: "",
+        jamSelesai: "",
+        catatan: "",
+      });
+      setShowForm(false);
+    } catch (error) {
+      console.error("Error menyimpan data:", error);
+      alert("Terjadi kesalahan saat menyimpan data.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleEdit = (report) => {
@@ -131,10 +160,27 @@ export default function LaporanPekerjaan() {
   };
 
   const handleDelete = async (id) => {
-    if (confirm("Yakin ingin menghapus laporan ini?")) {
-      const updatedReports = reports.filter((report) => report.id !== id);
-      setReports(updatedReports);
-      await saveReports(updatedReports);
+    if (!confirm("Yakin ingin menghapus laporan ini?")) return;
+
+    setSaving(true);
+
+    try {
+      const response = await fetch(`${API_URL}?id=${id}`, {
+        method: "DELETE",
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        await loadReports(); // Reload data
+      } else {
+        alert("Gagal menghapus data: " + result.message);
+      }
+    } catch (error) {
+      console.error("Error menghapus data:", error);
+      alert("Terjadi kesalahan saat menghapus data.");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -156,9 +202,9 @@ export default function LaporanPekerjaan() {
 
   const filteredReports = reports.filter((report) => {
     const matchesSearch =
-      report.namaProyek.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      report.lokasi.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      report.jenisKegiatan.toLowerCase().includes(searchTerm.toLowerCase());
+      report.namaProyek?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      report.lokasi?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      report.jenisKegiatan?.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesFilter =
       filterStatus === "semua" || report.status === filterStatus;
@@ -212,7 +258,15 @@ export default function LaporanPekerjaan() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-        <div className="text-lg text-gray-600">Memuat data...</div>
+        <div className="text-center">
+          <RefreshCw
+            className="animate-spin mx-auto mb-4 text-indigo-600"
+            size={48}
+          />
+          <div className="text-lg text-gray-600">
+            Memuat data dari Google Sheets...
+          </div>
+        </div>
       </div>
     );
   }
@@ -229,19 +283,32 @@ export default function LaporanPekerjaan() {
               </h1>
               <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold flex items-center gap-1">
                 <Users size={14} />
-                Kolaborasi Tim
+                Google Sheets Real-time
               </span>
             </div>
-            <button
-              onClick={() => {
-                setShowForm(true);
-                setActiveTab("laporan");
-              }}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
-            >
-              <Plus size={18} />
-              Laporan Baru
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={loadReports}
+                disabled={loading}
+                className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
+                title="Refresh data"
+              >
+                <RefreshCw
+                  size={18}
+                  className={loading ? "animate-spin" : ""}
+                />
+              </button>
+              <button
+                onClick={() => {
+                  setShowForm(true);
+                  setActiveTab("laporan");
+                }}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
+              >
+                <Plus size={18} />
+                Laporan Baru
+              </button>
+            </div>
           </div>
           <div className="flex gap-4 border-t">
             <button
@@ -271,19 +338,31 @@ export default function LaporanPekerjaan() {
       </div>
 
       <div className="max-w-6xl mx-auto p-4 md:p-8">
-        {/* Info Banner - Shared Mode */}
+        {/* Info Banner */}
         <div className="bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl shadow-lg p-4 mb-6">
           <div className="flex items-center gap-3">
             <Users size={24} />
             <div>
-              <h3 className="font-bold text-lg">Mode Kolaborasi Aktif</h3>
+              <h3 className="font-bold text-lg">
+                Mode Kolaborasi Real-time dengan Google Sheets
+              </h3>
               <p className="text-sm text-green-50">
-                Semua pengguna dapat melihat dan mengelola laporan bersama-sama.
-                Data akan tersinkronisasi untuk semua tim.
+                Semua data tersimpan di Google Sheets dan tersinkronisasi secara
+                real-time untuk semua pengguna.
               </p>
             </div>
           </div>
         </div>
+
+        {/* Loading Overlay */}
+        {saving && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-xl p-6 flex items-center gap-3">
+              <RefreshCw className="animate-spin text-indigo-600" size={24} />
+              <span className="text-lg font-semibold">Menyimpan data...</span>
+            </div>
+          </div>
+        )}
 
         {/* Dashboard Tab */}
         {activeTab === "dashboard" && (
@@ -627,14 +706,20 @@ export default function LaporanPekerjaan() {
                   <div className="flex gap-3 pt-2">
                     <button
                       onClick={handleSubmit}
-                      className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors"
+                      disabled={saving}
+                      className="flex-1 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 text-white px-6 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors"
                     >
-                      <Check size={20} />
+                      {saving ? (
+                        <RefreshCw className="animate-spin" size={20} />
+                      ) : (
+                        <Check size={20} />
+                      )}
                       {editingId ? "Update Laporan" : "Simpan Laporan"}
                     </button>
                     <button
                       onClick={handleCancel}
-                      className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors"
+                      disabled={saving}
+                      className="flex-1 bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 text-gray-800 px-6 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors"
                     >
                       <X size={20} />
                       Batal
@@ -677,8 +762,8 @@ export default function LaporanPekerjaan() {
                               report.status
                             )}`}
                           >
-                            {report.status.charAt(0).toUpperCase() +
-                              report.status.slice(1)}
+                            {report.status?.charAt(0).toUpperCase() +
+                              report.status?.slice(1)}
                           </span>
                         </div>
                         <p className="text-sm text-gray-600 font-medium">
@@ -688,14 +773,16 @@ export default function LaporanPekerjaan() {
                       <div className="flex gap-2">
                         <button
                           onClick={() => handleEdit(report)}
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          disabled={saving}
+                          className="p-2 text-blue-600 hover:bg-blue-50 disabled:opacity-50 rounded-lg transition-colors"
                           title="Edit"
                         >
                           <Edit2 size={18} />
                         </button>
                         <button
                           onClick={() => handleDelete(report.id)}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          disabled={saving}
+                          className="p-2 text-red-600 hover:bg-red-50 disabled:opacity-50 rounded-lg transition-colors"
                           title="Hapus"
                         >
                           <Trash2 size={18} />
