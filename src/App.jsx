@@ -37,7 +37,7 @@ export default function LaporanPekerjaan() {
     jenisKegiatan: "",
     unitAlat: "",
     deskripsi: "",
-    status: "berlangsung",
+    status: "tertunda",
     jamMulai: "",
     jamSelesai: "",
     catatan: "",
