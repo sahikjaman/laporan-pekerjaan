@@ -14,12 +14,11 @@ import {
   CheckCircle,
   AlertCircle,
   TrendingUp,
-  Users,
   RefreshCw,
+  Wrench,
 } from "lucide-react";
 
-const API_URL = "/api/reports"; // Untuk production Vercel
-// const API_URL = 'http://localhost:3000/api/reports'; // Untuk development
+const API_URL = "/api/reports";
 
 export default function LaporanPekerjaan() {
   const [reports, setReports] = useState([]);
@@ -36,6 +35,7 @@ export default function LaporanPekerjaan() {
     lokasi: "",
     namaProyek: "",
     jenisKegiatan: "",
+    unitAlat: "",
     deskripsi: "",
     status: "berlangsung",
     jamMulai: "",
@@ -66,6 +66,15 @@ export default function LaporanPekerjaan() {
     }
   };
 
+  const calculateDuration = (start, end) => {
+    if (!start || !end) return 0;
+    const [startH, startM] = start.split(":").map(Number);
+    const [endH, endM] = end.split(":").map(Number);
+    const startMinutes = startH * 60 + startM;
+    const endMinutes = endH * 60 + endM;
+    return (endMinutes - startMinutes) / 60; // Return in hours
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -80,6 +89,7 @@ export default function LaporanPekerjaan() {
       !formData.lokasi ||
       !formData.namaProyek ||
       !formData.jenisKegiatan ||
+      !formData.unitAlat ||
       !formData.deskripsi
     ) {
       alert("Harap isi semua field yang wajib diisi");
@@ -90,7 +100,6 @@ export default function LaporanPekerjaan() {
 
     try {
       if (editingId) {
-        // Update existing report
         const response = await fetch(API_URL, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -104,13 +113,12 @@ export default function LaporanPekerjaan() {
         const result = await response.json();
 
         if (result.success) {
-          await loadReports(); // Reload data
+          await loadReports();
           setEditingId(null);
         } else {
           alert("Gagal mengupdate data: " + result.message);
         }
       } else {
-        // Add new report
         const newReport = {
           ...formData,
           id: Date.now().toString(),
@@ -126,7 +134,7 @@ export default function LaporanPekerjaan() {
         const result = await response.json();
 
         if (result.success) {
-          await loadReports(); // Reload data
+          await loadReports();
         } else {
           alert("Gagal menyimpan data: " + result.message);
         }
@@ -137,6 +145,7 @@ export default function LaporanPekerjaan() {
         lokasi: "",
         namaProyek: "",
         jenisKegiatan: "",
+        unitAlat: "",
         deskripsi: "",
         status: "berlangsung",
         jamMulai: "",
@@ -172,7 +181,7 @@ export default function LaporanPekerjaan() {
       const result = await response.json();
 
       if (result.success) {
-        await loadReports(); // Reload data
+        await loadReports();
       } else {
         alert("Gagal menghapus data: " + result.message);
       }
@@ -190,6 +199,7 @@ export default function LaporanPekerjaan() {
       lokasi: "",
       namaProyek: "",
       jenisKegiatan: "",
+      unitAlat: "",
       deskripsi: "",
       status: "berlangsung",
       jamMulai: "",
@@ -204,7 +214,8 @@ export default function LaporanPekerjaan() {
     const matchesSearch =
       report.namaProyek?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       report.lokasi?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      report.jenisKegiatan?.toLowerCase().includes(searchTerm.toLowerCase());
+      report.jenisKegiatan?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      report.unitAlat?.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesFilter =
       filterStatus === "semua" || report.status === filterStatus;
@@ -239,12 +250,34 @@ export default function LaporanPekerjaan() {
     )
     .slice(0, 5);
 
-  const lokasiCount = reports.reduce((acc, report) => {
-    acc[report.lokasi] = (acc[report.lokasi] || 0) + 1;
+  // Calculate location statistics with duration and units
+  const lokasiStats = reports.reduce((acc, report) => {
+    if (!acc[report.lokasi]) {
+      acc[report.lokasi] = {
+        count: 0,
+        totalHours: 0,
+        units: new Set(),
+      };
+    }
+    acc[report.lokasi].count += 1;
+    acc[report.lokasi].totalHours += calculateDuration(
+      report.jamMulai,
+      report.jamSelesai
+    );
+    if (report.unitAlat) {
+      acc[report.lokasi].units.add(report.unitAlat);
+    }
     return acc;
   }, {});
-  const topLokasi = Object.entries(lokasiCount)
-    .sort((a, b) => b[1] - a[1])
+
+  const topLokasi = Object.entries(lokasiStats)
+    .map(([lokasi, stats]) => ({
+      lokasi,
+      count: stats.count,
+      totalHours: stats.totalHours,
+      unitCount: stats.units.size,
+    }))
+    .sort((a, b) => b.count - a.count)
     .slice(0, 5);
 
   const kegiatanCount = reports.reduce((acc, report) => {
@@ -263,9 +296,7 @@ export default function LaporanPekerjaan() {
             className="animate-spin mx-auto mb-4 text-indigo-600"
             size={48}
           />
-          <div className="text-lg text-gray-600">
-            Memuat data dari Google Sheets...
-          </div>
+          <div className="text-lg text-gray-600">Memuat data...</div>
         </div>
       </div>
     );
@@ -274,17 +305,32 @@ export default function LaporanPekerjaan() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Navigation */}
-      <div className="bg-white shadow-md">
+      <div className="bg-white shadow-md border-b-4 border-red-600">
         <div className="max-w-6xl mx-auto px-4 md:px-8">
           <div className="flex items-center justify-between py-4">
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold text-gray-800">
-                Laporan Pekerjaan Lapangan
-              </h1>
-              <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold flex items-center gap-1">
-                <Users size={14} />
-                Google Sheets Real-time
-              </span>
+            <div className="flex items-center gap-4">
+              {/* Logo SPIL */}
+              <div className="flex items-center gap-2">
+                <img
+                  src="/logo-spil.png"
+                  alt="SPIL Logo"
+                  className="w-16 h-16 object-contain"
+                  onError={(e) => {
+                    // Fallback jika logo tidak ditemukan
+                    e.target.style.display = "none";
+                    e.target.parentElement.innerHTML =
+                      '<div class="w-16 h-16 bg-red-600 rounded-lg flex items-center justify-center"><span class="text-white font-bold text-2xl">SPIL</span></div>';
+                  }}
+                />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-gray-800">
+                  Laporan Pekerjaan Lapangan
+                </h1>
+                <p className="text-sm font-semibold text-gray-600 border-b-2 border-gray-800 inline-block">
+                  HVE Electrical
+                </p>
+              </div>
             </div>
             <div className="flex gap-2">
               <button
@@ -338,22 +384,6 @@ export default function LaporanPekerjaan() {
       </div>
 
       <div className="max-w-6xl mx-auto p-4 md:p-8">
-        {/* Info Banner */}
-        <div className="bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl shadow-lg p-4 mb-6">
-          <div className="flex items-center gap-3">
-            <Users size={24} />
-            <div>
-              <h3 className="font-bold text-lg">
-                Mode Kolaborasi Real-time dengan Google Sheets
-              </h3>
-              <p className="text-sm text-green-50">
-                Semua data tersimpan di Google Sheets dan tersinkronisasi secara
-                real-time untuk semua pengguna.
-              </p>
-            </div>
-          </div>
-        </div>
-
         {/* Loading Overlay */}
         {saving && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -468,7 +498,7 @@ export default function LaporanPekerjaan() {
                 )}
               </div>
 
-              {/* Top Locations */}
+              {/* Top Locations with Stats */}
               <div className="bg-white rounded-xl shadow-lg p-6">
                 <h2 className="text-xl font-bold text-gray-800 mb-4">
                   Lokasi Terbanyak
@@ -479,32 +509,38 @@ export default function LaporanPekerjaan() {
                   </p>
                 ) : (
                   <div className="space-y-3">
-                    {topLokasi.map(([lokasi, count], index) => (
+                    {topLokasi.map((item, index) => (
                       <div
-                        key={lokasi}
-                        className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                        key={item.lokasi}
+                        className="p-3 bg-gray-50 rounded-lg"
                       >
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
-                            {index + 1}
-                          </div>
-                          <div>
-                            <p className="font-semibold text-gray-800">
-                              {lokasi}
-                            </p>
-                            <p className="text-xs text-gray-500">
-                              {count} laporan
-                            </p>
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                              {index + 1}
+                            </div>
+                            <div>
+                              <p className="font-semibold text-gray-800">
+                                {item.lokasi}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                {item.count} laporan
+                              </p>
+                            </div>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <div className="w-16 bg-gray-200 rounded-full h-2">
-                            <div
-                              className="bg-indigo-600 h-2 rounded-full"
-                              style={{
-                                width: `${(count / totalReports) * 100}%`,
-                              }}
-                            />
+                        <div className="grid grid-cols-2 gap-2 mt-2 ml-11">
+                          <div className="flex items-center gap-1 text-xs text-gray-600">
+                            <Clock size={14} className="text-blue-600" />
+                            <span className="font-semibold">
+                              {item.totalHours.toFixed(1)} jam
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1 text-xs text-gray-600">
+                            <Wrench size={14} className="text-orange-600" />
+                            <span className="font-semibold">
+                              {item.unitCount} unit alat
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -555,7 +591,7 @@ export default function LaporanPekerjaan() {
                   />
                   <input
                     type="text"
-                    placeholder="Cari proyek, lokasi, atau kegiatan..."
+                    placeholder="Cari proyek, lokasi, kegiatan, atau unit alat..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
@@ -635,6 +671,34 @@ export default function LaporanPekerjaan() {
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-1">
+                        Unit Alat *
+                      </label>
+                      <input
+                        type="text"
+                        name="unitAlat"
+                        value={formData.unitAlat}
+                        onChange={handleInputChange}
+                        placeholder="Contoh: Generator, Trafo, Panel"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-1">
+                        Status
+                      </label>
+                      <select
+                        name="status"
+                        value={formData.status}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      >
+                        <option value="berlangsung">Berlangsung</option>
+                        <option value="selesai">Selesai</option>
+                        <option value="tertunda">Tertunda</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-1">
                         Jam Mulai
                       </label>
                       <input
@@ -657,22 +721,6 @@ export default function LaporanPekerjaan() {
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                       />
                     </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">
-                      Status
-                    </label>
-                    <select
-                      name="status"
-                      value={formData.status}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                    >
-                      <option value="berlangsung">Berlangsung</option>
-                      <option value="selesai">Selesai</option>
-                      <option value="tertunda">Tertunda</option>
-                    </select>
                   </div>
 
                   <div>
@@ -769,6 +817,14 @@ export default function LaporanPekerjaan() {
                         <p className="text-sm text-gray-600 font-medium">
                           {report.jenisKegiatan}
                         </p>
+                        {report.unitAlat && (
+                          <div className="flex items-center gap-1 mt-1">
+                            <Wrench size={14} className="text-orange-600" />
+                            <span className="text-sm text-gray-600">
+                              {report.unitAlat}
+                            </span>
+                          </div>
+                        )}
                       </div>
                       <div className="flex gap-2">
                         <button
@@ -814,6 +870,14 @@ export default function LaporanPekerjaan() {
                           <Clock size={16} />
                           <span className="text-sm">
                             {report.jamMulai} - {report.jamSelesai}
+                          </span>
+                          <span className="text-xs text-blue-600 font-semibold">
+                            (
+                            {calculateDuration(
+                              report.jamMulai,
+                              report.jamSelesai
+                            ).toFixed(1)}{" "}
+                            jam)
                           </span>
                         </div>
                       )}

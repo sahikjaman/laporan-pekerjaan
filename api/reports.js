@@ -36,7 +36,7 @@ export default async function handler(req, res) {
     if (req.method === "GET") {
       const response = await sheets.spreadsheets.values.get({
         spreadsheetId: SPREADSHEET_ID,
-        range: `${SHEET_NAME}!A2:K`,
+        range: `${SHEET_NAME}!A2:L`,
       });
 
       const rows = response.data.values || [];
@@ -46,12 +46,13 @@ export default async function handler(req, res) {
         lokasi: row[2],
         namaProyek: row[3],
         jenisKegiatan: row[4],
-        deskripsi: row[5],
-        status: row[6],
-        jamMulai: row[7],
-        jamSelesai: row[8],
-        catatan: row[9],
-        createdAt: row[10],
+        unitAlat: row[5],
+        deskripsi: row[6],
+        status: row[7],
+        jamMulai: row[8],
+        jamSelesai: row[9],
+        catatan: row[10],
+        createdAt: row[11],
       }));
 
       return res.status(200).json({ success: true, data: reports });
@@ -66,6 +67,7 @@ export default async function handler(req, res) {
         data.lokasi,
         data.namaProyek,
         data.jenisKegiatan,
+        data.unitAlat || "",
         data.deskripsi,
         data.status,
         data.jamMulai || "",
@@ -76,7 +78,7 @@ export default async function handler(req, res) {
 
       await sheets.spreadsheets.values.append({
         spreadsheetId: SPREADSHEET_ID,
-        range: `${SHEET_NAME}!A:K`,
+        range: `${SHEET_NAME}!A:L`,
         valueInputOption: "USER_ENTERED",
         resource: {
           values: [newRow],
@@ -114,6 +116,7 @@ export default async function handler(req, res) {
         data.lokasi,
         data.namaProyek,
         data.jenisKegiatan,
+        data.unitAlat || "",
         data.deskripsi,
         data.status,
         data.jamMulai || "",
@@ -124,7 +127,7 @@ export default async function handler(req, res) {
 
       await sheets.spreadsheets.values.update({
         spreadsheetId: SPREADSHEET_ID,
-        range: `${SHEET_NAME}!A${actualRowNumber}:K${actualRowNumber}`,
+        range: `${SHEET_NAME}!A${actualRowNumber}:L${actualRowNumber}`,
         valueInputOption: "USER_ENTERED",
         resource: {
           values: [updatedRow],
