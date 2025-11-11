@@ -17,6 +17,9 @@ import {
   Wrench,
   ListTodo,
   Target,
+  Sun,
+  Moon,
+  Monitor,
 } from "lucide-react";
 
 const API_URL = "/api/reports";
@@ -33,6 +36,74 @@ export default function LaporanPekerjaan() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
+
+  // Theme: 'system' | 'light' | 'dark'
+  const THEME_KEY = "theme";
+  const [theme, setTheme] = useState(() => {
+    try {
+      return localStorage.getItem(THEME_KEY) || "system";
+    } catch (e) {
+      return "system";
+    }
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+
+    const apply = (t) => {
+      if (t === "system") {
+        const prefersDark =
+          window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        root.classList.toggle("dark", prefersDark);
+      } else {
+        root.classList.toggle("dark", t === "dark");
+      }
+    };
+
+    apply(theme);
+
+    // listen to system changes when in 'system' mode
+    let mq;
+    const mqHandler = () => {
+      if (theme === "system") apply("system");
+    };
+    if (window.matchMedia) {
+      mq = window.matchMedia("(prefers-color-scheme: dark)");
+      if (mq.addEventListener) mq.addEventListener("change", mqHandler);
+      else if (mq.addListener) mq.addListener(mqHandler);
+    }
+
+    try {
+      localStorage.setItem(THEME_KEY, theme);
+    } catch (e) {}
+
+    return () => {
+      if (mq) {
+        if (mq.removeEventListener) mq.removeEventListener("change", mqHandler);
+        else if (mq.removeListener) mq.removeListener(mqHandler);
+      }
+    };
+  }, [theme]);
+
+  const cycleTheme = () => {
+    setTheme((current) => {
+      if (current === "light") return "dark";
+      if (current === "dark") return "system";
+      return "light";
+    });
+  };
+
+  const getThemeIcon = () => {
+    if (theme === "light") return <Sun size={18} />;
+    if (theme === "dark") return <Moon size={18} />;
+    return <Monitor size={18} />;
+  };
+
+  const getThemeLabel = () => {
+    if (theme === "light") return "Light";
+    if (theme === "dark") return "Dark";
+    return "System";
+  };
 
   const [formData, setFormData] = useState({
     tanggal: "",
@@ -388,22 +459,22 @@ export default function LaporanPekerjaan() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
         <div className="text-center">
           <RefreshCw
-            className="animate-spin mx-auto mb-4 text-indigo-600"
+            className="animate-spin mx-auto mb-4 text-indigo-600 dark:text-indigo-400"
             size={48}
           />
-          <div className="text-lg text-gray-600">Memuat data...</div>
+          <div className="text-lg text-gray-600 dark:text-gray-300">Memuat data...</div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
       {/* Navigation */}
-      <div className="bg-white shadow-md border-b-4 border-red-600">
+      <div className="bg-white dark:bg-gray-800 shadow-md border-b-4 border-red-600 dark:border-red-500">
         <div className="max-w-6xl mx-auto px-4 md:px-8">
           <div className="flex items-center justify-between py-4">
             <div className="flex items-center gap-4">
@@ -420,19 +491,28 @@ export default function LaporanPekerjaan() {
                 />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-800">
+                <h1 className="text-xl font-bold text-gray-800 dark:text-white">
                   Laporan Pekerjaan Lapangan
                 </h1>
-                <p className="text-sm font-semibold text-gray-600 border-b-2 border-gray-800 inline-block">
+                <p className="text-sm font-semibold text-gray-600 dark:text-gray-300 border-b-2 border-gray-800 dark:border-gray-300 inline-block">
                   HVE Electrical
                 </p>
               </div>
             </div>
             <div className="flex gap-2">
+              {/* Theme Toggle Button */}
+              <button
+                onClick={cycleTheme}
+                className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
+                title={`Current: ${getThemeLabel()} - Click to change`}
+              >
+                {getThemeIcon()}
+                <span className="hidden md:inline text-sm">{getThemeLabel()}</span>
+              </button>
               <button
                 onClick={loadReports}
                 disabled={loading}
-                className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
+                className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
               >
                 <RefreshCw
                   size={18}
@@ -459,7 +539,7 @@ export default function LaporanPekerjaan() {
               )}
             </div>
           </div>
-          <div className="flex gap-4 border-t">
+          <div className="flex gap-4 border-t dark:border-gray-700">
             <button
               onClick={() => {
                 setActiveTab("dashboard");
@@ -468,8 +548,8 @@ export default function LaporanPekerjaan() {
               }}
               className={`px-4 py-3 font-semibold transition-colors ${
                 activeTab === "dashboard"
-                  ? "text-indigo-600 border-b-2 border-indigo-600"
-                  : "text-gray-600 hover:text-gray-800"
+                  ? "text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400"
+                  : "text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100"
               }`}
             >
               <BarChart3 size={18} className="inline mr-2" />
@@ -482,8 +562,8 @@ export default function LaporanPekerjaan() {
               }}
               className={`px-4 py-3 font-semibold transition-colors ${
                 activeTab === "laporan"
-                  ? "text-indigo-600 border-b-2 border-indigo-600"
-                  : "text-gray-600 hover:text-gray-800"
+                  ? "text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400"
+                  : "text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100"
               }`}
             >
               <FileText size={18} className="inline mr-2" />
@@ -496,8 +576,8 @@ export default function LaporanPekerjaan() {
               }}
               className={`px-4 py-3 font-semibold transition-colors ${
                 activeTab === "tasks"
-                  ? "text-indigo-600 border-b-2 border-indigo-600"
-                  : "text-gray-600 hover:text-gray-800"
+                  ? "text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400"
+                  : "text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100"
               }`}
             >
               <ListTodo size={18} className="inline mr-2" />
@@ -510,9 +590,9 @@ export default function LaporanPekerjaan() {
       <div className="max-w-6xl mx-auto p-4 md:p-8">
         {saving && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-xl p-6 flex items-center gap-3">
-              <RefreshCw className="animate-spin text-indigo-600" size={24} />
-              <span className="text-lg font-semibold">Menyimpan data...</span>
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 flex items-center gap-3">
+              <RefreshCw className="animate-spin text-indigo-600 dark:text-indigo-400" size={24} />
+              <span className="text-lg font-semibold dark:text-white">Menyimpan data...</span>
             </div>
           </div>
         )}
@@ -575,45 +655,45 @@ export default function LaporanPekerjaan() {
 
             {/* Statistics Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-white rounded-xl shadow-lg p-6">
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
                 <div className="flex items-center justify-between mb-2">
-                  <div className="p-3 bg-indigo-100 rounded-lg">
-                    <FileText className="text-indigo-600" size={24} />
+                  <div className="p-3 bg-indigo-100 dark:bg-indigo-900/50 rounded-lg">
+                    <FileText className="text-indigo-600 dark:text-indigo-400" size={24} />
                   </div>
-                  <TrendingUp className="text-indigo-600" size={20} />
+                  <TrendingUp className="text-indigo-600 dark:text-indigo-400" size={20} />
                 </div>
-                <h3 className="text-gray-600 text-sm font-medium mb-1">
+                <h3 className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">
                   Total Laporan
                 </h3>
-                <p className="text-3xl font-bold text-gray-800">
+                <p className="text-3xl font-bold text-gray-800 dark:text-white">
                   {totalReports}
                 </p>
               </div>
 
-              <div className="bg-white rounded-xl shadow-lg p-6">
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
                 <div className="flex items-center justify-between mb-2">
-                  <div className="p-3 bg-green-100 rounded-lg">
-                    <CheckCircle className="text-green-600" size={24} />
+                  <div className="p-3 bg-green-100 dark:bg-green-900/50 rounded-lg">
+                    <CheckCircle className="text-green-600 dark:text-green-400" size={24} />
                   </div>
                 </div>
-                <h3 className="text-gray-600 text-sm font-medium mb-1">
+                <h3 className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">
                   Task Selesai
                 </h3>
-                <p className="text-3xl font-bold text-gray-800">
+                <p className="text-3xl font-bold text-gray-800 dark:text-white">
                   {completedTasks}
                 </p>
               </div>
 
-              <div className="bg-white rounded-xl shadow-lg p-6">
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
                 <div className="flex items-center justify-between mb-2">
-                  <div className="p-3 bg-blue-100 rounded-lg">
-                    <Target className="text-blue-600" size={24} />
+                  <div className="p-3 bg-blue-100 dark:bg-blue-900/50 rounded-lg">
+                    <Target className="text-blue-600 dark:text-blue-400" size={24} />
                   </div>
                 </div>
-                <h3 className="text-gray-600 text-sm font-medium mb-1">
+                <h3 className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">
                   Task Berlangsung
                 </h3>
-                <p className="text-3xl font-bold text-gray-800">
+                <p className="text-3xl font-bold text-gray-800 dark:text-white">
                   {ongoingTasks}
                 </p>
               </div>
@@ -622,12 +702,12 @@ export default function LaporanPekerjaan() {
             {/* Recent Reports & Top Locations */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Recent Reports */}
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
                   Laporan Terbaru
                 </h2>
                 {recentReports.length === 0 ? (
-                  <p className="text-gray-500 text-center py-8">
+                  <p className="text-gray-500 dark:text-gray-400 text-center py-8">
                     Belum ada laporan
                   </p>
                 ) : (
@@ -635,14 +715,14 @@ export default function LaporanPekerjaan() {
                     {recentReports.map((report) => (
                       <div
                         key={report.id}
-                        className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+                        className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors"
                         onClick={() => handleEdit(report)}
                       >
-                        <h3 className="font-semibold text-gray-800">
+                        <h3 className="font-semibold text-gray-800 dark:text-white">
                           {report.namaProyek}
                         </h3>
-                        <p className="text-sm text-gray-600">{report.lokasi}</p>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-sm text-gray-600 dark:text-gray-300">{report.lokasi}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                           {new Date(report.tanggal).toLocaleDateString("id-ID")}
                         </p>
                       </div>
@@ -652,12 +732,12 @@ export default function LaporanPekerjaan() {
               </div>
 
               {/* Top Locations with Unit Names */}
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
                   Lokasi Terbanyak
                 </h2>
                 {topLokasi.length === 0 ? (
-                  <p className="text-gray-500 text-center py-8">
+                  <p className="text-gray-500 dark:text-gray-400 text-center py-8">
                     Belum ada data
                   </p>
                 ) : (
@@ -665,18 +745,18 @@ export default function LaporanPekerjaan() {
                     {topLokasi.map((item, index) => (
                       <div
                         key={item.lokasi}
-                        className="p-3 bg-gray-50 rounded-lg"
+                        className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
                       >
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                            <div className="w-8 h-8 bg-indigo-600 dark:bg-indigo-500 text-white rounded-full flex items-center justify-center font-bold text-sm">
                               {index + 1}
                             </div>
                             <div>
-                              <p className="font-semibold text-gray-800">
+                              <p className="font-semibold text-gray-800 dark:text-white">
                                 {item.lokasi}
                               </p>
-                              <p className="text-xs text-gray-500">
+                              <p className="text-xs text-gray-500 dark:text-gray-400">
                                 {item.count} laporan •{" "}
                                 {item.totalHours.toFixed(1)} jam
                               </p>
@@ -689,7 +769,7 @@ export default function LaporanPekerjaan() {
                               {item.units.map((unit, idx) => (
                                 <span
                                   key={idx}
-                                  className="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded-full flex items-center gap-1"
+                                  className="px-2 py-1 bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-300 text-xs rounded-full flex items-center gap-1"
                                 >
                                   <Wrench size={12} />
                                   {unit}
@@ -708,12 +788,12 @@ export default function LaporanPekerjaan() {
             {/* Tasks Overview */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Ongoing Tasks */}
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
                   Task Berlangsung
                 </h2>
                 {tasks.filter((t) => t.progress < 100).length === 0 ? (
-                  <p className="text-gray-500 text-center py-8">
+                  <p className="text-gray-500 dark:text-gray-400 text-center py-8">
                     Tidak ada task berlangsung
                   </p>
                 ) : (
@@ -724,11 +804,11 @@ export default function LaporanPekerjaan() {
                       .map((task) => (
                         <div
                           key={task.id}
-                          className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+                          className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors"
                           onClick={() => handleEditTask(task)}
                         >
                           <div className="flex justify-between items-start mb-3">
-                            <h3 className="font-semibold text-gray-800">
+                            <h3 className="font-semibold text-gray-800 dark:text-white">
                               {task.namaTask}
                             </h3>
                             <span
@@ -745,14 +825,14 @@ export default function LaporanPekerjaan() {
                           </div>
                           <div className="mb-2">
                             <div className="flex justify-between items-center mb-1">
-                              <span className="text-xs text-gray-600">
+                              <span className="text-xs text-gray-600 dark:text-gray-300">
                                 Progress
                               </span>
-                              <span className="text-xs font-bold text-indigo-600">
+                              <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">
                                 {task.progress}%
                               </span>
                             </div>
-                            <div className="w-full bg-gray-200 rounded-full h-2.5">
+                            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
                               <div
                                 className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2.5 rounded-full transition-all duration-300"
                                 style={{ width: `${task.progress}%` }}
@@ -760,7 +840,7 @@ export default function LaporanPekerjaan() {
                             </div>
                           </div>
                           {task.deadline && (
-                            <p className="text-xs text-gray-500 mt-2">
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                               ⏰{" "}
                               {new Date(task.deadline).toLocaleDateString(
                                 "id-ID"
@@ -774,12 +854,12 @@ export default function LaporanPekerjaan() {
               </div>
 
               {/* Completed Tasks */}
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
                   Task Selesai
                 </h2>
                 {tasks.filter((t) => t.progress >= 100).length === 0 ? (
-                  <p className="text-gray-500 text-center py-8">
+                  <p className="text-gray-500 dark:text-gray-400 text-center py-8">
                     Belum ada task selesai
                   </p>
                 ) : (
@@ -790,15 +870,15 @@ export default function LaporanPekerjaan() {
                       .map((task) => (
                         <div
                           key={task.id}
-                          className="p-4 border border-green-200 bg-green-50 rounded-lg"
+                          className="p-4 border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20 rounded-lg"
                         >
                           <div className="flex items-center gap-2 mb-2">
-                            <CheckCircle className="text-green-600" size={20} />
-                            <h3 className="font-semibold text-gray-800">
+                            <CheckCircle className="text-green-600 dark:text-green-400" size={20} />
+                            <h3 className="font-semibold text-gray-800 dark:text-white">
                               {task.namaTask}
                             </h3>
                           </div>
-                          <p className="text-xs text-gray-600">
+                          <p className="text-xs text-gray-600 dark:text-gray-300">
                             {task.deskripsi}
                           </p>
                         </div>
@@ -813,11 +893,11 @@ export default function LaporanPekerjaan() {
         {/* Laporan Tab */}
         {activeTab === "laporan" && (
           <div className="space-y-6">
-            <div className="bg-white rounded-xl shadow-lg p-6">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
               <div className="flex flex-col md:flex-row gap-4">
                 <div className="flex-1 relative">
                   <Search
-                    className="absolute left-3 top-3 text-gray-400"
+                    className="absolute left-3 top-3 text-gray-400 dark:text-gray-500"
                     size={20}
                   />
                   <input
@@ -825,21 +905,21 @@ export default function LaporanPekerjaan() {
                     placeholder="Cari proyek, lokasi, kegiatan, atau unit alat..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                   />
                 </div>
               </div>
             </div>
 
             {showForm && (
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h2 className="text-2xl font-bold text-gray-800 mb-4">
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
                   {editingId ? "Edit Laporan" : "Buat Laporan Baru"}
                 </h2>
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-1">
+                      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
                         Tanggal *
                       </label>
                       <input
@@ -847,11 +927,11 @@ export default function LaporanPekerjaan() {
                         name="tanggal"
                         value={formData.tanggal}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-1">
+                      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
                         Lokasi *
                       </label>
                       <input
@@ -860,11 +940,11 @@ export default function LaporanPekerjaan() {
                         value={formData.lokasi}
                         onChange={handleInputChange}
                         placeholder="Contoh: Jakarta Pusat"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-1">
+                      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
                         Nama Proyek *
                       </label>
                       <input
@@ -873,11 +953,11 @@ export default function LaporanPekerjaan() {
                         value={formData.namaProyek}
                         onChange={handleInputChange}
                         placeholder="Contoh: Instalasi Jaringan"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-1">
+                      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
                         Jenis Kegiatan *
                       </label>
                       <input
@@ -886,11 +966,11 @@ export default function LaporanPekerjaan() {
                         value={formData.jenisKegiatan}
                         onChange={handleInputChange}
                         placeholder="Contoh: Survey, Instalasi, Maintenance"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-1">
+                      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
                         Unit Alat *
                       </label>
                       <input
@@ -899,12 +979,12 @@ export default function LaporanPekerjaan() {
                         value={formData.unitAlat}
                         onChange={handleInputChange}
                         placeholder="Contoh: Generator, Trafo, Panel"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                       />
                     </div>
                     <div></div>
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-1">
+                      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
                         Jam Mulai
                       </label>
                       <input
@@ -912,11 +992,11 @@ export default function LaporanPekerjaan() {
                         name="jamMulai"
                         value={formData.jamMulai}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-1">
+                      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
                         Jam Selesai
                       </label>
                       <input
@@ -924,13 +1004,13 @@ export default function LaporanPekerjaan() {
                         name="jamSelesai"
                         value={formData.jamSelesai}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
                       Deskripsi Pekerjaan *
                     </label>
                     <textarea
@@ -939,12 +1019,12 @@ export default function LaporanPekerjaan() {
                       onChange={handleInputChange}
                       rows={3}
                       placeholder="Jelaskan pekerjaan yang dilakukan..."
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
                       Catatan Tambahan
                     </label>
                     <textarea
@@ -953,7 +1033,7 @@ export default function LaporanPekerjaan() {
                       onChange={handleInputChange}
                       rows={2}
                       placeholder="Kendala, material yang digunakan, dll (opsional)"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                     />
                   </div>
 
@@ -973,7 +1053,7 @@ export default function LaporanPekerjaan() {
                     <button
                       onClick={handleCancel}
                       disabled={saving}
-                      className="flex-1 bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 text-gray-800 px-6 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors"
+                      className="flex-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:bg-gray-100 text-gray-800 dark:text-white px-6 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors"
                     >
                       <X size={20} />
                       Batal
@@ -985,14 +1065,14 @@ export default function LaporanPekerjaan() {
 
             <div className="space-y-4">
               {filteredReports.length === 0 ? (
-                <div className="bg-white rounded-xl shadow-lg p-12 text-center">
-                  <FileText size={64} className="mx-auto text-gray-300 mb-4" />
-                  <h3 className="text-xl font-semibold text-gray-600 mb-2">
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-12 text-center">
+                  <FileText size={64} className="mx-auto text-gray-300 dark:text-gray-600 mb-4" />
+                  <h3 className="text-xl font-semibold text-gray-600 dark:text-gray-300 mb-2">
                     {searchTerm
                       ? "Tidak ada laporan yang sesuai"
                       : "Belum ada laporan"}
                   </h3>
-                  <p className="text-gray-500">
+                  <p className="text-gray-500 dark:text-gray-400">
                     {searchTerm
                       ? "Coba ubah kata kunci pencarian"
                       : 'Klik tombol "Laporan Baru" untuk mulai mendata pekerjaan'}
@@ -1002,20 +1082,20 @@ export default function LaporanPekerjaan() {
                 filteredReports.map((report) => (
                   <div
                     key={report.id}
-                    className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow"
+                    className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow"
                   >
                     <div className="flex justify-between items-start mb-4">
                       <div className="flex-1">
-                        <h3 className="text-xl font-bold text-gray-800 mb-2">
+                        <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">
                           {report.namaProyek}
                         </h3>
-                        <p className="text-sm text-gray-600 font-medium">
+                        <p className="text-sm text-gray-600 dark:text-gray-300 font-medium">
                           {report.jenisKegiatan}
                         </p>
                         {report.unitAlat && (
                           <div className="flex items-center gap-1 mt-1">
-                            <Wrench size={14} className="text-orange-600" />
-                            <span className="text-sm text-gray-600">
+                            <Wrench size={14} className="text-orange-600 dark:text-orange-400" />
+                            <span className="text-sm text-gray-600 dark:text-gray-300">
                               {report.unitAlat}
                             </span>
                           </div>
@@ -1025,14 +1105,14 @@ export default function LaporanPekerjaan() {
                         <button
                           onClick={() => handleEdit(report)}
                           disabled={saving}
-                          className="p-2 text-blue-600 hover:bg-blue-50 disabled:opacity-50 rounded-lg transition-colors"
+                          className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 disabled:opacity-50 rounded-lg transition-colors"
                         >
                           <Edit2 size={18} />
                         </button>
                         <button
                           onClick={() => handleDelete(report.id)}
                           disabled={saving}
-                          className="p-2 text-red-600 hover:bg-red-50 disabled:opacity-50 rounded-lg transition-colors"
+                          className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 disabled:opacity-50 rounded-lg transition-colors"
                         >
                           <Trash2 size={18} />
                         </button>
@@ -1040,7 +1120,7 @@ export default function LaporanPekerjaan() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-                      <div className="flex items-center gap-2 text-gray-600">
+                      <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
                         <Calendar size={16} />
                         <span className="text-sm">
                           {new Date(report.tanggal).toLocaleDateString(
@@ -1054,17 +1134,17 @@ export default function LaporanPekerjaan() {
                           )}
                         </span>
                       </div>
-                      <div className="flex items-center gap-2 text-gray-600">
+                      <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
                         <MapPin size={16} />
                         <span className="text-sm">{report.lokasi}</span>
                       </div>
                       {report.jamMulai && report.jamSelesai && (
-                        <div className="flex items-center gap-2 text-gray-600">
+                        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
                           <Clock size={16} />
                           <span className="text-sm">
                             {report.jamMulai} - {report.jamSelesai}
                           </span>
-                          <span className="text-xs text-blue-600 font-semibold">
+                          <span className="text-xs text-blue-600 dark:text-blue-400 font-semibold">
                             (
                             {calculateDuration(
                               report.jamMulai,
@@ -1076,13 +1156,13 @@ export default function LaporanPekerjaan() {
                       )}
                     </div>
 
-                    <div className="border-t pt-4">
-                      <p className="text-gray-700 mb-2">
+                    <div className="border-t dark:border-gray-700 pt-4">
+                      <p className="text-gray-700 dark:text-gray-200 mb-2">
                         <span className="font-semibold">Deskripsi:</span>{" "}
                         {report.deskripsi}
                       </p>
                       {report.catatan && (
-                        <p className="text-gray-600 text-sm">
+                        <p className="text-gray-600 dark:text-gray-300 text-sm">
                           <span className="font-semibold">Catatan:</span>{" "}
                           {report.catatan}
                         </p>
@@ -1098,11 +1178,11 @@ export default function LaporanPekerjaan() {
         {/* Tasks Tab */}
         {activeTab === "tasks" && (
           <div className="space-y-6">
-            <div className="bg-white rounded-xl shadow-lg p-6">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
               <div className="flex flex-col md:flex-row gap-4">
                 <div className="flex-1 relative">
                   <Search
-                    className="absolute left-3 top-3 text-gray-400"
+                    className="absolute left-3 top-3 text-gray-400 dark:text-gray-500"
                     size={20}
                   />
                   <input
@@ -1110,21 +1190,21 @@ export default function LaporanPekerjaan() {
                     placeholder="Cari task..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                   />
                 </div>
               </div>
             </div>
 
             {showTaskForm && (
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h2 className="text-2xl font-bold text-gray-800 mb-4">
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
                   {editingTaskId ? "Edit Task" : "Buat Task Baru"}
                 </h2>
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-1">
+                      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
                         Nama Task *
                       </label>
                       <input
@@ -1133,18 +1213,18 @@ export default function LaporanPekerjaan() {
                         value={taskFormData.namaTask}
                         onChange={handleTaskInputChange}
                         placeholder="Contoh: Maintenance Generator A"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-1">
+                      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
                         Prioritas
                       </label>
                       <select
                         name="prioritas"
                         value={taskFormData.prioritas}
                         onChange={handleTaskInputChange}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       >
                         <option value="low">Rendah</option>
                         <option value="medium">Sedang</option>
@@ -1152,7 +1232,7 @@ export default function LaporanPekerjaan() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-1">
+                      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
                         Deadline
                       </label>
                       <input
@@ -1160,11 +1240,11 @@ export default function LaporanPekerjaan() {
                         name="deadline"
                         value={taskFormData.deadline}
                         onChange={handleTaskInputChange}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-1">
+                      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
                         Progress (%)
                       </label>
                       <div className="flex gap-3 items-center">
@@ -1176,7 +1256,7 @@ export default function LaporanPekerjaan() {
                           min="0"
                           max="100"
                           step="5"
-                          className="flex-1 h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                          className="flex-1 h-3 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
                           style={{
                             background: `linear-gradient(to right, 
                               ${
@@ -1200,27 +1280,27 @@ export default function LaporanPekerjaan() {
                           onChange={handleTaskInputChange}
                           min="0"
                           max="100"
-                          className="w-20 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-center font-bold"
+                          className="w-20 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-center font-bold bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                         />
                       </div>
                       <div className="mt-3">
                         <div className="flex justify-between items-center mb-2">
-                          <span className="text-xs text-gray-600">Preview</span>
+                          <span className="text-xs text-gray-600 dark:text-gray-300">Preview</span>
                           <span
                             className={`text-sm font-bold ${
                               taskFormData.progress >= 100
-                                ? "text-green-600"
+                                ? "text-green-600 dark:text-green-400"
                                 : taskFormData.progress >= 75
-                                ? "text-blue-600"
+                                ? "text-blue-600 dark:text-blue-400"
                                 : taskFormData.progress >= 50
-                                ? "text-orange-600"
-                                : "text-gray-600"
+                                ? "text-orange-600 dark:text-orange-400"
+                                : "text-gray-600 dark:text-gray-300"
                             }`}
                           >
                             {taskFormData.progress}%
                           </span>
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-4 shadow-inner relative overflow-hidden">
+                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4 shadow-inner relative overflow-hidden">
                           <div
                             className={`h-4 rounded-full transition-all duration-300 ${
                               taskFormData.progress >= 100
@@ -1240,11 +1320,11 @@ export default function LaporanPekerjaan() {
                             )}
                           </div>
                         </div>
-                        <div className="flex justify-between mt-1 text-xs text-gray-500">
+                        <div className="flex justify-between mt-1 text-xs text-gray-500 dark:text-gray-400">
                           <span
                             className={
                               taskFormData.progress === 0
-                                ? "font-bold text-gray-700"
+                                ? "font-bold text-gray-700 dark:text-gray-200"
                                 : ""
                             }
                           >
@@ -1253,7 +1333,7 @@ export default function LaporanPekerjaan() {
                           <span
                             className={
                               taskFormData.progress === 25
-                                ? "font-bold text-gray-700"
+                                ? "font-bold text-gray-700 dark:text-gray-200"
                                 : ""
                             }
                           >
@@ -1262,7 +1342,7 @@ export default function LaporanPekerjaan() {
                           <span
                             className={
                               taskFormData.progress === 50
-                                ? "font-bold text-orange-600"
+                                ? "font-bold text-orange-600 dark:text-orange-400"
                                 : ""
                             }
                           >
@@ -1271,7 +1351,7 @@ export default function LaporanPekerjaan() {
                           <span
                             className={
                               taskFormData.progress === 75
-                                ? "font-bold text-blue-600"
+                                ? "font-bold text-blue-600 dark:text-blue-400"
                                 : ""
                             }
                           >
@@ -1280,7 +1360,7 @@ export default function LaporanPekerjaan() {
                           <span
                             className={
                               taskFormData.progress === 100
-                                ? "font-bold text-green-600"
+                                ? "font-bold text-green-600 dark:text-green-400"
                                 : ""
                             }
                           >
@@ -1292,7 +1372,7 @@ export default function LaporanPekerjaan() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
                       Deskripsi *
                     </label>
                     <textarea
@@ -1301,7 +1381,7 @@ export default function LaporanPekerjaan() {
                       onChange={handleTaskInputChange}
                       rows={3}
                       placeholder="Jelaskan detail task..."
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                     />
                   </div>
 
@@ -1321,7 +1401,7 @@ export default function LaporanPekerjaan() {
                     <button
                       onClick={handleTaskCancel}
                       disabled={saving}
-                      className="flex-1 bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 text-gray-800 px-6 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors"
+                      className="flex-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:bg-gray-100 text-gray-800 dark:text-white px-6 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors"
                     >
                       <X size={20} />
                       Batal
@@ -1333,14 +1413,14 @@ export default function LaporanPekerjaan() {
 
             <div className="space-y-4">
               {filteredTasks.length === 0 ? (
-                <div className="bg-white rounded-xl shadow-lg p-12 text-center">
-                  <ListTodo size={64} className="mx-auto text-gray-300 mb-4" />
-                  <h3 className="text-xl font-semibold text-gray-600 mb-2">
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-12 text-center">
+                  <ListTodo size={64} className="mx-auto text-gray-300 dark:text-gray-600 mb-4" />
+                  <h3 className="text-xl font-semibold text-gray-600 dark:text-gray-300 mb-2">
                     {searchTerm
                       ? "Tidak ada task yang sesuai"
                       : "Belum ada task"}
                   </h3>
-                  <p className="text-gray-500">
+                  <p className="text-gray-500 dark:text-gray-400">
                     {searchTerm
                       ? "Coba ubah kata kunci pencarian"
                       : 'Klik tombol "Task Baru" untuk mulai membuat task'}
@@ -1350,12 +1430,12 @@ export default function LaporanPekerjaan() {
                 filteredTasks.map((task) => (
                   <div
                     key={task.id}
-                    className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow"
+                    className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow"
                   >
                     <div className="flex justify-between items-start mb-4">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-xl font-bold text-gray-800">
+                          <h3 className="text-xl font-bold text-gray-800 dark:text-white">
                             {task.namaTask}
                           </h3>
                           <span
@@ -1370,17 +1450,17 @@ export default function LaporanPekerjaan() {
                               : "Rendah"}
                           </span>
                           {task.progress >= 100 && (
-                            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800 flex items-center gap-1">
+                            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300 flex items-center gap-1">
                               <CheckCircle size={14} />
                               Selesai
                             </span>
                           )}
                         </div>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-gray-600 dark:text-gray-300">
                           {task.deskripsi}
                         </p>
                         {task.deadline && (
-                          <div className="flex items-center gap-2 mt-2 text-gray-600">
+                          <div className="flex items-center gap-2 mt-2 text-gray-600 dark:text-gray-300">
                             <Calendar size={14} />
                             <span className="text-xs">
                               Deadline:{" "}
@@ -1395,14 +1475,14 @@ export default function LaporanPekerjaan() {
                         <button
                           onClick={() => handleEditTask(task)}
                           disabled={saving}
-                          className="p-2 text-blue-600 hover:bg-blue-50 disabled:opacity-50 rounded-lg transition-colors"
+                          className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 disabled:opacity-50 rounded-lg transition-colors"
                         >
                           <Edit2 size={18} />
                         </button>
                         <button
                           onClick={() => handleDeleteTask(task.id)}
                           disabled={saving}
-                          className="p-2 text-red-600 hover:bg-red-50 disabled:opacity-50 rounded-lg transition-colors"
+                          className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 disabled:opacity-50 rounded-lg transition-colors"
                         >
                           <Trash2 size={18} />
                         </button>
@@ -1411,14 +1491,14 @@ export default function LaporanPekerjaan() {
 
                     <div className="mt-4">
                       <div className="flex justify-between items-center mb-2">
-                        <span className="text-sm font-semibold text-gray-700">
+                        <span className="text-sm font-semibold text-gray-700 dark:text-gray-200">
                           Progress
                         </span>
-                        <span className="text-sm font-bold text-indigo-600">
+                        <span className="text-sm font-bold text-indigo-600 dark:text-indigo-400">
                           {task.progress}%
                         </span>
                       </div>
-                      <div className="w-full bg-gray-200 rounded-full h-4 shadow-inner">
+                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4 shadow-inner">
                         <div
                           className={`h-4 rounded-full transition-all duration-500 ${
                             task.progress >= 100
@@ -1440,12 +1520,12 @@ export default function LaporanPekerjaan() {
                           )}
                         </div>
                       </div>
-                      <div className="flex justify-between mt-1 text-xs text-gray-400">
+                      <div className="flex justify-between mt-1 text-xs text-gray-400 dark:text-gray-500">
                         <span>Start</span>
                         <span
                           className={
                             task.progress >= 50
-                              ? "text-indigo-600 font-semibold"
+                              ? "text-indigo-600 dark:text-indigo-400 font-semibold"
                               : ""
                           }
                         >
@@ -1454,7 +1534,7 @@ export default function LaporanPekerjaan() {
                         <span
                           className={
                             task.progress >= 100
-                              ? "text-green-600 font-semibold"
+                              ? "text-green-600 dark:text-green-400 font-semibold"
                               : ""
                           }
                         >
