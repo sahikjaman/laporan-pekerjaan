@@ -520,6 +520,59 @@ export default function LaporanPekerjaan() {
         {/* Dashboard Tab */}
         {activeTab === "dashboard" && (
           <div className="space-y-6">
+            {/* Quick Action Buttons */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <button
+                onClick={() => {
+                  setActiveTab("laporan");
+                  setShowForm(true);
+                  setShowTaskForm(false);
+                }}
+                className="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white p-6 rounded-xl shadow-lg flex items-center justify-between transition-all hover:shadow-xl group"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-white bg-opacity-20 rounded-lg group-hover:scale-110 transition-transform">
+                    <FileText size={32} />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="text-xl font-bold">Buat Laporan Baru</h3>
+                    <p className="text-sm text-blue-100">
+                      Catat pekerjaan lapangan Anda
+                    </p>
+                  </div>
+                </div>
+                <Plus
+                  size={32}
+                  className="group-hover:rotate-90 transition-transform"
+                />
+              </button>
+
+              <button
+                onClick={() => {
+                  setActiveTab("tasks");
+                  setShowTaskForm(true);
+                  setShowForm(false);
+                }}
+                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white p-6 rounded-xl shadow-lg flex items-center justify-between transition-all hover:shadow-xl group"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-white bg-opacity-20 rounded-lg group-hover:scale-110 transition-transform">
+                    <ListTodo size={32} />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="text-xl font-bold">Buat Task Baru</h3>
+                    <p className="text-sm text-green-100">
+                      Rencanakan pekerjaan Anda
+                    </p>
+                  </div>
+                </div>
+                <Plus
+                  size={32}
+                  className="group-hover:rotate-90 transition-transform"
+                />
+              </button>
+            </div>
+
             {/* Statistics Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="bg-white rounded-xl shadow-lg p-6">
