@@ -461,7 +461,11 @@ export default function LaporanPekerjaan() {
           </div>
           <div className="flex gap-4 border-t">
             <button
-              onClick={() => setActiveTab("dashboard")}
+              onClick={() => {
+                setActiveTab("dashboard");
+                setShowForm(false);
+                setShowTaskForm(false);
+              }}
               className={`px-4 py-3 font-semibold transition-colors ${
                 activeTab === "dashboard"
                   ? "text-indigo-600 border-b-2 border-indigo-600"
@@ -472,7 +476,10 @@ export default function LaporanPekerjaan() {
               Dashboard
             </button>
             <button
-              onClick={() => setActiveTab("laporan")}
+              onClick={() => {
+                setActiveTab("laporan");
+                setShowTaskForm(false);
+              }}
               className={`px-4 py-3 font-semibold transition-colors ${
                 activeTab === "laporan"
                   ? "text-indigo-600 border-b-2 border-indigo-600"
@@ -483,7 +490,10 @@ export default function LaporanPekerjaan() {
               Laporan
             </button>
             <button
-              onClick={() => setActiveTab("tasks")}
+              onClick={() => {
+                setActiveTab("tasks");
+                setShowForm(false);
+              }}
               className={`px-4 py-3 font-semibold transition-colors ${
                 activeTab === "tasks"
                   ? "text-indigo-600 border-b-2 border-indigo-600"
@@ -664,7 +674,7 @@ export default function LaporanPekerjaan() {
                           className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
                           onClick={() => handleEditTask(task)}
                         >
-                          <div className="flex justify-between items-start mb-2">
+                          <div className="flex justify-between items-start mb-3">
                             <h3 className="font-semibold text-gray-800">
                               {task.namaTask}
                             </h3>
@@ -673,18 +683,37 @@ export default function LaporanPekerjaan() {
                                 task.prioritas
                               )}`}
                             >
-                              {task.prioritas}
+                              {task.prioritas === "high"
+                                ? "Tinggi"
+                                : task.prioritas === "medium"
+                                ? "Sedang"
+                                : "Rendah"}
                             </span>
                           </div>
-                          <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
-                            <div
-                              className="bg-blue-600 h-2 rounded-full"
-                              style={{ width: `${task.progress}%` }}
-                            ></div>
+                          <div className="mb-2">
+                            <div className="flex justify-between items-center mb-1">
+                              <span className="text-xs text-gray-600">
+                                Progress
+                              </span>
+                              <span className="text-xs font-bold text-indigo-600">
+                                {task.progress}%
+                              </span>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-2.5">
+                              <div
+                                className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2.5 rounded-full transition-all duration-300"
+                                style={{ width: `${task.progress}%` }}
+                              ></div>
+                            </div>
                           </div>
-                          <p className="text-xs text-gray-600">
-                            {task.progress}% selesai
-                          </p>
+                          {task.deadline && (
+                            <p className="text-xs text-gray-500 mt-2">
+                              ⏰{" "}
+                              {new Date(task.deadline).toLocaleDateString(
+                                "id-ID"
+                              )}
+                            </p>
+                          )}
                         </div>
                       ))}
                   </div>
@@ -1085,15 +1114,127 @@ export default function LaporanPekerjaan() {
                       <label className="block text-sm font-semibold text-gray-700 mb-1">
                         Progress (%)
                       </label>
-                      <input
-                        type="number"
-                        name="progress"
-                        value={taskFormData.progress}
-                        onChange={handleTaskInputChange}
-                        min="0"
-                        max="100"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                      />
+                      <div className="flex gap-3 items-center">
+                        <input
+                          type="range"
+                          name="progress"
+                          value={taskFormData.progress}
+                          onChange={handleTaskInputChange}
+                          min="0"
+                          max="100"
+                          step="5"
+                          className="flex-1 h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                          style={{
+                            background: `linear-gradient(to right, 
+                              ${
+                                taskFormData.progress >= 100
+                                  ? "#10b981"
+                                  : taskFormData.progress >= 75
+                                  ? "#3b82f6"
+                                  : taskFormData.progress >= 50
+                                  ? "#f59e0b"
+                                  : taskFormData.progress >= 25
+                                  ? "#ef4444"
+                                  : "#9ca3af"
+                              } ${taskFormData.progress}%, 
+                              #e5e7eb ${taskFormData.progress}%)`,
+                          }}
+                        />
+                        <input
+                          type="number"
+                          name="progress"
+                          value={taskFormData.progress}
+                          onChange={handleTaskInputChange}
+                          min="0"
+                          max="100"
+                          className="w-20 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-center font-bold"
+                        />
+                      </div>
+                      <div className="mt-3">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-xs text-gray-600">Preview</span>
+                          <span
+                            className={`text-sm font-bold ${
+                              taskFormData.progress >= 100
+                                ? "text-green-600"
+                                : taskFormData.progress >= 75
+                                ? "text-blue-600"
+                                : taskFormData.progress >= 50
+                                ? "text-orange-600"
+                                : "text-gray-600"
+                            }`}
+                          >
+                            {taskFormData.progress}%
+                          </span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-4 shadow-inner relative overflow-hidden">
+                          <div
+                            className={`h-4 rounded-full transition-all duration-300 ${
+                              taskFormData.progress >= 100
+                                ? "bg-gradient-to-r from-green-500 to-emerald-600"
+                                : taskFormData.progress >= 75
+                                ? "bg-gradient-to-r from-blue-500 to-indigo-600"
+                                : taskFormData.progress >= 50
+                                ? "bg-gradient-to-r from-yellow-400 to-orange-500"
+                                : taskFormData.progress >= 25
+                                ? "bg-gradient-to-r from-orange-400 to-red-500"
+                                : "bg-gradient-to-r from-gray-400 to-gray-600"
+                            }`}
+                            style={{ width: `${taskFormData.progress}%` }}
+                          >
+                            {taskFormData.progress > 0 && (
+                              <div className="absolute inset-0 bg-white opacity-20 animate-pulse"></div>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex justify-between mt-1 text-xs text-gray-500">
+                          <span
+                            className={
+                              taskFormData.progress === 0
+                                ? "font-bold text-gray-700"
+                                : ""
+                            }
+                          >
+                            0%
+                          </span>
+                          <span
+                            className={
+                              taskFormData.progress === 25
+                                ? "font-bold text-gray-700"
+                                : ""
+                            }
+                          >
+                            25%
+                          </span>
+                          <span
+                            className={
+                              taskFormData.progress === 50
+                                ? "font-bold text-orange-600"
+                                : ""
+                            }
+                          >
+                            50%
+                          </span>
+                          <span
+                            className={
+                              taskFormData.progress === 75
+                                ? "font-bold text-blue-600"
+                                : ""
+                            }
+                          >
+                            75%
+                          </span>
+                          <span
+                            className={
+                              taskFormData.progress === 100
+                                ? "font-bold text-green-600"
+                                : ""
+                            }
+                          >
+                            100%
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -1224,15 +1365,48 @@ export default function LaporanPekerjaan() {
                           {task.progress}%
                         </span>
                       </div>
-                      <div className="w-full bg-gray-200 rounded-full h-3">
+                      <div className="w-full bg-gray-200 rounded-full h-4 shadow-inner">
                         <div
-                          className={`h-3 rounded-full transition-all ${
+                          className={`h-4 rounded-full transition-all duration-500 ${
                             task.progress >= 100
-                              ? "bg-green-600"
-                              : "bg-blue-600"
-                          }`}
+                              ? "bg-gradient-to-r from-green-500 to-emerald-600"
+                              : task.progress >= 75
+                              ? "bg-gradient-to-r from-blue-500 to-indigo-600"
+                              : task.progress >= 50
+                              ? "bg-gradient-to-r from-yellow-400 to-orange-500"
+                              : task.progress >= 25
+                              ? "bg-gradient-to-r from-orange-400 to-red-500"
+                              : "bg-gradient-to-r from-gray-400 to-gray-600"
+                          } shadow-sm`}
                           style={{ width: `${task.progress}%` }}
-                        ></div>
+                        >
+                          {task.progress > 10 && (
+                            <span className="flex items-center justify-end pr-2 h-full text-xs font-bold text-white">
+                              {task.progress}%
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex justify-between mt-1 text-xs text-gray-400">
+                        <span>Start</span>
+                        <span
+                          className={
+                            task.progress >= 50
+                              ? "text-indigo-600 font-semibold"
+                              : ""
+                          }
+                        >
+                          Halfway
+                        </span>
+                        <span
+                          className={
+                            task.progress >= 100
+                              ? "text-green-600 font-semibold"
+                              : ""
+                          }
+                        >
+                          Complete
+                        </span>
                       </div>
                     </div>
                   </div>
