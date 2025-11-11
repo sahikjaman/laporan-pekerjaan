@@ -135,6 +135,16 @@ export default async function handler(req, res) {
 
       const actualRowNumber = rowIndex + 2;
 
+      // Get sheet info to find correct sheetId
+      const sheetInfo = await sheets.spreadsheets.get({
+        spreadsheetId: SPREADSHEET_ID,
+      });
+
+      const taskSheet = sheetInfo.data.sheets.find(
+        (s) => s.properties.title === SHEET_NAME
+      );
+      const sheetId = taskSheet ? taskSheet.properties.sheetId : 1;
+
       await sheets.spreadsheets.batchUpdate({
         spreadsheetId: SPREADSHEET_ID,
         resource: {
@@ -142,7 +152,7 @@ export default async function handler(req, res) {
             {
               deleteDimension: {
                 range: {
-                  sheetId: 1, // Sheet ID untuk Tasks (berbeda dengan Laporan yang 0)
+                  sheetId: sheetId,
                   dimension: "ROWS",
                   startIndex: actualRowNumber - 1,
                   endIndex: actualRowNumber,
