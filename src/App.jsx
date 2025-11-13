@@ -135,6 +135,8 @@ export default function LaporanPekerjaan() {
     progressIncrement: 0,
   });
 
+  const [editingLogId, setEditingLogId] = useState(null);
+
   useEffect(() => {
     loadReports();
     loadTasks();
@@ -335,6 +337,10 @@ export default function LaporanPekerjaan() {
     setEditingId(report.id);
     setShowForm(true);
     setActiveTab("laporan");
+    // Auto scroll to form
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }, 100);
   };
 
   const handleEditTask = (task) => {
@@ -345,6 +351,10 @@ export default function LaporanPekerjaan() {
     setEditingTaskId(task.id);
     setShowTaskForm(true);
     setActiveTab("tasks");
+    // Auto scroll to form
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }, 100);
   };
 
   const handleDelete = async (id) => {
@@ -464,6 +474,64 @@ export default function LaporanPekerjaan() {
       ...taskFormData,
       progressLogs: updatedLogs,
       progress: newProgress,
+    });
+  };
+
+  const handleEditProgressLog = (log) => {
+    setEditingLogId(log.id);
+    setNewProgressLog({
+      tanggal: log.tanggal,
+      deskripsi: log.deskripsi,
+      progressIncrement: log.progressIncrement,
+    });
+  };
+
+  const handleUpdateProgressLog = () => {
+    if (!newProgressLog.deskripsi.trim()) {
+      alert("Harap isi deskripsi progress");
+      return;
+    }
+
+    const logToUpdate = taskFormData.progressLogs.find(
+      (log) => log.id === editingLogId
+    );
+    const oldIncrement = logToUpdate?.progressIncrement || 0;
+    const newIncrement = parseInt(newProgressLog.progressIncrement) || 0;
+    const incrementDiff = newIncrement - oldIncrement;
+
+    const updatedLogs = taskFormData.progressLogs.map((log) =>
+      log.id === editingLogId
+        ? {
+            ...log,
+            tanggal: newProgressLog.tanggal,
+            deskripsi: newProgressLog.deskripsi,
+            progressIncrement: newIncrement,
+          }
+        : log
+    );
+
+    const newProgress = Math.min(100, Math.max(0, taskFormData.progress + incrementDiff));
+
+    setTaskFormData({
+      ...taskFormData,
+      progressLogs: updatedLogs,
+      progress: newProgress,
+    });
+
+    setEditingLogId(null);
+    setNewProgressLog({
+      tanggal: new Date().toISOString().split("T")[0],
+      deskripsi: "",
+      progressIncrement: 0,
+    });
+  };
+
+  const handleCancelEditLog = () => {
+    setEditingLogId(null);
+    setNewProgressLog({
+      tanggal: new Date().toISOString().split("T")[0],
+      deskripsi: "",
+      progressIncrement: 0,
     });
   };
 
@@ -1505,13 +1573,22 @@ export default function LaporanPekerjaan() {
                               key={log.id}
                               className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 relative group"
                             >
-                              <button
-                                onClick={() => handleDeleteProgressLog(log.id)}
-                                className="absolute top-3 right-3 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 opacity-0 group-hover:opacity-100 transition-opacity"
-                                title="Hapus log"
-                              >
-                                <Trash2 size={16} />
-                              </button>
+                              <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button
+                                  onClick={() => handleEditProgressLog(log)}
+                                  className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                                  title="Edit log"
+                                >
+                                  <Edit2 size={16} />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteProgressLog(log.id)}
+                                  className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                                  title="Hapus log"
+                                >
+                                  <Trash2 size={16} />
+                                </button>
+                              </div>
                               <div className="flex items-start gap-3">
                                 <MessageSquare
                                   className="text-indigo-500 dark:text-indigo-400 mt-1"
@@ -1550,11 +1627,24 @@ export default function LaporanPekerjaan() {
                         </div>
                       )}
 
-                    {/* Add New Progress Log Form */}
-                    <div className="bg-indigo-50 dark:bg-gray-800 border border-indigo-200 dark:border-indigo-900 rounded-lg p-4">
+                    {/* Add/Edit Progress Log Form */}
+                    <div className={`border rounded-lg p-4 ${
+                      editingLogId 
+                        ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'
+                        : 'bg-indigo-50 dark:bg-gray-800 border-indigo-200 dark:border-indigo-900'
+                    }`}>
                       <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
-                        <Plus size={16} />
-                        Tambah Progress Baru
+                        {editingLogId ? (
+                          <>
+                            <Edit2 size={16} />
+                            Edit Progress Log
+                          </>
+                        ) : (
+                          <>
+                            <Plus size={16} />
+                            Tambah Progress Baru
+                          </>
+                        )}
                       </h4>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
                         <div>
@@ -1592,14 +1682,32 @@ export default function LaporanPekerjaan() {
                             placeholder="0"
                           />
                         </div>
-                        <div className="md:col-span-1 flex items-end">
-                          <button
-                            onClick={handleAddProgressLog}
-                            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors text-sm"
-                          >
-                            <Plus size={16} />
-                            Tambah
-                          </button>
+                        <div className="md:col-span-1 flex items-end gap-2">
+                          {editingLogId ? (
+                            <>
+                              <button
+                                onClick={handleUpdateProgressLog}
+                                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors text-sm"
+                              >
+                                <Check size={16} />
+                                Update
+                              </button>
+                              <button
+                                onClick={handleCancelEditLog}
+                                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors text-sm"
+                              >
+                                <X size={16} />
+                              </button>
+                            </>
+                          ) : (
+                            <button
+                              onClick={handleAddProgressLog}
+                              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors text-sm"
+                            >
+                              <Plus size={16} />
+                              Tambah
+                            </button>
+                          )}
                         </div>
                       </div>
                       <div>
