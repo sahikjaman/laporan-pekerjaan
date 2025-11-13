@@ -1176,7 +1176,7 @@ export default function LaporanPekerjaan() {
                               {task.namaTask}
                             </h3>
                           </div>
-                          <p className="text-xs text-gray-600 dark:text-gray-300">
+                          <p className="text-xs text-gray-600 dark:text-gray-300 whitespace-pre-wrap">
                             {task.deskripsi}
                           </p>
                         </div>
@@ -1849,7 +1849,7 @@ export default function LaporanPekerjaan() {
                             </span>
                           )}
                         </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-300">
+                        <p className="text-sm text-gray-600 dark:text-gray-300 whitespace-pre-wrap">
                           {task.deskripsi}
                         </p>
                         {task.deadline && (
@@ -1955,17 +1955,22 @@ export default function LaporanPekerjaan() {
             {/* Modal Header */}
             <div className="sticky top-0 bg-white dark:bg-gray-800 border-b dark:border-gray-700 p-6">
               <div className="flex justify-between items-start">
-                <div>
+                <div className="flex-1 mr-4">
                   <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                     {selectedTask.namaTask}
                   </h2>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  {selectedTask.deskripsi && (
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 whitespace-pre-wrap">
+                      {selectedTask.deskripsi}
+                    </p>
+                  )}
+                  <p className="text-sm font-semibold text-indigo-600 dark:text-indigo-400 mt-2">
                     Progress: {selectedTask.progress}%
                   </p>
                 </div>
                 <button
                   onClick={handleCloseProgressModal}
-                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 flex-shrink-0"
                 >
                   <X className="w-6 h-6" />
                 </button>
