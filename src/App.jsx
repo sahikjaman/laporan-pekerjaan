@@ -1552,18 +1552,18 @@ export default function LaporanPekerjaan() {
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                        Progress (%)
+                        Progress (Otomatis dari Riwayat)
                       </label>
-                      <div className="flex gap-3 items-center">
-                        <input
-                          type="range"
-                          name="progress"
-                          value={taskFormData.progress}
-                          onChange={handleTaskInputChange}
-                          min="0"
-                          max="100"
-                          step="5"
-                          className="flex-1 h-3 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                      <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-sm text-gray-600 dark:text-gray-300">
+                            Total Progress
+                          </span>
+                          <span className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                            {taskFormData.progress}%
+                          </span>
+                        </div>
+                        <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-3"
                           style={{
                             background: `linear-gradient(to right, 
                               ${
@@ -1579,270 +1579,62 @@ export default function LaporanPekerjaan() {
                               } ${taskFormData.progress}%, 
                               #e5e7eb ${taskFormData.progress}%)`,
                           }}
-                        />
-                        <input
-                          type="number"
-                          name="progress"
-                          value={taskFormData.progress}
-                          onChange={handleTaskInputChange}
-                          min="0"
-                          max="100"
-                          className="w-20 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-center font-bold bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                        />
-                      </div>
-                      <div className="mt-3">
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="text-xs text-gray-600 dark:text-gray-300">
-                            Preview
-                          </span>
-                          <span
-                            className={`text-sm font-bold ${
-                              taskFormData.progress >= 100
-                                ? "text-green-600 dark:text-green-400"
-                                : taskFormData.progress >= 75
-                                ? "text-blue-600 dark:text-blue-400"
-                                : taskFormData.progress >= 50
-                                ? "text-orange-600 dark:text-orange-400"
-                                : "text-gray-600 dark:text-gray-300"
-                            }`}
-                          >
-                            {taskFormData.progress}%
-                          </span>
+                        >
                         </div>
-                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4 shadow-inner relative overflow-hidden">
-                          <div
-                            className={`h-4 rounded-full transition-all duration-300 ${
-                              taskFormData.progress >= 100
-                                ? "bg-gradient-to-r from-green-500 to-emerald-600"
-                                : taskFormData.progress >= 75
-                                ? "bg-gradient-to-r from-blue-500 to-indigo-600"
-                                : taskFormData.progress >= 50
-                                ? "bg-gradient-to-r from-yellow-400 to-orange-500"
-                                : taskFormData.progress >= 25
-                                ? "bg-gradient-to-r from-orange-400 to-red-500"
-                                : "bg-gradient-to-r from-gray-400 to-gray-600"
-                            }`}
-                            style={{ width: `${taskFormData.progress}%` }}
-                          >
-                            {taskFormData.progress > 0 && (
-                              <div className="absolute inset-0 bg-white opacity-20 animate-pulse"></div>
-                            )}
-                          </div>
-                        </div>
-                        <div className="flex justify-between mt-1 text-xs text-gray-500 dark:text-gray-400">
-                          <span
-                            className={
-                              taskFormData.progress === 0
-                                ? "font-bold text-gray-700 dark:text-gray-200"
-                                : ""
-                            }
-                          >
-                            0%
-                          </span>
-                          <span
-                            className={
-                              taskFormData.progress === 25
-                                ? "font-bold text-gray-700 dark:text-gray-200"
-                                : ""
-                            }
-                          >
-                            25%
-                          </span>
-                          <span
-                            className={
-                              taskFormData.progress === 50
-                                ? "font-bold text-orange-600 dark:text-orange-400"
-                                : ""
-                            }
-                          >
-                            50%
-                          </span>
-                          <span
-                            className={
-                              taskFormData.progress === 75
-                                ? "font-bold text-blue-600 dark:text-blue-400"
-                                : ""
-                            }
-                          >
-                            75%
-                          </span>
-                          <span
-                            className={
-                              taskFormData.progress === 100
-                                ? "font-bold text-green-600 dark:text-green-400"
-                                : ""
-                            }
-                          >
-                            100%
-                          </span>
-                        </div>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                          Progress dihitung otomatis dari total riwayat progress yang ditambahkan
+                        </p>
                       </div>
                     </div>
                   </div>
 
                   {/* Progress Logs Section */}
-                  <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-                    <div className="flex items-center gap-2 mb-4">
-                      <ClipboardList
-                        className="text-indigo-600 dark:text-indigo-400"
-                        size={20}
-                      />
-                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                        Riwayat Progress
-                      </h3>
-                    </div>
-
-                    {/* Existing Progress Logs */}
-                    {taskFormData.progressLogs &&
-                      taskFormData.progressLogs.length > 0 && (
-                        <div className="mb-4 space-y-3 max-h-60 overflow-y-auto">
-                          {taskFormData.progressLogs.map((log) => (
-                            <div
-                              key={log.id}
-                              className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 relative group"
-                            >
-                              <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button
-                                  onClick={() => handleEditProgressLog(log)}
-                                  className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-                                  title="Edit log"
-                                >
-                                  <Edit2 size={16} />
-                                </button>
-                                <button
-                                  onClick={() => handleDeleteProgressLog(log.id)}
-                                  className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
-                                  title="Hapus log"
-                                >
-                                  <Trash2 size={16} />
-                                </button>
-                              </div>
-                              <div className="flex items-start gap-3">
-                                <MessageSquare
-                                  className="text-indigo-500 dark:text-indigo-400 mt-1"
-                                  size={18}
-                                />
-                                <div className="flex-1">
-                                  <div className="flex items-center gap-2 mb-1">
-                                    <span className="text-xs text-gray-500 dark:text-gray-400">
-                                      {new Date(log.tanggal).toLocaleDateString(
-                                        "id-ID",
-                                        {
-                                          day: "numeric",
-                                          month: "long",
-                                          year: "numeric",
-                                        }
-                                      )}
-                                    </span>
-                                    <span
-                                      className={`text-xs font-bold px-2 py-0.5 rounded ${
-                                        log.progressIncrement > 0
-                                          ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
-                                          : "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
-                                      }`}
-                                    >
-                                      {log.progressIncrement > 0 ? "+" : ""}
-                                      {log.progressIncrement}%
-                                    </span>
-                                  </div>
-                                  <p className="text-sm text-gray-700 dark:text-gray-300">
-                                    {log.deskripsi}
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-
-                    {/* Add/Edit Progress Log Form */}
-                    <div className={`border rounded-lg p-4 ${
-                      editingLogId 
-                        ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'
-                        : 'bg-indigo-50 dark:bg-gray-800 border-indigo-200 dark:border-indigo-900'
-                    }`}>
-                      <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
-                        {editingLogId ? (
-                          <>
-                            <Edit2 size={16} />
-                            Edit Progress Log
-                          </>
-                        ) : (
-                          <>
-                            <Plus size={16} />
-                            Tambah Progress Baru
-                          </>
-                        )}
-                      </h4>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
-                        <div>
-                          <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-                            Tanggal
-                          </label>
-                          <input
-                            type="date"
-                            value={newProgressLog.tanggal}
-                            onChange={(e) =>
-                              setNewProgressLog({
-                                ...newProgressLog,
-                                tanggal: e.target.value,
-                              })
-                            }
-                            className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-                            Penambahan Progress (%)
-                          </label>
-                          <input
-                            type="number"
-                            value={newProgressLog.progressIncrement}
-                            onChange={(e) =>
-                              setNewProgressLog({
-                                ...newProgressLog,
-                                progressIncrement: e.target.value,
-                              })
-                            }
-                            min="0"
-                            max="100"
-                            className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                            placeholder="0"
-                          />
-                        </div>
-                        <div className="md:col-span-1 flex items-end gap-2">
-                          {editingLogId ? (
-                            <>
-                              <button
-                                onClick={handleUpdateProgressLog}
-                                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors text-sm"
-                              >
-                                <Check size={16} />
-                                Update
-                              </button>
-                              <button
-                                onClick={handleCancelEditLog}
-                                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors text-sm"
-                              >
-                                <X size={16} />
-                              </button>
-                            </>
-                          ) : (
-                            <button
-                              onClick={handleAddProgressLog}
-                              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors text-sm"
-                            >
-                              <Plus size={16} />
-                              Tambah
-                            </button>
-                          )}
-                        </div>
+                  <div className={`p-4 rounded-lg ${editingLogId ? "bg-blue-50 dark:bg-blue-900/20" : "bg-gray-50 dark:bg-gray-700/50"}`}>
+                    <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
+                      {editingLogId ? "Edit Progress" : "Tambah Progress"}
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                          Tanggal
+                        </label>
+                        <input
+                          type="date"
+                          value={newProgressLog.tanggal}
+                          onChange={(e) =>
+                            setNewProgressLog({
+                              ...newProgressLog,
+                              tanggal: e.target.value,
+                            })
+                          }
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        />
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-                          Deskripsi Progress
+                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                          Penambahan Progress (%)
                         </label>
-                        <textarea
+                        <input
+                          type="number"
+                          value={newProgressLog.progressIncrement}
+                          onChange={(e) =>
+                            setNewProgressLog({
+                              ...newProgressLog,
+                              progressIncrement: e.target.value,
+                            })
+                          }
+                          min="0"
+                          max="100"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                          placeholder="0"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                          Deskripsi
+                        </label>
+                        <input
+                          type="text"
                           value={newProgressLog.deskripsi}
                           onChange={(e) =>
                             setNewProgressLog({
@@ -1850,29 +1642,108 @@ export default function LaporanPekerjaan() {
                               deskripsi: e.target.value,
                             })
                           }
-                          rows={2}
-                          placeholder="Jelaskan progress yang telah dilakukan..."
-                          className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                          placeholder="Deskripsi progress..."
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                         />
                       </div>
                     </div>
+                    <div className="flex gap-2 mt-4">
+                      {editingLogId ? (
+                        <>
+                          <button
+                            onClick={handleUpdateProgressLog}
+                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
+                          >
+                            <Check className="w-4 h-4" />
+                            Update Progress
+                          </button>
+                          <button
+                            onClick={handleCancelEditLog}
+                            className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 flex items-center gap-2"
+                          >
+                            <X className="w-4 h-4" />
+                            Batal
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          onClick={handleAddProgressLog}
+                          className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 flex items-center gap-2"
+                        >
+                          <Plus className="w-4 h-4" />
+                          Tambah Progress
+                        </button>
+                      )}
+                    </div>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                      Deskripsi *
-                    </label>
-                    <textarea
-                      name="deskripsi"
-                      value={taskFormData.deskripsi}
-                      onChange={handleTaskInputChange}
-                      rows={3}
-                      placeholder="Jelaskan detail task..."
-                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
-                    />
+                  {/* Riwayat Progress Logs */}
+                  <div className="mt-6">
+                    <div className="flex items-center gap-2 mb-4">
+                      <ClipboardList className="text-indigo-600 dark:text-indigo-400" size={20} />
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                        Riwayat Progress
+                      </h3>
+                    </div>
+                    {taskFormData.progressLogs && taskFormData.progressLogs.length > 0 ? (
+                      <div className="space-y-3 max-h-60 overflow-y-auto">
+                        {taskFormData.progressLogs
+                          .sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal))
+                          .map((log) => (
+                            <div
+                              key={log.id}
+                              className={`p-4 rounded-lg border transition-colors group ${
+                                editingLogId === log.id
+                                  ? "bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-700"
+                                  : "bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
+                              }`}
+                            >
+                              <div className="flex justify-between items-start">
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-3 mb-2">
+                                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                                      {new Date(log.tanggal).toLocaleDateString("id-ID", {
+                                        day: "numeric",
+                                        month: "long",
+                                        year: "numeric",
+                                      })}
+                                    </span>
+                                    <span className="px-2 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded text-sm font-semibold">
+                                      +{log.progressIncrement}%
+                                    </span>
+                                  </div>
+                                  <p className="text-gray-700 dark:text-gray-300">
+                                    {log.deskripsi}
+                                  </p>
+                                </div>
+                                <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <button
+                                    onClick={() => handleEditProgressLog(log)}
+                                    className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded"
+                                    title="Edit"
+                                  >
+                                    <Edit2 className="w-4 h-4" />
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteProgressLog(log.id)}
+                                    className="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded"
+                                    title="Hapus"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    ) : (
+                      <p className="text-gray-500 dark:text-gray-400 text-center py-4">
+                        Belum ada riwayat progress. Tambahkan progress pertama di atas.
+                      </p>
+                    )}
                   </div>
 
-                  <div className="flex gap-3 pt-2">
+                  <div className="flex gap-3 mt-6">
                     <button
                       onClick={handleTaskSubmit}
                       disabled={saving}
