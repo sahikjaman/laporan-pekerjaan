@@ -177,7 +177,24 @@ export default async function handler(req, res) {
           .json({ success: false, error: "Sparepart tidak ditemukan" });
       }
 
+      // Get sheet metadata to find sheetId
+      const spreadsheet = await sheets.spreadsheets.get({
+        spreadsheetId: SPREADSHEET_ID,
+      });
+
+      const sheet = spreadsheet.data.sheets.find(
+        (s) => s.properties.title === SHEET_NAME
+      );
+
+      if (!sheet) {
+        return res
+          .status(404)
+          .json({ success: false, error: "Sheet tidak ditemukan" });
+      }
+
+      const sheetId = sheet.properties.sheetId;
       const sheetRow = rowIndex + 2;
+
       await sheets.spreadsheets.batchUpdate({
         spreadsheetId: SPREADSHEET_ID,
         requestBody: {
@@ -185,7 +202,7 @@ export default async function handler(req, res) {
             {
               deleteDimension: {
                 range: {
-                  sheetId: 0,
+                  sheetId: sheetId,
                   dimension: "ROWS",
                   startIndex: sheetRow - 1,
                   endIndex: sheetRow,
