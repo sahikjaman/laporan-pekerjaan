@@ -20,6 +20,8 @@ import {
   Sun,
   Moon,
   Monitor,
+  ClipboardList,
+  MessageSquare,
 } from "lucide-react";
 
 const API_URL = "/api/reports";
@@ -123,6 +125,13 @@ export default function LaporanPekerjaan() {
     prioritas: "medium",
     deadline: "",
     progress: 0,
+    progressLogs: [],
+  });
+
+  const [newProgressLog, setNewProgressLog] = useState({
+    tanggal: new Date().toISOString().split('T')[0],
+    deskripsi: "",
+    progressIncrement: 0,
   });
 
   useEffect(() => {
@@ -322,7 +331,10 @@ export default function LaporanPekerjaan() {
   };
 
   const handleEditTask = (task) => {
-    setTaskFormData(task);
+    setTaskFormData({
+      ...task,
+      progressLogs: task.progressLogs || [],
+    });
     setEditingTaskId(task.id);
     setShowTaskForm(true);
     setActiveTab("tasks");
@@ -383,9 +395,65 @@ export default function LaporanPekerjaan() {
       prioritas: "medium",
       deadline: "",
       progress: 0,
+      progressLogs: [],
     });
     setEditingTaskId(null);
     setShowTaskForm(false);
+    setNewProgressLog({
+      tanggal: new Date().toISOString().split('T')[0],
+      deskripsi: "",
+      progressIncrement: 0,
+    });
+  };
+
+  const handleAddProgressLog = () => {
+    if (!newProgressLog.deskripsi.trim()) {
+      alert("Harap isi deskripsi progress");
+      return;
+    }
+
+    const logEntry = {
+      id: Date.now().toString(),
+      tanggal: newProgressLog.tanggal,
+      deskripsi: newProgressLog.deskripsi,
+      progressIncrement: parseInt(newProgressLog.progressIncrement) || 0,
+      createdAt: new Date().toISOString(),
+    };
+
+    const updatedLogs = [...(taskFormData.progressLogs || []), logEntry];
+    const newProgress = Math.min(
+      100,
+      taskFormData.progress + (parseInt(newProgressLog.progressIncrement) || 0)
+    );
+
+    setTaskFormData({
+      ...taskFormData,
+      progressLogs: updatedLogs,
+      progress: newProgress,
+    });
+
+    setNewProgressLog({
+      tanggal: new Date().toISOString().split('T')[0],
+      deskripsi: "",
+      progressIncrement: 0,
+    });
+  };
+
+  const handleDeleteProgressLog = (logId) => {
+    if (!confirm("Yakin ingin menghapus log progress ini?")) return;
+
+    const logToDelete = taskFormData.progressLogs.find(log => log.id === logId);
+    const updatedLogs = taskFormData.progressLogs.filter(log => log.id !== logId);
+    const newProgress = Math.max(
+      0,
+      taskFormData.progress - (logToDelete?.progressIncrement || 0)
+    );
+
+    setTaskFormData({
+      ...taskFormData,
+      progressLogs: updatedLogs,
+      progress: newProgress,
+    });
   };
 
   const filteredReports = reports.filter((report) => {
@@ -1367,6 +1435,131 @@ export default function LaporanPekerjaan() {
                             100%
                           </span>
                         </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Progress Logs Section */}
+                  <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+                    <div className="flex items-center gap-2 mb-4">
+                      <ClipboardList className="text-indigo-600 dark:text-indigo-400" size={20} />
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                        Riwayat Progress
+                      </h3>
+                    </div>
+
+                    {/* Existing Progress Logs */}
+                    {taskFormData.progressLogs && taskFormData.progressLogs.length > 0 && (
+                      <div className="mb-4 space-y-3 max-h-60 overflow-y-auto">
+                        {taskFormData.progressLogs.map((log) => (
+                          <div
+                            key={log.id}
+                            className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 relative group"
+                          >
+                            <button
+                              onClick={() => handleDeleteProgressLog(log.id)}
+                              className="absolute top-3 right-3 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 opacity-0 group-hover:opacity-100 transition-opacity"
+                              title="Hapus log"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                            <div className="flex items-start gap-3">
+                              <MessageSquare className="text-indigo-500 dark:text-indigo-400 mt-1" size={18} />
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                                    {new Date(log.tanggal).toLocaleDateString('id-ID', {
+                                      day: 'numeric',
+                                      month: 'long',
+                                      year: 'numeric'
+                                    })}
+                                  </span>
+                                  <span className={`text-xs font-bold px-2 py-0.5 rounded ${
+                                    log.progressIncrement > 0
+                                      ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
+                                      : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+                                  }`}>
+                                    {log.progressIncrement > 0 ? '+' : ''}{log.progressIncrement}%
+                                  </span>
+                                </div>
+                                <p className="text-sm text-gray-700 dark:text-gray-300">
+                                  {log.deskripsi}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Add New Progress Log Form */}
+                    <div className="bg-indigo-50 dark:bg-gray-800 border border-indigo-200 dark:border-indigo-900 rounded-lg p-4">
+                      <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+                        <Plus size={16} />
+                        Tambah Progress Baru
+                      </h4>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+                        <div>
+                          <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                            Tanggal
+                          </label>
+                          <input
+                            type="date"
+                            value={newProgressLog.tanggal}
+                            onChange={(e) =>
+                              setNewProgressLog({
+                                ...newProgressLog,
+                                tanggal: e.target.value,
+                              })
+                            }
+                            className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                            Penambahan Progress (%)
+                          </label>
+                          <input
+                            type="number"
+                            value={newProgressLog.progressIncrement}
+                            onChange={(e) =>
+                              setNewProgressLog({
+                                ...newProgressLog,
+                                progressIncrement: e.target.value,
+                              })
+                            }
+                            min="0"
+                            max="100"
+                            className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            placeholder="0"
+                          />
+                        </div>
+                        <div className="md:col-span-1 flex items-end">
+                          <button
+                            onClick={handleAddProgressLog}
+                            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors text-sm"
+                          >
+                            <Plus size={16} />
+                            Tambah
+                          </button>
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                          Deskripsi Progress
+                        </label>
+                        <textarea
+                          value={newProgressLog.deskripsi}
+                          onChange={(e) =>
+                            setNewProgressLog({
+                              ...newProgressLog,
+                              deskripsi: e.target.value,
+                            })
+                          }
+                          rows={2}
+                          placeholder="Jelaskan progress yang telah dilakukan..."
+                          className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                        />
                       </div>
                     </div>
                   </div>
