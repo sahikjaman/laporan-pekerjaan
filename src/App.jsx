@@ -927,6 +927,9 @@ export default function LaporanPekerjaan() {
                 <h1 className="text-xl font-bold text-gray-800 dark:text-white">
                   HVE ELECTRICAL SPIL
                 </h1>
+                <p className="text-xs text-gray-600 dark:text-gray-400">
+                  Heavy Equipment Electrical PT. Salam Pasific Indonesia Lines
+                </p>
               </div>
             </div>
             <div className="flex gap-2">
@@ -2889,7 +2892,7 @@ export default function LaporanPekerjaan() {
       {/* Footer Copyright */}
       <footer className="mt-12 py-6 border-t border-gray-200 dark:border-gray-700">
         <div className="text-center text-sm text-gray-600 dark:text-gray-400">
-          © Copyright 2025
+          © 2025 PT SALAM PACIFIC INDONESIA LINES. All rights reserved
         </div>
       </footer>
     </div>
