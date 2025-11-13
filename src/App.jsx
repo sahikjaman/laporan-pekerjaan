@@ -792,6 +792,44 @@ export default function LaporanPekerjaan() {
     }
   };
 
+  const handleClearSparepartDate = async (sparepart, dateField) => {
+    if (!confirm(`Apakah Anda yakin ingin menghapus ${dateField === 'tanggalDipesan' ? 'tanggal dipesan' : 'tanggal datang'}?`)) {
+      return;
+    }
+    
+    setSaving(true);
+    try {
+      let updatedSparepart = { ...sparepart };
+      
+      if (dateField === "tanggalDipesan") {
+        // Hapus tanggal dipesan, reset status ke pending, dan hapus tanggal datang juga
+        updatedSparepart.tanggalDipesan = "";
+        updatedSparepart.tanggalDatang = "";
+        updatedSparepart.status = "pending";
+      } else if (dateField === "tanggalDatang") {
+        // Hapus tanggal datang, reset status ke ordered
+        updatedSparepart.tanggalDatang = "";
+        updatedSparepart.status = "ordered";
+      }
+
+      const response = await fetch(SPAREPART_API_URL, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedSparepart),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        await loadSpareparts();
+      }
+    } catch (error) {
+      console.error("Error menghapus tanggal:", error);
+      alert("Gagal menghapus tanggal");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const filteredReports = reports.filter((report) => {
     const matchesSearch =
       report.namaProyek?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -1030,12 +1068,13 @@ export default function LaporanPekerjaan() {
         {activeTab === "dashboard" && (
           <div className="space-y-6">
             {/* Quick Action Buttons */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <button
                 onClick={() => {
                   setActiveTab("laporan");
                   setShowForm(true);
                   setShowTaskForm(false);
+                  setShowSparepartForm(false);
                 }}
                 className="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white p-6 rounded-xl shadow-lg flex items-center justify-between transition-all hover:shadow-xl group"
               >
@@ -1061,6 +1100,7 @@ export default function LaporanPekerjaan() {
                   setActiveTab("tasks");
                   setShowTaskForm(true);
                   setShowForm(false);
+                  setShowSparepartForm(false);
                 }}
                 className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white p-6 rounded-xl shadow-lg flex items-center justify-between transition-all hover:shadow-xl group"
               >
@@ -1080,10 +1120,36 @@ export default function LaporanPekerjaan() {
                   className="group-hover:rotate-90 transition-transform"
                 />
               </button>
+
+              <button
+                onClick={() => {
+                  setActiveTab("spareparts");
+                  setShowSparepartForm(true);
+                  setShowForm(false);
+                  setShowTaskForm(false);
+                }}
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white p-6 rounded-xl shadow-lg flex items-center justify-between transition-all hover:shadow-xl group"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-white bg-opacity-20 rounded-lg group-hover:scale-110 transition-transform">
+                    <Wrench size={32} />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="text-xl font-bold">Order Sparepart</h3>
+                    <p className="text-sm text-purple-100">
+                      Pesan sparepart yang dibutuhkan
+                    </p>
+                  </div>
+                </div>
+                <Plus
+                  size={32}
+                  className="group-hover:rotate-90 transition-transform"
+                />
+              </button>
             </div>
 
             {/* Statistics Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
                 <div className="flex items-center justify-between mb-2">
                   <div className="p-3 bg-indigo-100 dark:bg-indigo-900/50 rounded-lg">
@@ -1136,6 +1202,23 @@ export default function LaporanPekerjaan() {
                 </h3>
                 <p className="text-3xl font-bold text-gray-800 dark:text-white">
                   {ongoingTasks}
+                </p>
+              </div>
+
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="p-3 bg-purple-100 dark:bg-purple-900/50 rounded-lg">
+                    <Wrench
+                      className="text-purple-600 dark:text-purple-400"
+                      size={24}
+                    />
+                  </div>
+                </div>
+                <h3 className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">
+                  Sparepart Pending
+                </h3>
+                <p className="text-3xl font-bold text-gray-800 dark:text-white">
+                  {spareparts.filter((s) => s.status === "pending").length}
                 </p>
               </div>
             </div>
@@ -1229,7 +1312,7 @@ export default function LaporanPekerjaan() {
             </div>
 
             {/* Tasks Overview */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
               {/* Ongoing Tasks by Priority */}
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
                 <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
@@ -1418,6 +1501,104 @@ export default function LaporanPekerjaan() {
                           </p>
                         </div>
                       ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Sparepart Summary */}
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
+                  Ringkasan Sparepart
+                </h2>
+                {spareparts.length === 0 ? (
+                  <p className="text-gray-500 dark:text-gray-400 text-center py-8">
+                    Belum ada order sparepart
+                  </p>
+                ) : (
+                  <div className="space-y-3">
+                    {/* Pending */}
+                    {spareparts.filter((s) => s.status === "pending").length > 0 && (
+                      <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-semibold text-yellow-800 dark:text-yellow-400 flex items-center gap-2">
+                            <Clock size={16} />
+                            Pending
+                          </h4>
+                          <span className="text-xl font-bold text-yellow-800 dark:text-yellow-400">
+                            {spareparts.filter((s) => s.status === "pending").length}
+                          </span>
+                        </div>
+                        <div className="text-xs text-yellow-700 dark:text-yellow-300 space-y-1">
+                          {spareparts
+                            .filter((s) => s.status === "pending")
+                            .slice(0, 3)
+                            .map((part) => (
+                              <div key={part.id} className="flex justify-between">
+                                <span className="truncate mr-2">{part.namaPart}</span>
+                                <span className="font-semibold whitespace-nowrap">
+                                  {part.jumlah} {part.unit}
+                                </span>
+                              </div>
+                            ))}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Ordered */}
+                    {spareparts.filter((s) => s.status === "ordered").length > 0 && (
+                      <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-semibold text-blue-800 dark:text-blue-400 flex items-center gap-2">
+                            <RefreshCw size={16} />
+                            Dipesan
+                          </h4>
+                          <span className="text-xl font-bold text-blue-800 dark:text-blue-400">
+                            {spareparts.filter((s) => s.status === "ordered").length}
+                          </span>
+                        </div>
+                        <div className="text-xs text-blue-700 dark:text-blue-300 space-y-1">
+                          {spareparts
+                            .filter((s) => s.status === "ordered")
+                            .slice(0, 3)
+                            .map((part) => (
+                              <div key={part.id} className="flex justify-between">
+                                <span className="truncate mr-2">{part.namaPart}</span>
+                                <span className="font-semibold whitespace-nowrap">
+                                  {part.jumlah} {part.unit}
+                                </span>
+                              </div>
+                            ))}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Arrived */}
+                    {spareparts.filter((s) => s.status === "arrived").length > 0 && (
+                      <div className="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-semibold text-green-800 dark:text-green-400 flex items-center gap-2">
+                            <CheckCircle size={16} />
+                            Sudah Datang
+                          </h4>
+                          <span className="text-xl font-bold text-green-800 dark:text-green-400">
+                            {spareparts.filter((s) => s.status === "arrived").length}
+                          </span>
+                        </div>
+                        <div className="text-xs text-green-700 dark:text-green-300 space-y-1">
+                          {spareparts
+                            .filter((s) => s.status === "arrived")
+                            .slice(0, 3)
+                            .map((part) => (
+                              <div key={part.id} className="flex justify-between">
+                                <span className="truncate mr-2">{part.namaPart}</span>
+                                <span className="font-semibold whitespace-nowrap">
+                                  {part.jumlah} {part.unit}
+                                </span>
+                              </div>
+                            ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -2438,33 +2619,61 @@ export default function LaporanPekerjaan() {
                             Jumlah: {part.jumlah} {part.unit}
                           </span>
                         </div>
+                        
+                        {/* Tanggal Dipesan */}
                         {part.tanggalDipesan && (
-                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                            📅 Dipesan:{" "}
-                            {new Date(part.tanggalDipesan).toLocaleDateString(
-                              "id-ID",
-                              {
-                                weekday: "long",
-                                year: "numeric",
-                                month: "long",
-                                day: "numeric",
+                          <div className="flex items-center gap-2 mt-2">
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              📅 Dipesan:{" "}
+                              {new Date(part.tanggalDipesan).toLocaleDateString(
+                                "id-ID",
+                                {
+                                  weekday: "long",
+                                  year: "numeric",
+                                  month: "long",
+                                  day: "numeric",
+                                }
+                              )}
+                            </p>
+                            <button
+                              onClick={() =>
+                                handleClearSparepartDate(part, "tanggalDipesan")
                               }
-                            )}
-                          </p>
+                              disabled={saving}
+                              className="p-1 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded disabled:opacity-50"
+                              title="Hapus tanggal dipesan"
+                            >
+                              <X size={14} />
+                            </button>
+                          </div>
                         )}
+                        
+                        {/* Tanggal Datang */}
                         {part.tanggalDatang && (
-                          <p className="text-xs text-green-600 dark:text-green-400 mt-1 font-semibold">
-                            ✅ Datang:{" "}
-                            {new Date(part.tanggalDatang).toLocaleDateString(
-                              "id-ID",
-                              {
-                                weekday: "long",
-                                year: "numeric",
-                                month: "long",
-                                day: "numeric",
+                          <div className="flex items-center gap-2 mt-1">
+                            <p className="text-xs text-green-600 dark:text-green-400 font-semibold">
+                              ✅ Datang:{" "}
+                              {new Date(part.tanggalDatang).toLocaleDateString(
+                                "id-ID",
+                                {
+                                  weekday: "long",
+                                  year: "numeric",
+                                  month: "long",
+                                  day: "numeric",
+                                }
+                              )}
+                            </p>
+                            <button
+                              onClick={() =>
+                                handleClearSparepartDate(part, "tanggalDatang")
                               }
-                            )}
-                          </p>
+                              disabled={saving}
+                              className="p-1 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded disabled:opacity-50"
+                              title="Hapus tanggal datang"
+                            >
+                              <X size={14} />
+                            </button>
+                          </div>
                         )}
                       </div>
                       <div className="flex flex-col gap-2 ml-4">
@@ -2601,6 +2810,54 @@ export default function LaporanPekerjaan() {
                   />
                 </div>
               </div>
+
+              {editingSparepartId && (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                      Status
+                    </label>
+                    <select
+                      name="status"
+                      value={sparepartFormData.status}
+                      onChange={handleSparepartInputChange}
+                      className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    >
+                      <option value="pending">Belum Dipesan</option>
+                      <option value="ordered">Sudah Dipesan</option>
+                      <option value="arrived">Sudah Datang</option>
+                    </select>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                        Tanggal Dipesan
+                      </label>
+                      <input
+                        type="date"
+                        name="tanggalDipesan"
+                        value={sparepartFormData.tanggalDipesan}
+                        onChange={handleSparepartInputChange}
+                        className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                        Tanggal Datang
+                      </label>
+                      <input
+                        type="date"
+                        name="tanggalDatang"
+                        value={sparepartFormData.tanggalDatang}
+                        onChange={handleSparepartInputChange}
+                        className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
 
               <div className="flex gap-3 pt-4">
                 <button
