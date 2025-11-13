@@ -25,20 +25,30 @@ export default async function handler(req, res) {
     if (req.method === "GET") {
       const response = await sheets.spreadsheets.values.get({
         spreadsheetId: SPREADSHEET_ID,
-        range: `${SHEET_NAME}!A2:H`,
+        range: `${SHEET_NAME}!A2:I`,
       });
 
       const rows = response.data.values || [];
-      const tasks = rows.map((row) => ({
-        id: row[0],
-        namaTask: row[1],
-        deskripsi: row[2],
-        prioritas: row[3],
-        deadline: row[4],
-        progress: parseInt(row[5]) || 0,
-        status: row[6],
-        createdAt: row[7],
-      }));
+      const tasks = rows.map((row) => {
+        let progressLogs = [];
+        try {
+          progressLogs = row[8] ? JSON.parse(row[8]) : [];
+        } catch (e) {
+          progressLogs = [];
+        }
+        
+        return {
+          id: row[0],
+          namaTask: row[1],
+          deskripsi: row[2],
+          prioritas: row[3],
+          deadline: row[4],
+          progress: parseInt(row[5]) || 0,
+          status: row[6],
+          createdAt: row[7],
+          progressLogs: progressLogs,
+        };
+      });
 
       return res.status(200).json({ success: true, data: tasks });
     }
@@ -55,11 +65,12 @@ export default async function handler(req, res) {
         data.progress || 0,
         data.progress >= 100 ? "selesai" : "berlangsung",
         data.createdAt,
+        JSON.stringify(data.progressLogs || []),
       ];
 
       await sheets.spreadsheets.values.append({
         spreadsheetId: SPREADSHEET_ID,
-        range: `${SHEET_NAME}!A:H`,
+        range: `${SHEET_NAME}!A:I`,
         valueInputOption: "USER_ENTERED",
         resource: {
           values: [newRow],
@@ -99,11 +110,12 @@ export default async function handler(req, res) {
         data.progress || 0,
         data.progress >= 100 ? "selesai" : "berlangsung",
         data.updatedAt || data.createdAt,
+        JSON.stringify(data.progressLogs || []),
       ];
 
       await sheets.spreadsheets.values.update({
         spreadsheetId: SPREADSHEET_ID,
-        range: `${SHEET_NAME}!A${actualRowNumber}:H${actualRowNumber}`,
+        range: `${SHEET_NAME}!A${actualRowNumber}:I${actualRowNumber}`,
         valueInputOption: "USER_ENTERED",
         resource: {
           values: [updatedRow],

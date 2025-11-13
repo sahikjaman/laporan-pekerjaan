@@ -313,8 +313,14 @@ export default function LaporanPekerjaan() {
         prioritas: "medium",
         deadline: "",
         progress: 0,
+        progressLogs: [],
       });
       setShowTaskForm(false);
+      setNewProgressLog({
+        tanggal: new Date().toISOString().split('T')[0],
+        deskripsi: "",
+        progressIncrement: 0,
+      });
     } catch (error) {
       console.error("Error menyimpan task:", error);
       alert("Terjadi kesalahan saat menyimpan task.");
