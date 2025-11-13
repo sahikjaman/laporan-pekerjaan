@@ -32,6 +32,8 @@ export default function LaporanPekerjaan() {
   const [tasks, setTasks] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [showTaskForm, setShowTaskForm] = useState(false);
+  const [showProgressModal, setShowProgressModal] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [editingTaskId, setEditingTaskId] = useState(null);
@@ -343,18 +345,44 @@ export default function LaporanPekerjaan() {
     }, 100);
   };
 
-  const handleEditTask = (task) => {
+  const handleEditTask = (task, event) => {
+    // Stop propagation to prevent card click
+    if (event) event.stopPropagation();
+    
     setTaskFormData({
       ...task,
       progressLogs: task.progressLogs || [],
     });
     setEditingTaskId(task.id);
     setShowTaskForm(true);
+    setShowProgressModal(false);
     setActiveTab("tasks");
     // Auto scroll to form
     setTimeout(() => {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }, 100);
+  };
+
+  const handleTaskCardClick = (task) => {
+    setSelectedTask(task);
+    setShowProgressModal(true);
+    setNewProgressLog({
+      tanggal: new Date().toISOString().split("T")[0],
+      deskripsi: "",
+      progressIncrement: 0,
+    });
+    setEditingLogId(null);
+  };
+
+  const handleCloseProgressModal = () => {
+    setShowProgressModal(false);
+    setSelectedTask(null);
+    setEditingLogId(null);
+    setNewProgressLog({
+      tanggal: new Date().toISOString().split("T")[0],
+      deskripsi: "",
+      progressIncrement: 0,
+    });
   };
 
   const handleDelete = async (id) => {
@@ -437,6 +465,20 @@ export default function LaporanPekerjaan() {
       createdAt: new Date().toISOString(),
     };
 
+    // For modal mode
+    if (showProgressModal && selectedTask) {
+      const updatedLogs = [...(selectedTask.progressLogs || []), logEntry];
+      const newProgress = Math.min(
+        100,
+        selectedTask.progress + (parseInt(newProgressLog.progressIncrement) || 0)
+      );
+
+      // Update via API
+      updateTaskProgress(selectedTask.id, updatedLogs, newProgress);
+      return;
+    }
+
+    // For form mode
     const updatedLogs = [...(taskFormData.progressLogs || []), logEntry];
     const newProgress = Math.min(
       100,
@@ -456,9 +498,126 @@ export default function LaporanPekerjaan() {
     });
   };
 
+  const updateTaskProgress = async (taskId, progressLogs, progress) => {
+    setSaving(true);
+    try {
+      const taskToUpdate = tasks.find(t => t.id === taskId);
+      const response = await fetch(TASK_API_URL, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...taskToUpdate,
+          progressLogs,
+          progress,
+          updatedAt: new Date().toISOString(),
+        }),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        await loadTasks();
+        setSelectedTask({
+          ...taskToUpdate,
+          progressLogs,
+          progress,
+        });
+        setNewProgressLog({
+          tanggal: new Date().toISOString().split("T")[0],
+          deskripsi: "",
+          progressIncrement: 0,
+        });
+      }
+    } catch (error) {
+      console.error("Error updating task progress:", error);
+      alert("Gagal menyimpan progress");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleUpdateProgressLog = () => {
+    if (!newProgressLog.deskripsi.trim()) {
+      alert("Harap isi deskripsi progress");
+      return;
+    }
+
+    // For modal mode
+    if (showProgressModal && selectedTask) {
+      const updatedLogs = (selectedTask.progressLogs || []).map((log) =>
+        log.id === editingLogId
+          ? {
+              ...log,
+              tanggal: newProgressLog.tanggal,
+              deskripsi: newProgressLog.deskripsi,
+              progressIncrement: parseInt(newProgressLog.progressIncrement) || 0,
+            }
+          : log
+      );
+
+      const totalProgress = updatedLogs.reduce(
+        (sum, log) => sum + (log.progressIncrement || 0),
+        0
+      );
+      const newProgress = Math.min(100, totalProgress);
+
+      updateTaskProgress(selectedTask.id, updatedLogs, newProgress);
+      setEditingLogId(null);
+      return;
+    }
+
+    // For form mode
+    const updatedLogs = (taskFormData.progressLogs || []).map((log) =>
+      log.id === editingLogId
+        ? {
+            ...log,
+            tanggal: newProgressLog.tanggal,
+            deskripsi: newProgressLog.deskripsi,
+            progressIncrement: parseInt(newProgressLog.progressIncrement) || 0,
+          }
+        : log
+    );
+
+    const totalProgress = updatedLogs.reduce(
+      (sum, log) => sum + (log.progressIncrement || 0),
+      0
+    );
+    const newProgress = Math.min(100, totalProgress);
+
+    setTaskFormData({
+      ...taskFormData,
+      progressLogs: updatedLogs,
+      progress: newProgress,
+    });
+
+    setNewProgressLog({
+      tanggal: new Date().toISOString().split("T")[0],
+      deskripsi: "",
+      progressIncrement: 0,
+    });
+    setEditingLogId(null);
+  };
+
   const handleDeleteProgressLog = (logId) => {
     if (!confirm("Yakin ingin menghapus log progress ini?")) return;
 
+    // For modal mode
+    if (showProgressModal && selectedTask) {
+      const logToDelete = (selectedTask.progressLogs || []).find(
+        (log) => log.id === logId
+      );
+      const updatedLogs = (selectedTask.progressLogs || []).filter(
+        (log) => log.id !== logId
+      );
+      const newProgress = Math.max(
+        0,
+        selectedTask.progress - (logToDelete?.progressIncrement || 0)
+      );
+
+      updateTaskProgress(selectedTask.id, updatedLogs, newProgress);
+      return;
+    }
+
+    // For form mode
     const logToDelete = taskFormData.progressLogs.find(
       (log) => log.id === logId
     );
@@ -483,46 +642,6 @@ export default function LaporanPekerjaan() {
       tanggal: log.tanggal,
       deskripsi: log.deskripsi,
       progressIncrement: log.progressIncrement,
-    });
-  };
-
-  const handleUpdateProgressLog = () => {
-    if (!newProgressLog.deskripsi.trim()) {
-      alert("Harap isi deskripsi progress");
-      return;
-    }
-
-    const logToUpdate = taskFormData.progressLogs.find(
-      (log) => log.id === editingLogId
-    );
-    const oldIncrement = logToUpdate?.progressIncrement || 0;
-    const newIncrement = parseInt(newProgressLog.progressIncrement) || 0;
-    const incrementDiff = newIncrement - oldIncrement;
-
-    const updatedLogs = taskFormData.progressLogs.map((log) =>
-      log.id === editingLogId
-        ? {
-            ...log,
-            tanggal: newProgressLog.tanggal,
-            deskripsi: newProgressLog.deskripsi,
-            progressIncrement: newIncrement,
-          }
-        : log
-    );
-
-    const newProgress = Math.min(100, Math.max(0, taskFormData.progress + incrementDiff));
-
-    setTaskFormData({
-      ...taskFormData,
-      progressLogs: updatedLogs,
-      progress: newProgress,
-    });
-
-    setEditingLogId(null);
-    setNewProgressLog({
-      tanggal: new Date().toISOString().split("T")[0],
-      deskripsi: "",
-      progressIncrement: 0,
     });
   };
 
@@ -975,23 +1094,32 @@ export default function LaporanPekerjaan() {
                         <div
                           key={task.id}
                           className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors"
-                          onClick={() => handleEditTask(task)}
+                          onClick={() => handleTaskCardClick(task)}
                         >
                           <div className="flex justify-between items-start mb-3">
                             <h3 className="font-semibold text-gray-800 dark:text-white">
                               {task.namaTask}
                             </h3>
-                            <span
-                              className={`px-2 py-1 rounded-full text-xs font-semibold ${getPriorityColor(
-                                task.prioritas
-                              )}`}
-                            >
-                              {task.prioritas === "high"
-                                ? "Tinggi"
-                                : task.prioritas === "medium"
-                                ? "Sedang"
-                                : "Rendah"}
-                            </span>
+                            <div className="flex gap-2 items-center">
+                              <button
+                                onClick={(e) => handleEditTask(task, e)}
+                                className="p-1 text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/30 rounded transition-colors"
+                                title="Edit Task"
+                              >
+                                <Edit2 className="w-4 h-4" />
+                              </button>
+                              <span
+                                className={`px-2 py-1 rounded-full text-xs font-semibold ${getPriorityColor(
+                                  task.prioritas
+                                )}`}
+                              >
+                                {task.prioritas === "high"
+                                  ? "Tinggi"
+                                  : task.prioritas === "medium"
+                                  ? "Sedang"
+                                  : "Rendah"}
+                              </span>
+                            </div>
                           </div>
                           <div className="mb-2">
                             <div className="flex justify-between items-center mb-1">
@@ -1792,7 +1920,8 @@ export default function LaporanPekerjaan() {
                 filteredTasks.map((task) => (
                   <div
                     key={task.id}
-                    className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow"
+                    className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow cursor-pointer"
+                    onClick={() => handleTaskCardClick(task)}
                   >
                     <div className="flex justify-between items-start mb-4">
                       <div className="flex-1">
@@ -1835,16 +1964,21 @@ export default function LaporanPekerjaan() {
                       </div>
                       <div className="flex gap-2">
                         <button
-                          onClick={() => handleEditTask(task)}
+                          onClick={(e) => handleEditTask(task, e)}
                           disabled={saving}
                           className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 disabled:opacity-50 rounded-lg transition-colors"
+                          title="Edit Task"
                         >
                           <Edit2 size={18} />
                         </button>
                         <button
-                          onClick={() => handleDeleteTask(task.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteTask(task.id);
+                          }}
                           disabled={saving}
                           className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 disabled:opacity-50 rounded-lg transition-colors"
+                          title="Hapus Task"
                         >
                           <Trash2 size={18} />
                         </button>
@@ -1911,6 +2045,189 @@ export default function LaporanPekerjaan() {
           </div>
         )}
       </div>
+
+      {/* Progress Modal */}
+      {showProgressModal && selectedTask && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-white dark:bg-gray-800 border-b dark:border-gray-700 p-6">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                    {selectedTask.namaTask}
+                  </h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    Progress: {selectedTask.progress}%
+                  </p>
+                </div>
+                <button
+                  onClick={handleCloseProgressModal}
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6">
+              {/* Add/Edit Progress Form */}
+              <div className={`mb-6 p-4 rounded-lg ${editingLogId ? "bg-blue-50 dark:bg-blue-900/20" : "bg-gray-50 dark:bg-gray-700/50"}`}>
+                <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
+                  {editingLogId ? "Edit Progress" : "Tambah Progress"}
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                      Tanggal
+                    </label>
+                    <input
+                      type="date"
+                      value={newProgressLog.tanggal}
+                      onChange={(e) =>
+                        setNewProgressLog({
+                          ...newProgressLog,
+                          tanggal: e.target.value,
+                        })
+                      }
+                      className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                      Progress (%)
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={newProgressLog.progressIncrement}
+                      onChange={(e) =>
+                        setNewProgressLog({
+                          ...newProgressLog,
+                          progressIncrement: e.target.value,
+                        })
+                      }
+                      className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    />
+                  </div>
+                  <div className="md:col-span-1">
+                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                      Deskripsi
+                    </label>
+                    <input
+                      type="text"
+                      value={newProgressLog.deskripsi}
+                      onChange={(e) =>
+                        setNewProgressLog({
+                          ...newProgressLog,
+                          deskripsi: e.target.value,
+                        })
+                      }
+                      placeholder="Deskripsi progress..."
+                      className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-2 mt-4">
+                  {editingLogId ? (
+                    <>
+                      <button
+                        onClick={handleUpdateProgressLog}
+                        disabled={saving}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2"
+                      >
+                        <Check className="w-4 h-4" />
+                        Update Progress
+                      </button>
+                      <button
+                        onClick={handleCancelEditLog}
+                        className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 flex items-center gap-2"
+                      >
+                        <X className="w-4 h-4" />
+                        Batal
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={handleAddProgressLog}
+                      disabled={saving}
+                      className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 flex items-center gap-2"
+                    >
+                      <Plus className="w-4 h-4" />
+                      Tambah Progress
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Progress Logs List */}
+              <div>
+                <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
+                  Riwayat Progress
+                </h3>
+                {(!selectedTask.progressLogs || selectedTask.progressLogs.length === 0) ? (
+                  <p className="text-gray-500 dark:text-gray-400 text-center py-4">
+                    Belum ada riwayat progress
+                  </p>
+                ) : (
+                  <div className="space-y-3">
+                    {selectedTask.progressLogs
+                      .sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal))
+                      .map((log) => (
+                        <div
+                          key={log.id}
+                          className={`p-4 rounded-lg border transition-colors group ${
+                            editingLogId === log.id
+                              ? "bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-700"
+                              : "bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
+                          }`}
+                        >
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-3 mb-2">
+                                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                                  {new Date(log.tanggal).toLocaleDateString("id-ID", {
+                                    day: "numeric",
+                                    month: "long",
+                                    year: "numeric",
+                                  })}
+                                </span>
+                                <span className="px-2 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded text-sm font-semibold">
+                                  +{log.progressIncrement}%
+                                </span>
+                              </div>
+                              <p className="text-gray-700 dark:text-gray-300">
+                                {log.deskripsi}
+                              </p>
+                            </div>
+                            <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <button
+                                onClick={() => handleEditProgressLog(log)}
+                                className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded"
+                                title="Edit"
+                              >
+                                <Edit2 className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteProgressLog(log.id)}
+                                className="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded"
+                                title="Hapus"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
