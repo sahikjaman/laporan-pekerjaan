@@ -746,17 +746,8 @@ export default function LaporanPekerjaan() {
         <div className="max-w-6xl mx-auto px-4 md:px-8">
           <div className="flex items-center justify-between py-4">
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <img
-                  src="/logo-spil.png"
-                  alt="SPIL Logo"
-                  className="w-16 h-16 object-contain"
-                  onError={(e) => {
-                    e.target.style.display = "none";
-                    e.target.parentElement.innerHTML =
-                      '<div class="w-16 h-16 bg-red-600 rounded-lg flex items-center justify-center"><span class="text-white font-bold text-2xl">SPIL</span></div>';
-                  }}
-                />
+              <div className="bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl p-3 shadow-lg">
+                <ClipboardList className="w-10 h-10 text-white" />
               </div>
               <div>
                 <h1 className="text-xl font-bold text-gray-800 dark:text-white">
@@ -1586,6 +1577,21 @@ export default function LaporanPekerjaan() {
                         </p>
                       </div>
                     </div>
+                  </div>
+
+                  {/* Deskripsi Task */}
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                      Deskripsi Task *
+                    </label>
+                    <textarea
+                      name="deskripsi"
+                      value={taskFormData.deskripsi}
+                      onChange={handleTaskInputChange}
+                      rows={4}
+                      placeholder="Jelaskan detail task, lokasi, peralatan yang digunakan, dll..."
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                    />
                   </div>
 
                   {/* Progress Logs Section */}
