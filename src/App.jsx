@@ -1950,21 +1950,21 @@ export default function LaporanPekerjaan() {
 
       {/* Progress Modal */}
       {showProgressModal && selectedTask && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-2 sm:p-4">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
-            <div className="sticky top-0 bg-white dark:bg-gray-800 border-b dark:border-gray-700 p-6">
-              <div className="flex justify-between items-start">
-                <div className="flex-1 mr-4">
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+            <div className="sticky top-0 bg-white dark:bg-gray-800 border-b dark:border-gray-700 p-4 sm:p-6">
+              <div className="flex justify-between items-start gap-2 sm:gap-4">
+                <div className="flex-1 min-w-0">
+                  <h2 className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white break-words">
                     {selectedTask.namaTask}
                   </h2>
                   {selectedTask.deskripsi && (
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 whitespace-pre-wrap">
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-2 whitespace-pre-wrap break-words">
                       {selectedTask.deskripsi}
                     </p>
                   )}
-                  <p className="text-sm font-semibold text-indigo-600 dark:text-indigo-400 mt-2">
+                  <p className="text-xs sm:text-sm font-semibold text-indigo-600 dark:text-indigo-400 mt-2">
                     Progress: {selectedTask.progress}%
                   </p>
                 </div>
@@ -1978,21 +1978,21 @@ export default function LaporanPekerjaan() {
             </div>
 
             {/* Modal Body */}
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               {/* Add/Edit Progress Form */}
               <div
-                className={`mb-6 p-4 rounded-lg ${
+                className={`mb-4 sm:mb-6 p-3 sm:p-4 rounded-lg ${
                   editingLogId
                     ? "bg-blue-50 dark:bg-blue-900/20"
                     : "bg-gray-50 dark:bg-gray-700/50"
                 }`}
               >
-                <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
+                <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-gray-900 dark:text-white">
                   {editingLogId ? "Edit Progress" : "Tambah Progress"}
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
                   <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                    <label className="block text-xs sm:text-sm font-medium mb-1 sm:mb-2 text-gray-700 dark:text-gray-300">
                       Tanggal
                     </label>
                     <input
@@ -2043,20 +2043,21 @@ export default function LaporanPekerjaan() {
                     />
                   </div>
                 </div>
-                <div className="flex gap-2 mt-4">
+                <div className="flex flex-col sm:flex-row gap-2 mt-3 sm:mt-4">
                   {editingLogId ? (
                     <>
                       <button
                         onClick={handleUpdateProgressLog}
                         disabled={saving}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2"
+                        className="flex-1 px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center justify-center gap-2 text-sm sm:text-base"
                       >
                         <Check className="w-4 h-4" />
-                        Update Progress
+                        <span className="hidden sm:inline">Update Progress</span>
+                        <span className="sm:hidden">Update</span>
                       </button>
                       <button
                         onClick={handleCancelEditLog}
-                        className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 flex items-center gap-2"
+                        className="flex-1 px-3 sm:px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 flex items-center justify-center gap-2 text-sm sm:text-base"
                       >
                         <X className="w-4 h-4" />
                         Batal
@@ -2066,7 +2067,7 @@ export default function LaporanPekerjaan() {
                     <button
                       onClick={handleAddProgressLog}
                       disabled={saving}
-                      className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 flex items-center gap-2"
+                      className="w-full sm:w-auto px-3 sm:px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 flex items-center justify-center gap-2 text-sm sm:text-base"
                     >
                       <Plus className="w-4 h-4" />
                       Tambah Progress
@@ -2077,7 +2078,7 @@ export default function LaporanPekerjaan() {
 
               {/* Progress Logs List */}
               <div>
-                <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
+                <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-gray-900 dark:text-white">
                   Riwayat Progress
                 </h3>
                 {!selectedTask.progressLogs ||
@@ -2092,16 +2093,16 @@ export default function LaporanPekerjaan() {
                       .map((log) => (
                         <div
                           key={log.id}
-                          className={`p-4 rounded-lg border transition-colors group ${
+                          className={`p-3 sm:p-4 rounded-lg border transition-colors group ${
                             editingLogId === log.id
                               ? "bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-700"
                               : "bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
                           }`}
                         >
-                          <div className="flex justify-between items-start">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-3 mb-2">
-                                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                          <div className="flex justify-between items-start gap-2">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
+                                <span className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
                                   {new Date(log.tanggal).toLocaleDateString(
                                     "id-ID",
                                     {
@@ -2111,28 +2112,28 @@ export default function LaporanPekerjaan() {
                                     }
                                   )}
                                 </span>
-                                <span className="px-2 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded text-sm font-semibold">
+                                <span className="px-2 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded text-xs sm:text-sm font-semibold w-fit">
                                   +{log.progressIncrement}%
                                 </span>
                               </div>
-                              <p className="text-gray-700 dark:text-gray-300">
+                              <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 whitespace-pre-wrap break-words">
                                 {log.deskripsi}
                               </p>
                             </div>
-                            <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="flex sm:opacity-0 sm:group-hover:opacity-100 transition-opacity gap-1 sm:gap-2 flex-shrink-0">
                               <button
                                 onClick={() => handleEditProgressLog(log)}
-                                className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded"
+                                className="p-1.5 sm:p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded"
                                 title="Edit"
                               >
-                                <Edit2 className="w-4 h-4" />
+                                <Edit2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                               </button>
                               <button
                                 onClick={() => handleDeleteProgressLog(log.id)}
-                                className="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded"
+                                className="p-1.5 sm:p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded"
                                 title="Hapus"
                               >
-                                <Trash2 className="w-4 h-4" />
+                                <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                               </button>
                             </div>
                           </div>
