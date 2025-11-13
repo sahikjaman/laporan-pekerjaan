@@ -55,7 +55,8 @@ export default function LaporanPekerjaan() {
     const apply = (t) => {
       if (t === "system") {
         const prefersDark =
-          window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+          window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches;
         root.classList.toggle("dark", prefersDark);
       } else {
         root.classList.toggle("dark", t === "dark");
@@ -129,7 +130,7 @@ export default function LaporanPekerjaan() {
   });
 
   const [newProgressLog, setNewProgressLog] = useState({
-    tanggal: new Date().toISOString().split('T')[0],
+    tanggal: new Date().toISOString().split("T")[0],
     deskripsi: "",
     progressIncrement: 0,
   });
@@ -317,7 +318,7 @@ export default function LaporanPekerjaan() {
       });
       setShowTaskForm(false);
       setNewProgressLog({
-        tanggal: new Date().toISOString().split('T')[0],
+        tanggal: new Date().toISOString().split("T")[0],
         deskripsi: "",
         progressIncrement: 0,
       });
@@ -406,7 +407,7 @@ export default function LaporanPekerjaan() {
     setEditingTaskId(null);
     setShowTaskForm(false);
     setNewProgressLog({
-      tanggal: new Date().toISOString().split('T')[0],
+      tanggal: new Date().toISOString().split("T")[0],
       deskripsi: "",
       progressIncrement: 0,
     });
@@ -439,7 +440,7 @@ export default function LaporanPekerjaan() {
     });
 
     setNewProgressLog({
-      tanggal: new Date().toISOString().split('T')[0],
+      tanggal: new Date().toISOString().split("T")[0],
       deskripsi: "",
       progressIncrement: 0,
     });
@@ -448,8 +449,12 @@ export default function LaporanPekerjaan() {
   const handleDeleteProgressLog = (logId) => {
     if (!confirm("Yakin ingin menghapus log progress ini?")) return;
 
-    const logToDelete = taskFormData.progressLogs.find(log => log.id === logId);
-    const updatedLogs = taskFormData.progressLogs.filter(log => log.id !== logId);
+    const logToDelete = taskFormData.progressLogs.find(
+      (log) => log.id === logId
+    );
+    const updatedLogs = taskFormData.progressLogs.filter(
+      (log) => log.id !== logId
+    );
     const newProgress = Math.max(
       0,
       taskFormData.progress - (logToDelete?.progressIncrement || 0)
@@ -539,7 +544,9 @@ export default function LaporanPekerjaan() {
             className="animate-spin mx-auto mb-4 text-indigo-600 dark:text-indigo-400"
             size={48}
           />
-          <div className="text-lg text-gray-600 dark:text-gray-300">Memuat data...</div>
+          <div className="text-lg text-gray-600 dark:text-gray-300">
+            Memuat data...
+          </div>
         </div>
       </div>
     );
@@ -581,7 +588,9 @@ export default function LaporanPekerjaan() {
                 title={`Current: ${getThemeLabel()} - Click to change`}
               >
                 {getThemeIcon()}
-                <span className="hidden md:inline text-sm">{getThemeLabel()}</span>
+                <span className="hidden md:inline text-sm">
+                  {getThemeLabel()}
+                </span>
               </button>
               <button
                 onClick={loadReports}
@@ -665,8 +674,13 @@ export default function LaporanPekerjaan() {
         {saving && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 flex items-center gap-3">
-              <RefreshCw className="animate-spin text-indigo-600 dark:text-indigo-400" size={24} />
-              <span className="text-lg font-semibold dark:text-white">Menyimpan data...</span>
+              <RefreshCw
+                className="animate-spin text-indigo-600 dark:text-indigo-400"
+                size={24}
+              />
+              <span className="text-lg font-semibold dark:text-white">
+                Menyimpan data...
+              </span>
             </div>
           </div>
         )}
@@ -732,9 +746,15 @@ export default function LaporanPekerjaan() {
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
                 <div className="flex items-center justify-between mb-2">
                   <div className="p-3 bg-indigo-100 dark:bg-indigo-900/50 rounded-lg">
-                    <FileText className="text-indigo-600 dark:text-indigo-400" size={24} />
+                    <FileText
+                      className="text-indigo-600 dark:text-indigo-400"
+                      size={24}
+                    />
                   </div>
-                  <TrendingUp className="text-indigo-600 dark:text-indigo-400" size={20} />
+                  <TrendingUp
+                    className="text-indigo-600 dark:text-indigo-400"
+                    size={20}
+                  />
                 </div>
                 <h3 className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">
                   Total Laporan
@@ -747,7 +767,10 @@ export default function LaporanPekerjaan() {
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
                 <div className="flex items-center justify-between mb-2">
                   <div className="p-3 bg-green-100 dark:bg-green-900/50 rounded-lg">
-                    <CheckCircle className="text-green-600 dark:text-green-400" size={24} />
+                    <CheckCircle
+                      className="text-green-600 dark:text-green-400"
+                      size={24}
+                    />
                   </div>
                 </div>
                 <h3 className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">
@@ -761,7 +784,10 @@ export default function LaporanPekerjaan() {
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
                 <div className="flex items-center justify-between mb-2">
                   <div className="p-3 bg-blue-100 dark:bg-blue-900/50 rounded-lg">
-                    <Target className="text-blue-600 dark:text-blue-400" size={24} />
+                    <Target
+                      className="text-blue-600 dark:text-blue-400"
+                      size={24}
+                    />
                   </div>
                 </div>
                 <h3 className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">
@@ -795,7 +821,9 @@ export default function LaporanPekerjaan() {
                         <h3 className="font-semibold text-gray-800 dark:text-white">
                           {report.namaProyek}
                         </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-300">{report.lokasi}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">
+                          {report.lokasi}
+                        </p>
                         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                           {new Date(report.tanggal).toLocaleDateString("id-ID")}
                         </p>
@@ -947,7 +975,10 @@ export default function LaporanPekerjaan() {
                           className="p-4 border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20 rounded-lg"
                         >
                           <div className="flex items-center gap-2 mb-2">
-                            <CheckCircle className="text-green-600 dark:text-green-400" size={20} />
+                            <CheckCircle
+                              className="text-green-600 dark:text-green-400"
+                              size={20}
+                            />
                             <h3 className="font-semibold text-gray-800 dark:text-white">
                               {task.namaTask}
                             </h3>
@@ -1140,7 +1171,10 @@ export default function LaporanPekerjaan() {
             <div className="space-y-4">
               {filteredReports.length === 0 ? (
                 <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-12 text-center">
-                  <FileText size={64} className="mx-auto text-gray-300 dark:text-gray-600 mb-4" />
+                  <FileText
+                    size={64}
+                    className="mx-auto text-gray-300 dark:text-gray-600 mb-4"
+                  />
                   <h3 className="text-xl font-semibold text-gray-600 dark:text-gray-300 mb-2">
                     {searchTerm
                       ? "Tidak ada laporan yang sesuai"
@@ -1168,7 +1202,10 @@ export default function LaporanPekerjaan() {
                         </p>
                         {report.unitAlat && (
                           <div className="flex items-center gap-1 mt-1">
-                            <Wrench size={14} className="text-orange-600 dark:text-orange-400" />
+                            <Wrench
+                              size={14}
+                              className="text-orange-600 dark:text-orange-400"
+                            />
                             <span className="text-sm text-gray-600 dark:text-gray-300">
                               {report.unitAlat}
                             </span>
@@ -1359,7 +1396,9 @@ export default function LaporanPekerjaan() {
                       </div>
                       <div className="mt-3">
                         <div className="flex justify-between items-center mb-2">
-                          <span className="text-xs text-gray-600 dark:text-gray-300">Preview</span>
+                          <span className="text-xs text-gray-600 dark:text-gray-300">
+                            Preview
+                          </span>
                           <span
                             className={`text-sm font-bold ${
                               taskFormData.progress >= 100
@@ -1448,55 +1487,68 @@ export default function LaporanPekerjaan() {
                   {/* Progress Logs Section */}
                   <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
                     <div className="flex items-center gap-2 mb-4">
-                      <ClipboardList className="text-indigo-600 dark:text-indigo-400" size={20} />
+                      <ClipboardList
+                        className="text-indigo-600 dark:text-indigo-400"
+                        size={20}
+                      />
                       <h3 className="text-lg font-bold text-gray-900 dark:text-white">
                         Riwayat Progress
                       </h3>
                     </div>
 
                     {/* Existing Progress Logs */}
-                    {taskFormData.progressLogs && taskFormData.progressLogs.length > 0 && (
-                      <div className="mb-4 space-y-3 max-h-60 overflow-y-auto">
-                        {taskFormData.progressLogs.map((log) => (
-                          <div
-                            key={log.id}
-                            className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 relative group"
-                          >
-                            <button
-                              onClick={() => handleDeleteProgressLog(log.id)}
-                              className="absolute top-3 right-3 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 opacity-0 group-hover:opacity-100 transition-opacity"
-                              title="Hapus log"
+                    {taskFormData.progressLogs &&
+                      taskFormData.progressLogs.length > 0 && (
+                        <div className="mb-4 space-y-3 max-h-60 overflow-y-auto">
+                          {taskFormData.progressLogs.map((log) => (
+                            <div
+                              key={log.id}
+                              className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 relative group"
                             >
-                              <Trash2 size={16} />
-                            </button>
-                            <div className="flex items-start gap-3">
-                              <MessageSquare className="text-indigo-500 dark:text-indigo-400 mt-1" size={18} />
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2 mb-1">
-                                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                                    {new Date(log.tanggal).toLocaleDateString('id-ID', {
-                                      day: 'numeric',
-                                      month: 'long',
-                                      year: 'numeric'
-                                    })}
-                                  </span>
-                                  <span className={`text-xs font-bold px-2 py-0.5 rounded ${
-                                    log.progressIncrement > 0
-                                      ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
-                                      : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
-                                  }`}>
-                                    {log.progressIncrement > 0 ? '+' : ''}{log.progressIncrement}%
-                                  </span>
+                              <button
+                                onClick={() => handleDeleteProgressLog(log.id)}
+                                className="absolute top-3 right-3 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 opacity-0 group-hover:opacity-100 transition-opacity"
+                                title="Hapus log"
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                              <div className="flex items-start gap-3">
+                                <MessageSquare
+                                  className="text-indigo-500 dark:text-indigo-400 mt-1"
+                                  size={18}
+                                />
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                                      {new Date(log.tanggal).toLocaleDateString(
+                                        "id-ID",
+                                        {
+                                          day: "numeric",
+                                          month: "long",
+                                          year: "numeric",
+                                        }
+                                      )}
+                                    </span>
+                                    <span
+                                      className={`text-xs font-bold px-2 py-0.5 rounded ${
+                                        log.progressIncrement > 0
+                                          ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
+                                          : "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
+                                      }`}
+                                    >
+                                      {log.progressIncrement > 0 ? "+" : ""}
+                                      {log.progressIncrement}%
+                                    </span>
+                                  </div>
+                                  <p className="text-sm text-gray-700 dark:text-gray-300">
+                                    {log.deskripsi}
+                                  </p>
                                 </div>
-                                <p className="text-sm text-gray-700 dark:text-gray-300">
-                                  {log.deskripsi}
-                                </p>
                               </div>
                             </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                          ))}
+                        </div>
+                      )}
 
                     {/* Add New Progress Log Form */}
                     <div className="bg-indigo-50 dark:bg-gray-800 border border-indigo-200 dark:border-indigo-900 rounded-lg p-4">
@@ -1613,7 +1665,10 @@ export default function LaporanPekerjaan() {
             <div className="space-y-4">
               {filteredTasks.length === 0 ? (
                 <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-12 text-center">
-                  <ListTodo size={64} className="mx-auto text-gray-300 dark:text-gray-600 mb-4" />
+                  <ListTodo
+                    size={64}
+                    className="mx-auto text-gray-300 dark:text-gray-600 mb-4"
+                  />
                   <h3 className="text-xl font-semibold text-gray-600 dark:text-gray-300 mb-2">
                     {searchTerm
                       ? "Tidak ada task yang sesuai"
