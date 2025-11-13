@@ -26,17 +26,21 @@ import {
 
 const API_URL = "/api/reports";
 const TASK_API_URL = "/api/tasks";
+const SPAREPART_API_URL = "/api/spareparts";
 
 export default function LaporanPekerjaan() {
   const [reports, setReports] = useState([]);
   const [tasks, setTasks] = useState([]);
+  const [spareparts, setSpareparts] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [showTaskForm, setShowTaskForm] = useState(false);
+  const [showSparepartForm, setShowSparepartForm] = useState(false);
   const [showProgressModal, setShowProgressModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [editingTaskId, setEditingTaskId] = useState(null);
+  const [editingSparepartId, setEditingSparepartId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -131,6 +135,17 @@ export default function LaporanPekerjaan() {
     progressLogs: [],
   });
 
+  const [sparepartFormData, setSparepartFormData] = useState({
+    namaPart: "",
+    deskripsi: "",
+    jumlah: 0,
+    unit: "",
+    status: "pending",
+    tanggalDipesan: "",
+    tanggalDatang: "",
+    createdBy: "",
+  });
+
   const [newProgressLog, setNewProgressLog] = useState({
     tanggal: new Date().toISOString().split("T")[0],
     deskripsi: "",
@@ -142,6 +157,7 @@ export default function LaporanPekerjaan() {
   useEffect(() => {
     loadReports();
     loadTasks();
+    loadSpareparts();
   }, []);
 
   const loadReports = async () => {
@@ -170,6 +186,19 @@ export default function LaporanPekerjaan() {
       }
     } catch (error) {
       console.error("Error memuat task:", error);
+    }
+  };
+
+  const loadSpareparts = async () => {
+    try {
+      const response = await fetch(SPAREPART_API_URL);
+      const result = await response.json();
+
+      if (result.success) {
+        setSpareparts(result.data);
+      }
+    } catch (error) {
+      console.error("Error memuat spareparts:", error);
     }
   };
 
@@ -656,6 +685,113 @@ export default function LaporanPekerjaan() {
     });
   };
 
+  // Sparepart Functions
+  const handleSparepartInputChange = (e) => {
+    const { name, value } = e.target;
+    setSparepartFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSparepartSubmit = async () => {
+    if (!sparepartFormData.namaPart.trim() || !sparepartFormData.jumlah) {
+      alert("Harap isi nama part dan jumlah");
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const url = editingSparepartId ? SPAREPART_API_URL : SPAREPART_API_URL;
+      const method = editingSparepartId ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...sparepartFormData,
+          id: editingSparepartId,
+        }),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        await loadSpareparts();
+        setShowSparepartForm(false);
+        setEditingSparepartId(null);
+        setSparepartFormData({
+          namaPart: "",
+          deskripsi: "",
+          jumlah: 0,
+          unit: "",
+          status: "pending",
+          tanggalDipesan: "",
+          tanggalDatang: "",
+          createdBy: "",
+        });
+      }
+    } catch (error) {
+      console.error("Error menyimpan sparepart:", error);
+      alert("Gagal menyimpan sparepart");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleEditSparepart = (sparepart) => {
+    setEditingSparepartId(sparepart.id);
+    setSparepartFormData(sparepart);
+    setShowSparepartForm(true);
+  };
+
+  const handleDeleteSparepart = async (id) => {
+    if (!confirm("Yakin ingin menghapus sparepart ini?")) return;
+
+    setSaving(true);
+    try {
+      const response = await fetch(SPAREPART_API_URL, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        await loadSpareparts();
+      }
+    } catch (error) {
+      console.error("Error menghapus sparepart:", error);
+      alert("Gagal menghapus sparepart");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleUpdateSparepartStatus = async (sparepart, newStatus) => {
+    setSaving(true);
+    try {
+      const updatedSparepart = {
+        ...sparepart,
+        status: newStatus,
+        tanggalDipesan: newStatus === "ordered" ? new Date().toISOString().split("T")[0] : sparepart.tanggalDipesan,
+        tanggalDatang: newStatus === "arrived" ? new Date().toISOString().split("T")[0] : sparepart.tanggalDatang,
+      };
+
+      const response = await fetch(SPAREPART_API_URL, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedSparepart),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        await loadSpareparts();
+      }
+    } catch (error) {
+      console.error("Error update status sparepart:", error);
+      alert("Gagal update status sparepart");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const filteredReports = reports.filter((report) => {
     const matchesSearch =
       report.namaProyek?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -756,12 +892,9 @@ export default function LaporanPekerjaan() {
                 />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-green-800 dark:text-green-400">
-                  Laporan Pekerjaan Lapangan
+                <h1 className="text-xl font-bold text-gray-800 dark:text-white">
+                  HVE ELECTRICAL SPIL
                 </h1>
-                <p className="text-sm font-semibold text-gray-600 dark:text-gray-300 border-b-2 border-green-600 dark:border-green-500 inline-block">
-                  HVE Electrical
-                </p>
               </div>
             </div>
             <div className="flex gap-2">
@@ -802,6 +935,15 @@ export default function LaporanPekerjaan() {
                 >
                   <Plus size={18} />
                   Task Baru
+                </button>
+              )}
+              {activeTab === "spareparts" && (
+                <button
+                  onClick={() => setShowSparepartForm(true)}
+                  className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
+                >
+                  <Plus size={18} />
+                  Sparepart Baru
                 </button>
               )}
             </div>
@@ -849,6 +991,21 @@ export default function LaporanPekerjaan() {
             >
               <ListTodo size={18} className="inline mr-2" />
               Task
+            </button>
+            <button
+              onClick={() => {
+                setActiveTab("spareparts");
+                setShowForm(false);
+                setShowTaskForm(false);
+              }}
+              className={`px-4 py-3 font-semibold transition-colors ${
+                activeTab === "spareparts"
+                  ? "text-purple-600 dark:text-purple-400 border-b-2 border-purple-600 dark:border-purple-400"
+                  : "text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100"
+              }`}
+            >
+              <Wrench size={18} className="inline mr-2" />
+              Sparepart
             </button>
           </div>
         </div>
@@ -1072,11 +1229,11 @@ export default function LaporanPekerjaan() {
             </div>
 
             {/* Tasks Overview */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Ongoing Tasks */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Ongoing Tasks by Priority */}
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
                 <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
-                  Task Berlangsung
+                  Task Berlangsung (Prioritas)
                 </h2>
                 {tasks.filter((t) => t.progress < 100).length === 0 ? (
                   <p className="text-gray-500 dark:text-gray-400 text-center py-8">
@@ -1086,6 +1243,10 @@ export default function LaporanPekerjaan() {
                   <div className="space-y-3">
                     {tasks
                       .filter((t) => t.progress < 100)
+                      .sort((a, b) => {
+                        const priorityOrder = { high: 3, medium: 2, low: 1 };
+                        return (priorityOrder[b.prioritas] || 0) - (priorityOrder[a.prioritas] || 0);
+                      })
                       .slice(0, 5)
                       .map((task) => (
                         <div
@@ -1138,10 +1299,86 @@ export default function LaporanPekerjaan() {
                             <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                               ⏰{" "}
                               {new Date(task.deadline).toLocaleDateString(
-                                "id-ID"
+                                "id-ID",
+                                { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
                               )}
                             </p>
                           )}
+                        </div>
+                      ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Ongoing Tasks by Deadline */}
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+                <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
+                  Task Berlangsung (Deadline)
+                </h2>
+                {tasks.filter((t) => t.progress < 100 && t.deadline).length === 0 ? (
+                  <p className="text-gray-500 dark:text-gray-400 text-center py-8">
+                    Tidak ada task dengan deadline
+                  </p>
+                ) : (
+                  <div className="space-y-3">
+                    {tasks
+                      .filter((t) => t.progress < 100 && t.deadline)
+                      .sort((a, b) => new Date(a.deadline) - new Date(b.deadline))
+                      .slice(0, 5)
+                      .map((task) => (
+                        <div
+                          key={task.id}
+                          className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors"
+                          onClick={() => handleTaskCardClick(task)}
+                        >
+                          <div className="flex justify-between items-start mb-3">
+                            <h3 className="font-semibold text-gray-800 dark:text-white">
+                              {task.namaTask}
+                            </h3>
+                            <div className="flex gap-2 items-center">
+                              <button
+                                onClick={(e) => handleEditTask(task, e)}
+                                className="p-1 text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/30 rounded transition-colors"
+                                title="Edit Task"
+                              >
+                                <Edit2 className="w-4 h-4" />
+                              </button>
+                              <span
+                                className={`px-2 py-1 rounded-full text-xs font-semibold ${getPriorityColor(
+                                  task.prioritas
+                                )}`}
+                              >
+                                {task.prioritas === "high"
+                                  ? "Tinggi"
+                                  : task.prioritas === "medium"
+                                  ? "Sedang"
+                                  : "Rendah"}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="mb-2">
+                            <div className="flex justify-between items-center mb-1">
+                              <span className="text-xs text-gray-600 dark:text-gray-300">
+                                Progress
+                              </span>
+                              <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">
+                                {task.progress}%
+                              </span>
+                            </div>
+                            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                              <div
+                                className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2.5 rounded-full transition-all duration-300"
+                                style={{ width: `${task.progress}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 font-semibold">
+                            ⏰{" "}
+                            {new Date(task.deadline).toLocaleDateString(
+                              "id-ID",
+                              { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
+                            )}
+                          </p>
                         </div>
                       ))}
                   </div>
@@ -2146,6 +2383,264 @@ export default function LaporanPekerjaan() {
           </div>
         </div>
       )}
+
+      {/* Sparepart Tab */}
+      {activeTab === "spareparts" && (
+        <div className="space-y-6">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+                Sparepart
+              </h2>
+            </div>
+
+            {/* Sparepart List */}
+            <div className="space-y-4">
+              {spareparts.length === 0 ? (
+                <p className="text-center text-gray-500 dark:text-gray-400 py-8">
+                  Belum ada sparepart yang diorder
+                </p>
+              ) : (
+                spareparts.map((part) => (
+                  <div
+                    key={part.id}
+                    className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <h3 className="font-semibold text-lg text-gray-800 dark:text-white">
+                            {part.namaPart}
+                          </h3>
+                          <span
+                            className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                              part.status === "arrived"
+                                ? "bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300"
+                                : part.status === "ordered"
+                                ? "bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300"
+                                : "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300"
+                            }`}
+                          >
+                            {part.status === "arrived"
+                              ? "Sudah Datang"
+                              : part.status === "ordered"
+                              ? "Sudah Dipesan"
+                              : "Belum Dipesan"}
+                          </span>
+                        </div>
+                        {part.deskripsi && (
+                          <p className="text-sm text-gray-600 dark:text-gray-300 mb-2 whitespace-pre-wrap">
+                            {part.deskripsi}
+                          </p>
+                        )}
+                        <div className="flex gap-4 text-sm text-gray-600 dark:text-gray-400">
+                          <span className="font-semibold">
+                            Jumlah: {part.jumlah} {part.unit}
+                          </span>
+                        </div>
+                        {part.tanggalDipesan && (
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                            📅 Dipesan:{" "}
+                            {new Date(part.tanggalDipesan).toLocaleDateString(
+                              "id-ID",
+                              {
+                                weekday: "long",
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                              }
+                            )}
+                          </p>
+                        )}
+                        {part.tanggalDatang && (
+                          <p className="text-xs text-green-600 dark:text-green-400 mt-1 font-semibold">
+                            ✅ Datang:{" "}
+                            {new Date(part.tanggalDatang).toLocaleDateString(
+                              "id-ID",
+                              {
+                                weekday: "long",
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                              }
+                            )}
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex flex-col gap-2 ml-4">
+                        {part.status === "pending" && (
+                          <button
+                            onClick={() =>
+                              handleUpdateSparepartStatus(part, "ordered")
+                            }
+                            disabled={saving}
+                            className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-semibold disabled:opacity-50"
+                          >
+                            Tandai Dipesan
+                          </button>
+                        )}
+                        {part.status === "ordered" && (
+                          <button
+                            onClick={() =>
+                              handleUpdateSparepartStatus(part, "arrived")
+                            }
+                            disabled={saving}
+                            className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white rounded text-xs font-semibold disabled:opacity-50"
+                          >
+                            Tandai Datang
+                          </button>
+                        )}
+                        <button
+                          onClick={() => handleEditSparepart(part)}
+                          disabled={saving}
+                          className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded"
+                        >
+                          <Edit2 size={16} />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteSparepart(part.id)}
+                          disabled={saving}
+                          className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Sparepart Form Modal */}
+      {showSparepartForm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div className="sticky top-0 bg-white dark:bg-gray-800 border-b dark:border-gray-700 px-6 py-4 flex justify-between items-center z-10">
+              <h2 className="text-xl font-bold text-gray-800 dark:text-white">
+                {editingSparepartId ? "Edit Sparepart" : "Tambah Sparepart Baru"}
+              </h2>
+              <button
+                onClick={() => {
+                  setShowSparepartForm(false);
+                  setEditingSparepartId(null);
+                  setSparepartFormData({
+                    namaPart: "",
+                    deskripsi: "",
+                    jumlah: 0,
+                    unit: "",
+                    status: "pending",
+                    tanggalDipesan: "",
+                    tanggalDatang: "",
+                    createdBy: "",
+                  });
+                }}
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                  Nama Sparepart *
+                </label>
+                <input
+                  type="text"
+                  name="namaPart"
+                  value={sparepartFormData.namaPart}
+                  onChange={handleSparepartInputChange}
+                  className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  placeholder="Contoh: Bearing SKF 6205"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                  Deskripsi
+                </label>
+                <textarea
+                  name="deskripsi"
+                  value={sparepartFormData.deskripsi}
+                  onChange={handleSparepartInputChange}
+                  rows={3}
+                  className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  placeholder="Detail spesifikasi atau catatan tambahan"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                    Jumlah *
+                  </label>
+                  <input
+                    type="number"
+                    name="jumlah"
+                    value={sparepartFormData.jumlah}
+                    onChange={handleSparepartInputChange}
+                    className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    min="1"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                    Satuan
+                  </label>
+                  <input
+                    type="text"
+                    name="unit"
+                    value={sparepartFormData.unit}
+                    onChange={handleSparepartInputChange}
+                    className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    placeholder="pcs, set, unit, dll"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  onClick={handleSparepartSubmit}
+                  disabled={saving}
+                  className="flex-1 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold disabled:opacity-50"
+                >
+                  {editingSparepartId ? "Update" : "Simpan"}
+                </button>
+                <button
+                  onClick={() => {
+                    setShowSparepartForm(false);
+                    setEditingSparepartId(null);
+                    setSparepartFormData({
+                      namaPart: "",
+                      deskripsi: "",
+                      jumlah: 0,
+                      unit: "",
+                      status: "pending",
+                      tanggalDipesan: "",
+                      tanggalDatang: "",
+                      createdBy: "",
+                    });
+                  }}
+                  className="px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-white"
+                >
+                  Batal
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Footer Copyright */}
+      <footer className="mt-12 py-6 border-t border-gray-200 dark:border-gray-700">
+        <div className="text-center text-sm text-gray-600 dark:text-gray-400">
+          © Copyright 2025
+        </div>
+      </footer>
     </div>
   );
 }
