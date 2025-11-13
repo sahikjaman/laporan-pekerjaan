@@ -36,7 +36,7 @@ export default async function handler(req, res) {
         } catch (e) {
           progressLogs = [];
         }
-        
+
         return {
           id: row[0],
           namaTask: row[1],

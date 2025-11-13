@@ -348,7 +348,7 @@ export default function LaporanPekerjaan() {
   const handleEditTask = (task, event) => {
     // Stop propagation to prevent card click
     if (event) event.stopPropagation();
-    
+
     setTaskFormData({
       ...task,
       progressLogs: task.progressLogs || [],
@@ -470,7 +470,8 @@ export default function LaporanPekerjaan() {
       const updatedLogs = [...(selectedTask.progressLogs || []), logEntry];
       const newProgress = Math.min(
         100,
-        selectedTask.progress + (parseInt(newProgressLog.progressIncrement) || 0)
+        selectedTask.progress +
+          (parseInt(newProgressLog.progressIncrement) || 0)
       );
 
       // Update via API
@@ -501,7 +502,7 @@ export default function LaporanPekerjaan() {
   const updateTaskProgress = async (taskId, progressLogs, progress) => {
     setSaving(true);
     try {
-      const taskToUpdate = tasks.find(t => t.id === taskId);
+      const taskToUpdate = tasks.find((t) => t.id === taskId);
       const response = await fetch(TASK_API_URL, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -549,7 +550,8 @@ export default function LaporanPekerjaan() {
               ...log,
               tanggal: newProgressLog.tanggal,
               deskripsi: newProgressLog.deskripsi,
-              progressIncrement: parseInt(newProgressLog.progressIncrement) || 0,
+              progressIncrement:
+                parseInt(newProgressLog.progressIncrement) || 0,
             }
           : log
       );
@@ -746,8 +748,12 @@ export default function LaporanPekerjaan() {
         <div className="max-w-6xl mx-auto px-4 md:px-8">
           <div className="flex items-center justify-between py-4">
             <div className="flex items-center gap-4">
-              <div className="bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl p-3 shadow-lg">
-                <ClipboardList className="w-10 h-10 text-white" />
+              <div className="flex-shrink-0">
+                <img
+                  src="/logo-spil.png"
+                  alt="SPIL Logo"
+                  className="w-16 h-16 object-contain"
+                />
               </div>
               <div>
                 <h1 className="text-xl font-bold text-gray-800 dark:text-white">
@@ -1554,7 +1560,8 @@ export default function LaporanPekerjaan() {
                             {taskFormData.progress}%
                           </span>
                         </div>
-                        <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-3"
+                        <div
+                          className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-3"
                           style={{
                             background: `linear-gradient(to right, 
                               ${
@@ -1570,10 +1577,10 @@ export default function LaporanPekerjaan() {
                               } ${taskFormData.progress}%, 
                               #e5e7eb ${taskFormData.progress}%)`,
                           }}
-                        >
-                        </div>
+                        ></div>
                         <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                          Progress dihitung otomatis dari total riwayat progress yang ditambahkan
+                          Progress dihitung otomatis dari total riwayat progress
+                          yang ditambahkan
                         </p>
                       </div>
                     </div>
@@ -1595,7 +1602,13 @@ export default function LaporanPekerjaan() {
                   </div>
 
                   {/* Progress Logs Section */}
-                  <div className={`p-4 rounded-lg ${editingLogId ? "bg-blue-50 dark:bg-blue-900/20" : "bg-gray-50 dark:bg-gray-700/50"}`}>
+                  <div
+                    className={`p-4 rounded-lg ${
+                      editingLogId
+                        ? "bg-blue-50 dark:bg-blue-900/20"
+                        : "bg-gray-50 dark:bg-gray-700/50"
+                    }`}
+                  >
                     <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
                       {editingLogId ? "Edit Progress" : "Tambah Progress"}
                     </h3>
@@ -1686,15 +1699,21 @@ export default function LaporanPekerjaan() {
                   {/* Riwayat Progress Logs */}
                   <div className="mt-6">
                     <div className="flex items-center gap-2 mb-4">
-                      <ClipboardList className="text-indigo-600 dark:text-indigo-400" size={20} />
+                      <ClipboardList
+                        className="text-indigo-600 dark:text-indigo-400"
+                        size={20}
+                      />
                       <h3 className="text-lg font-bold text-gray-900 dark:text-white">
                         Riwayat Progress
                       </h3>
                     </div>
-                    {taskFormData.progressLogs && taskFormData.progressLogs.length > 0 ? (
+                    {taskFormData.progressLogs &&
+                    taskFormData.progressLogs.length > 0 ? (
                       <div className="space-y-3 max-h-60 overflow-y-auto">
                         {taskFormData.progressLogs
-                          .sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal))
+                          .sort(
+                            (a, b) => new Date(b.tanggal) - new Date(a.tanggal)
+                          )
                           .map((log) => (
                             <div
                               key={log.id}
@@ -1708,11 +1727,14 @@ export default function LaporanPekerjaan() {
                                 <div className="flex-1">
                                   <div className="flex items-center gap-3 mb-2">
                                     <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                                      {new Date(log.tanggal).toLocaleDateString("id-ID", {
-                                        day: "numeric",
-                                        month: "long",
-                                        year: "numeric",
-                                      })}
+                                      {new Date(log.tanggal).toLocaleDateString(
+                                        "id-ID",
+                                        {
+                                          day: "numeric",
+                                          month: "long",
+                                          year: "numeric",
+                                        }
+                                      )}
                                     </span>
                                     <span className="px-2 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded text-sm font-semibold">
                                       +{log.progressIncrement}%
@@ -1731,7 +1753,9 @@ export default function LaporanPekerjaan() {
                                     <Edit2 className="w-4 h-4" />
                                   </button>
                                   <button
-                                    onClick={() => handleDeleteProgressLog(log.id)}
+                                    onClick={() =>
+                                      handleDeleteProgressLog(log.id)
+                                    }
                                     className="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded"
                                     title="Hapus"
                                   >
@@ -1744,7 +1768,8 @@ export default function LaporanPekerjaan() {
                       </div>
                     ) : (
                       <p className="text-gray-500 dark:text-gray-400 text-center py-4">
-                        Belum ada riwayat progress. Tambahkan progress pertama di atas.
+                        Belum ada riwayat progress. Tambahkan progress pertama
+                        di atas.
                       </p>
                     )}
                   </div>
@@ -1950,7 +1975,13 @@ export default function LaporanPekerjaan() {
             {/* Modal Body */}
             <div className="p-6">
               {/* Add/Edit Progress Form */}
-              <div className={`mb-6 p-4 rounded-lg ${editingLogId ? "bg-blue-50 dark:bg-blue-900/20" : "bg-gray-50 dark:bg-gray-700/50"}`}>
+              <div
+                className={`mb-6 p-4 rounded-lg ${
+                  editingLogId
+                    ? "bg-blue-50 dark:bg-blue-900/20"
+                    : "bg-gray-50 dark:bg-gray-700/50"
+                }`}
+              >
                 <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
                   {editingLogId ? "Edit Progress" : "Tambah Progress"}
                 </h3>
@@ -2044,7 +2075,8 @@ export default function LaporanPekerjaan() {
                 <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
                   Riwayat Progress
                 </h3>
-                {(!selectedTask.progressLogs || selectedTask.progressLogs.length === 0) ? (
+                {!selectedTask.progressLogs ||
+                selectedTask.progressLogs.length === 0 ? (
                   <p className="text-gray-500 dark:text-gray-400 text-center py-4">
                     Belum ada riwayat progress
                   </p>
@@ -2065,11 +2097,14 @@ export default function LaporanPekerjaan() {
                             <div className="flex-1">
                               <div className="flex items-center gap-3 mb-2">
                                 <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                                  {new Date(log.tanggal).toLocaleDateString("id-ID", {
-                                    day: "numeric",
-                                    month: "long",
-                                    year: "numeric",
-                                  })}
+                                  {new Date(log.tanggal).toLocaleDateString(
+                                    "id-ID",
+                                    {
+                                      day: "numeric",
+                                      month: "long",
+                                      year: "numeric",
+                                    }
+                                  )}
                                 </span>
                                 <span className="px-2 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded text-sm font-semibold">
                                   +{log.progressIncrement}%
