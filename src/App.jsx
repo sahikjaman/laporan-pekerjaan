@@ -727,10 +727,10 @@ export default function LaporanPekerjaan() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
         <div className="text-center">
           <RefreshCw
-            className="animate-spin mx-auto mb-4 text-indigo-600 dark:text-indigo-400"
+            className="animate-spin mx-auto mb-4 text-green-600 dark:text-green-400"
             size={48}
           />
           <div className="text-lg text-gray-600 dark:text-gray-300">
@@ -742,9 +742,9 @@ export default function LaporanPekerjaan() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 dark:from-gray-900 dark:to-gray-800">
       {/* Navigation */}
-      <div className="bg-white dark:bg-gray-800 shadow-md border-b-4 border-red-600 dark:border-red-500">
+      <div className="bg-white dark:bg-gray-800 shadow-md border-b-4 border-green-600 dark:border-green-500">
         <div className="max-w-6xl mx-auto px-4 md:px-8">
           <div className="flex items-center justify-between py-4">
             <div className="flex items-center gap-4">
@@ -756,10 +756,10 @@ export default function LaporanPekerjaan() {
                 />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-800 dark:text-white">
+                <h1 className="text-xl font-bold text-green-800 dark:text-green-400">
                   Laporan Pekerjaan Lapangan
                 </h1>
-                <p className="text-sm font-semibold text-gray-600 dark:text-gray-300 border-b-2 border-gray-800 dark:border-gray-300 inline-block">
+                <p className="text-sm font-semibold text-gray-600 dark:text-gray-300 border-b-2 border-green-600 dark:border-green-500 inline-block">
                   HVE Electrical
                 </p>
               </div>
@@ -789,7 +789,7 @@ export default function LaporanPekerjaan() {
               {activeTab === "laporan" && (
                 <button
                   onClick={() => setShowForm(true)}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
                 >
                   <Plus size={18} />
                   Laporan Baru
@@ -815,7 +815,7 @@ export default function LaporanPekerjaan() {
               }}
               className={`px-4 py-3 font-semibold transition-colors ${
                 activeTab === "dashboard"
-                  ? "text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400"
+                  ? "text-green-600 dark:text-green-400 border-b-2 border-green-600 dark:border-green-400"
                   : "text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100"
               }`}
             >
@@ -829,7 +829,7 @@ export default function LaporanPekerjaan() {
               }}
               className={`px-4 py-3 font-semibold transition-colors ${
                 activeTab === "laporan"
-                  ? "text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400"
+                  ? "text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400"
                   : "text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100"
               }`}
             >
@@ -843,7 +843,7 @@ export default function LaporanPekerjaan() {
               }}
               className={`px-4 py-3 font-semibold transition-colors ${
                 activeTab === "tasks"
-                  ? "text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-600 dark:border-indigo-400"
+                  ? "text-green-600 dark:text-green-400 border-b-2 border-green-600 dark:border-green-400"
                   : "text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100"
               }`}
             >
@@ -859,7 +859,7 @@ export default function LaporanPekerjaan() {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 flex items-center gap-3">
               <RefreshCw
-                className="animate-spin text-indigo-600 dark:text-indigo-400"
+                className="animate-spin text-green-600 dark:text-green-400"
                 size={24}
               />
               <span className="text-lg font-semibold dark:text-white">
