@@ -913,119 +913,120 @@ export default function LaporanPekerjaan() {
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 dark:from-gray-900 dark:to-gray-800">
       {/* Navigation */}
       <div className="bg-white dark:bg-gray-800 shadow-md border-b-4 border-green-600 dark:border-green-500">
-        <div className="max-w-6xl mx-auto px-4 md:px-8">
-          <div className="flex items-center justify-between py-4">
-            <div className="flex items-center gap-4">
+        <div className="max-w-6xl mx-auto px-2 sm:px-4 md:px-8">
+          <div className="flex items-center justify-between py-2 sm:py-4">
+            <div className="flex items-center gap-2 sm:gap-4">
               <div className="flex-shrink-0">
                 <img
                   src="/logo-spil.png"
                   alt="SPIL Logo"
-                  className="w-16 h-16 object-contain"
+                  className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 object-contain"
                 />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-800 dark:text-white">
+                <h1 className="text-sm sm:text-base md:text-xl font-bold text-gray-800 dark:text-white leading-tight">
                   HVE ELECTRICAL SPIL
                 </h1>
-                <p className="text-xs text-gray-600 dark:text-gray-400">
+                <p className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 hidden sm:block">
                   Heavy Equipment Electrical PT. Salam Pasific Indonesia Lines
                 </p>
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-1 sm:gap-2">
               {/* Theme Toggle Button */}
               <button
                 onClick={cycleTheme}
-                className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
+                className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 p-2 sm:px-4 sm:py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
                 title={`Current: ${getThemeLabel()} - Click to change`}
               >
                 {getThemeIcon()}
-                <span className="hidden md:inline text-sm">
+                <span className="hidden lg:inline text-sm">
                   {getThemeLabel()}
                 </span>
               </button>
               <button
                 onClick={loadReports}
                 disabled={loading}
-                className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
+                className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 p-2 sm:px-4 sm:py-2 rounded-lg font-semibold flex items-center transition-colors"
+                title="Refresh"
               >
                 <RefreshCw
-                  size={18}
-                  className={loading ? "animate-spin" : ""}
+                  size={16}
+                  className={`sm:w-[18px] sm:h-[18px] ${loading ? "animate-spin" : ""}`}
                 />
               </button>
               {activeTab === "laporan" && (
                 <button
                   onClick={() => setShowForm(true)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
+                  className="bg-blue-600 hover:bg-blue-700 text-white p-2 sm:px-4 sm:py-2 rounded-lg font-semibold flex items-center gap-1 sm:gap-2 transition-colors"
                 >
-                  <Plus size={18} />
-                  Laporan Baru
+                  <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
+                  <span className="hidden sm:inline text-sm">Laporan Baru</span>
                 </button>
               )}
               {activeTab === "tasks" && (
                 <button
                   onClick={() => setShowTaskForm(true)}
-                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
+                  className="bg-green-600 hover:bg-green-700 text-white p-2 sm:px-4 sm:py-2 rounded-lg font-semibold flex items-center gap-1 sm:gap-2 transition-colors"
                 >
-                  <Plus size={18} />
-                  Task Baru
+                  <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
+                  <span className="hidden sm:inline text-sm">Task Baru</span>
                 </button>
               )}
               {activeTab === "spareparts" && (
                 <button
                   onClick={() => setShowSparepartForm(true)}
-                  className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
+                  className="bg-purple-600 hover:bg-purple-700 text-white p-2 sm:px-4 sm:py-2 rounded-lg font-semibold flex items-center gap-1 sm:gap-2 transition-colors"
                 >
-                  <Plus size={18} />
-                  Sparepart Baru
+                  <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
+                  <span className="hidden sm:inline text-sm">Sparepart Baru</span>
                 </button>
               )}
             </div>
           </div>
-          <div className="flex gap-4 border-t dark:border-gray-700">
+          <div className="flex gap-1 sm:gap-4 border-t dark:border-gray-700 overflow-x-auto scrollbar-hide">
             <button
               onClick={() => {
                 setActiveTab("dashboard");
                 setShowForm(false);
                 setShowTaskForm(false);
               }}
-              className={`px-4 py-3 font-semibold transition-colors ${
+              className={`px-2 sm:px-4 py-2 sm:py-3 font-semibold transition-colors whitespace-nowrap text-xs sm:text-base flex items-center gap-1 sm:gap-2 ${
                 activeTab === "dashboard"
                   ? "text-green-600 dark:text-green-400 border-b-2 border-green-600 dark:border-green-400"
                   : "text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100"
               }`}
             >
-              <BarChart3 size={18} className="inline mr-2" />
-              Dashboard
+              <BarChart3 size={14} className="sm:w-[18px] sm:h-[18px]" />
+              <span>Dashboard</span>
             </button>
             <button
               onClick={() => {
                 setActiveTab("laporan");
                 setShowTaskForm(false);
               }}
-              className={`px-4 py-3 font-semibold transition-colors ${
+              className={`px-2 sm:px-4 py-2 sm:py-3 font-semibold transition-colors whitespace-nowrap text-xs sm:text-base flex items-center gap-1 sm:gap-2 ${
                 activeTab === "laporan"
                   ? "text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400"
                   : "text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100"
               }`}
             >
-              <FileText size={18} className="inline mr-2" />
-              Laporan
+              <FileText size={14} className="sm:w-[18px] sm:h-[18px]" />
+              <span>Laporan</span>
             </button>
             <button
               onClick={() => {
                 setActiveTab("tasks");
                 setShowForm(false);
               }}
-              className={`px-4 py-3 font-semibold transition-colors ${
+              className={`px-2 sm:px-4 py-2 sm:py-3 font-semibold transition-colors whitespace-nowrap text-xs sm:text-base flex items-center gap-1 sm:gap-2 ${
                 activeTab === "tasks"
                   ? "text-green-600 dark:text-green-400 border-b-2 border-green-600 dark:border-green-400"
                   : "text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100"
               }`}
             >
-              <ListTodo size={18} className="inline mr-2" />
-              Task
+              <ListTodo size={14} className="sm:w-[18px] sm:h-[18px]" />
+              <span>Task</span>
             </button>
             <button
               onClick={() => {
@@ -1033,20 +1034,20 @@ export default function LaporanPekerjaan() {
                 setShowForm(false);
                 setShowTaskForm(false);
               }}
-              className={`px-4 py-3 font-semibold transition-colors ${
+              className={`px-2 sm:px-4 py-2 sm:py-3 font-semibold transition-colors whitespace-nowrap text-xs sm:text-base flex items-center gap-1 sm:gap-2 ${
                 activeTab === "spareparts"
                   ? "text-purple-600 dark:text-purple-400 border-b-2 border-purple-600 dark:border-purple-400"
                   : "text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100"
               }`}
             >
-              <Wrench size={18} className="inline mr-2" />
-              Sparepart
+              <Wrench size={14} className="sm:w-[18px] sm:h-[18px]" />
+              <span>Sparepart</span>
             </button>
           </div>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto p-4 md:p-8">
+      <div className="max-w-6xl mx-auto p-3 sm:p-4 md:p-8">
         {saving && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 flex items-center gap-3">
