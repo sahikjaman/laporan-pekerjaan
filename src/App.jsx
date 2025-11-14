@@ -3110,24 +3110,26 @@ export default function LaporanPekerjaan() {
       {activeTab === "monitoring" && (
         <div className="space-y-6">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-            <div className="flex items-center gap-3 mb-6">
-              <Monitor className="text-orange-600 dark:text-orange-400" size={32} />
-              <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
                 Monitoring Reach Stacker
               </h2>
+              <p className="text-gray-600 dark:text-gray-400">
+                Sistem monitoring real-time untuk Reach Stacker
+              </p>
             </div>
-            
-            <div className="relative w-full" style={{ paddingBottom: '75%' }}>
-              <iframe
-                src="https://reach-stacker-monitor.vercel.app/"
-                className="absolute top-0 left-0 w-full h-full border-0 rounded-lg"
-                title="Monitoring Reach Stacker"
-                allow="fullscreen"
-              />
-            </div>
-            
-            <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
-              <p>Sistem monitoring real-time untuk Reach Stacker</p>
+
+            {/* Iframe Container */}
+            <div className="w-full bg-gray-100 dark:bg-gray-900 rounded-lg overflow-hidden">
+              <div className="relative w-full" style={{ paddingBottom: '75%' }}>
+                <iframe
+                  src="https://reach-stacker-monitor.vercel.app/"
+                  className="absolute top-0 left-0 w-full h-full border-0"
+                  title="Monitoring Reach Stacker"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
             </div>
           </div>
         </div>
