@@ -897,14 +897,26 @@ export default function LaporanPekerjaan() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
-        <div className="text-center">
-          <RefreshCw
-            className="animate-spin mx-auto mb-4 text-green-600 dark:text-green-400"
-            size={48}
-          />
-          <div className="text-lg text-gray-600 dark:text-gray-300">
-            Memuat data...
+      <div className="min-h-screen relative">
+        {/* Background Image */}
+        <div className="fixed inset-0 z-0">
+          <div 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{ backgroundImage: 'url(/background.webp)' }}
+          ></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-green-900/50 via-emerald-900/45 to-teal-900/50 dark:from-gray-900/70 dark:via-gray-800/65 dark:to-gray-900/70"></div>
+        </div>
+        
+        {/* Content */}
+        <div className="relative z-10 min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <RefreshCw
+              className="animate-spin mx-auto mb-4 text-green-400 dark:text-green-300"
+              size={48}
+            />
+            <div className="text-lg text-white dark:text-gray-200">
+              Memuat data...
+            </div>
           </div>
         </div>
       </div>
@@ -912,9 +924,20 @@ export default function LaporanPekerjaan() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 dark:from-gray-900 dark:to-gray-800">
-      {/* Navigation */}
-      <div className="bg-white dark:bg-gray-800 shadow-md border-b-4 border-green-600 dark:border-green-500">
+    <div className="min-h-screen relative">
+      {/* Background Image with Overlay */}
+      <div className="fixed inset-0 z-0">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-fixed"
+          style={{ backgroundImage: 'url(/background.webp)' }}
+        ></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-white/75 via-green-50/70 to-emerald-50/75 dark:from-gray-900/85 dark:via-gray-800/80 dark:to-gray-900/85"></div>
+      </div>
+
+      {/* Main Content */}
+      <div className="relative z-10">
+        {/* Navigation */}
+        <div className="bg-white/90 dark:bg-gray-800/90 shadow-md border-b-4 border-green-600 dark:border-green-500 backdrop-blur-md">
         <div className="max-w-6xl mx-auto px-2 sm:px-4 md:px-8">
           <div className="flex items-center justify-between py-2 sm:py-4">
             <div className="flex items-center gap-2 sm:gap-4">
@@ -3098,6 +3121,8 @@ export default function LaporanPekerjaan() {
           © 2025 PT SALAM PACIFIC INDONESIA LINES. All rights reserved
         </div>
       </footer>
+      </div>
+      {/* End of Main Content */}
     </div>
   );
 }
