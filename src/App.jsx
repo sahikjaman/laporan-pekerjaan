@@ -680,10 +680,6 @@ export default function LaporanPekerjaan() {
     setEditingId(report.id);
     setShowForm(true);
     setActiveTab("laporan");
-    // Auto scroll to form
-    setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }, 100);
   };
 
   const handleEditTask = (task, event) => {
@@ -2249,16 +2245,48 @@ export default function LaporanPekerjaan() {
                       className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                     />
                   </div>
+                  <button
+                    onClick={() => {
+                      setShowForm(true);
+                      setEditingId(null);
+                      setFormData({
+                        tanggal: new Date().toISOString().split("T")[0],
+                        lokasi: "",
+                        namaProyek: "",
+                        jenisKegiatan: "",
+                        unitAlat: "",
+                        jamMulai: "",
+                        jamSelesai: "",
+                        deskripsi: "",
+                        catatan: "",
+                      });
+                    }}
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors hover-lift whitespace-nowrap"
+                  >
+                    <Plus size={20} />
+                    {t("newReport")}
+                  </button>
                 </div>
               </div>
 
               {showForm && (
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-                  <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
-                    {editingId ? t("editReport") : t("createReport")}
-                  </h2>
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 modal-backdrop" onClick={handleCancel}>
+                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto modal-content" onClick={(e) => e.stopPropagation()}>
+                    <div className="sticky top-0 bg-white dark:bg-gray-800 border-b dark:border-gray-700 px-6 py-4 flex justify-between items-center z-10">
+                      <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+                        {editingId ? t("editReport") : t("createReport")}
+                      </h2>
+                      <button
+                        onClick={handleCancel}
+                        disabled={saving}
+                        className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
+                      >
+                        <X size={24} />
+                      </button>
+                    </div>
+                    <div className="p-6">
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
                           {t("date")} *
@@ -2400,6 +2428,8 @@ export default function LaporanPekerjaan() {
                         {t("cancel")}
                       </button>
                     </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
@@ -2424,7 +2454,8 @@ export default function LaporanPekerjaan() {
                   filteredReports.map((report) => (
                     <div
                       key={report.id}
-                      className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow card-transition hover-lift"
+                      onClick={() => handleEdit(report)}
+                      className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow card-transition hover-lift cursor-pointer"
                     >
                       <div className="flex justify-between items-start mb-4">
                         <div className="flex-1">
@@ -2448,14 +2479,20 @@ export default function LaporanPekerjaan() {
                         </div>
                         <div className="flex gap-2">
                           <button
-                            onClick={() => handleEdit(report)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEdit(report);
+                            }}
                             disabled={saving}
                             className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 disabled:opacity-50 rounded-lg transition-colors"
                           >
                             <Edit2 size={18} />
                           </button>
                           <button
-                            onClick={() => handleDelete(report.id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(report.id);
+                            }}
                             disabled={saving}
                             className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 disabled:opacity-50 rounded-lg transition-colors"
                           >
