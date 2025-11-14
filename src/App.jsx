@@ -67,16 +67,22 @@ const translations = {
     createNewTask: "Buat Task Baru",
     planYourWork: "Rencanakan pekerjaan Anda",
     orderSparepart: "Order Sparepart",
+    addSparepartRequest: "Tambahkan permintaan sparepart",
     manageInventory: "Kelola inventori sparepart",
     totalReports: "Total Laporan",
+    totalSpareparts: "Total Sparepart",
     completedTasks: "Task Selesai",
+    noCompletedTasks: "Belum ada task selesai",
     ongoingTasks: "Task Berlangsung",
+    ongoingTasksByPriority: "Task Berlangsung (Prioritas)",
+    ongoingTasksByDeadline: "Task Berlangsung (Deadline)",
+    noOngoingTasks: "Tidak ada task berlangsung",
+    noTasksWithDeadline: "Tidak ada task dengan deadline",
+    noDataYet: "Belum ada data",
+    noReportsYet: "Belum ada laporan",
     sparepartOrdered: "Sparepart Dipesan",
     recentReports: "Laporan Terbaru",
-    topLocations: "Lokasi Teratas",
-    ongoingTasksPriority: "Task Berlangsung (Prioritas)",
-    ongoingTasksDeadline: "Task Berlangsung (Deadline)",
-    noOngoingTasks: "Tidak ada task berlangsung",
+    topLocations: "Lokasi Terbanyak",
     sparepartSummary: "Ringkasan Sparepart",
     
     // Reports
@@ -111,6 +117,9 @@ const translations = {
     createTask: "Buat Task Baru",
     taskName: "Nama Task",
     priority: "Prioritas",
+    "priority.high": "Tinggi",
+    "priority.medium": "Sedang",
+    "priority.low": "Rendah",
     deadline: "Deadline",
     progress: "Progress",
     high: "Tinggi",
@@ -150,7 +159,12 @@ const translations = {
     deleteFailed: "Gagal menghapus",
     saveSuccess: "Berhasil disimpan",
     saveFailed: "Gagal menyimpan",
+    updateFailed: "Gagal mengupdate data",
+    errorSaving: "Terjadi kesalahan saat menyimpan data",
     fillRequired: "Harap isi semua field yang wajib",
+    fillTaskRequired: "Harap isi nama task dan deskripsi",
+    fillPartRequired: "Harap isi nama part dan jumlah",
+    fillProgressRequired: "Harap isi deskripsi progress",
     orderDateRequired: "Tanggal dipesan harus diisi untuk status 'Sudah Dipesan'",
     arrivalDateRequired: "Tanggal datang harus diisi untuk status 'Sudah Datang'",
   },
@@ -189,16 +203,22 @@ const translations = {
     createNewTask: "Create New Task",
     planYourWork: "Plan your work",
     orderSparepart: "Order Sparepart",
+    addSparepartRequest: "Add sparepart request",
     manageInventory: "Manage sparepart inventory",
     totalReports: "Total Reports",
+    totalSpareparts: "Total Spareparts",
     completedTasks: "Completed Tasks",
+    noCompletedTasks: "No completed tasks yet",
     ongoingTasks: "Ongoing Tasks",
+    ongoingTasksByPriority: "Ongoing Tasks (Priority)",
+    ongoingTasksByDeadline: "Ongoing Tasks (Deadline)",
+    noOngoingTasks: "No ongoing tasks",
+    noTasksWithDeadline: "No tasks with deadline",
+    noDataYet: "No data yet",
+    noReportsYet: "No reports yet",
     sparepartOrdered: "Spareparts Ordered",
     recentReports: "Recent Reports",
     topLocations: "Top Locations",
-    ongoingTasksPriority: "Ongoing Tasks (Priority)",
-    ongoingTasksDeadline: "Ongoing Tasks (Deadline)",
-    noOngoingTasks: "No ongoing tasks",
     sparepartSummary: "Sparepart Summary",
     
     // Reports
@@ -233,6 +253,9 @@ const translations = {
     createTask: "Create New Task",
     taskName: "Task Name",
     priority: "Priority",
+    "priority.high": "High",
+    "priority.medium": "Medium",
+    "priority.low": "Low",
     deadline: "Deadline",
     progress: "Progress",
     high: "High",
@@ -272,7 +295,12 @@ const translations = {
     deleteFailed: "Failed to delete",
     saveSuccess: "Successfully saved",
     saveFailed: "Failed to save",
+    updateFailed: "Failed to update data",
+    errorSaving: "An error occurred while saving data",
     fillRequired: "Please fill all required fields",
+    fillTaskRequired: "Please fill task name and description",
+    fillPartRequired: "Please fill part name and quantity",
+    fillProgressRequired: "Please fill progress description",
     orderDateRequired: "Order date is required for 'Ordered' status",
     arrivalDateRequired: "Arrival date is required for 'Arrived' status",
   }
@@ -510,7 +538,7 @@ export default function LaporanPekerjaan() {
       !formData.unitAlat ||
       !formData.deskripsi
     ) {
-      alert("Harap isi semua field yang wajib diisi");
+      alert(t('fillRequired'));
       return;
     }
 
@@ -533,7 +561,7 @@ export default function LaporanPekerjaan() {
           await loadReports();
           setEditingId(null);
         } else {
-          alert("Gagal mengupdate data: " + result.message);
+          alert(t('updateFailed') + ": " + result.message);
         }
       } else {
         const newReport = {
@@ -552,7 +580,7 @@ export default function LaporanPekerjaan() {
         if (result.success) {
           await loadReports();
         } else {
-          alert("Gagal menyimpan data: " + result.message);
+          alert(t('saveFailed') + ": " + result.message);
         }
       }
 
@@ -570,7 +598,7 @@ export default function LaporanPekerjaan() {
       setShowForm(false);
     } catch (error) {
       console.error("Error menyimpan data:", error);
-      alert("Terjadi kesalahan saat menyimpan data.");
+      alert(t('errorSaving'));
     } finally {
       setSaving(false);
     }
@@ -578,7 +606,7 @@ export default function LaporanPekerjaan() {
 
   const handleTaskSubmit = async () => {
     if (!taskFormData.namaTask || !taskFormData.deskripsi) {
-      alert("Harap isi nama task dan deskripsi");
+      alert(t('fillTaskRequired'));
       return;
     }
 
@@ -637,7 +665,7 @@ export default function LaporanPekerjaan() {
       });
     } catch (error) {
       console.error("Error menyimpan task:", error);
-      alert("Terjadi kesalahan saat menyimpan task.");
+      alert(t('errorSaving'));
     } finally {
       setSaving(false);
     }
@@ -762,7 +790,7 @@ export default function LaporanPekerjaan() {
 
   const handleAddProgressLog = () => {
     if (!newProgressLog.deskripsi.trim()) {
-      alert("Harap isi deskripsi progress");
+      alert(t('fillProgressRequired'));
       return;
     }
 
@@ -839,7 +867,7 @@ export default function LaporanPekerjaan() {
       }
     } catch (error) {
       console.error("Error updating task progress:", error);
-      alert("Gagal menyimpan progress");
+      alert(t('saveFailed'));
     } finally {
       setSaving(false);
     }
@@ -847,7 +875,7 @@ export default function LaporanPekerjaan() {
 
   const handleUpdateProgressLog = () => {
     if (!newProgressLog.deskripsi.trim()) {
-      alert("Harap isi deskripsi progress");
+      alert(t('fillProgressRequired'));
       return;
     }
 
@@ -973,7 +1001,7 @@ export default function LaporanPekerjaan() {
 
   const handleSparepartSubmit = async () => {
     if (!sparepartFormData.namaPart.trim() || !sparepartFormData.jumlah) {
-      alert("Harap isi nama part dan jumlah");
+      alert(t('fillPartRequired'));
       return;
     }
 
@@ -1009,7 +1037,7 @@ export default function LaporanPekerjaan() {
       }
     } catch (error) {
       console.error("Error menyimpan sparepart:", error);
-      alert("Gagal menyimpan sparepart");
+      alert(t('saveFailed'));
     } finally {
       setSaving(false);
     }
@@ -1056,14 +1084,14 @@ export default function LaporanPekerjaan() {
       }
     } catch (error) {
       console.error("Error update tanggal sparepart:", error);
-      alert("Gagal update tanggal sparepart");
+      alert(t('updateFailed'));
     } finally {
       setSaving(false);
     }
   };
 
   const handleDeleteSparepart = async (id) => {
-    if (!confirm("Yakin ingin menghapus sparepart ini?")) return;
+    if (!confirm(t('confirmDelete') + "?")) return;
 
     setSaving(true);
     try {
@@ -1079,7 +1107,7 @@ export default function LaporanPekerjaan() {
       }
     } catch (error) {
       console.error("Error menghapus sparepart:", error);
-      alert("Gagal menghapus sparepart");
+      alert(t('deleteFailed'));
     } finally {
       setSaving(false);
     }
@@ -1107,7 +1135,7 @@ export default function LaporanPekerjaan() {
       }
     } catch (error) {
       console.error("Error update status sparepart:", error);
-      alert("Gagal update status sparepart");
+      alert(t('updateFailed'));
     } finally {
       setSaving(false);
     }
@@ -1631,9 +1659,9 @@ export default function LaporanPekerjaan() {
                     <FileText size={24} className="sm:w-8 sm:h-8" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-base sm:text-xl font-bold">Buat Laporan Baru</h3>
+                    <h3 className="text-base sm:text-xl font-bold">{t('createNewReport')}</h3>
                     <p className="text-xs sm:text-sm text-blue-100">
-                      Catat pekerjaan lapangan Anda
+                      {t('recordFieldWork')}
                     </p>
                   </div>
                 </div>
@@ -1657,9 +1685,9 @@ export default function LaporanPekerjaan() {
                     <ListTodo size={24} className="sm:w-8 sm:h-8" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-base sm:text-xl font-bold">Buat Task Baru</h3>
+                    <h3 className="text-base sm:text-xl font-bold">{t('createNewTask')}</h3>
                     <p className="text-xs sm:text-sm text-green-100">
-                      Rencanakan pekerjaan Anda
+                      {t('planYourWork')}
                     </p>
                   </div>
                 </div>
@@ -1683,9 +1711,9 @@ export default function LaporanPekerjaan() {
                     <Wrench size={24} className="sm:w-8 sm:h-8" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-base sm:text-xl font-bold">Order Sparepart</h3>
+                    <h3 className="text-base sm:text-xl font-bold">{t('orderSparepart')}</h3>
                     <p className="text-xs sm:text-sm text-purple-100">
-                      Tambahkan permintaan sparepart
+                      {t('addSparepartRequest')}
                     </p>
                   </div>
                 </div>
@@ -1712,7 +1740,7 @@ export default function LaporanPekerjaan() {
                   />
                 </div>
                 <h3 className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm font-medium mb-1">
-                  Total Laporan
+                  {t('totalReports')}
                 </h3>
                 <p className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
                   {totalReports}
@@ -1729,7 +1757,7 @@ export default function LaporanPekerjaan() {
                   </div>
                 </div>
                 <h3 className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm font-medium mb-1">
-                  Task Selesai
+                  {t('completedTasks')}
                 </h3>
                 <p className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
                   {completedTasks}
@@ -1746,7 +1774,7 @@ export default function LaporanPekerjaan() {
                   </div>
                 </div>
                 <h3 className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm font-medium mb-1">
-                  Task Berlangsung
+                  {t('ongoingTasks')}
                 </h3>
                 <p className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
                   {ongoingTasks}
@@ -1763,7 +1791,7 @@ export default function LaporanPekerjaan() {
                   </div>
                 </div>
                 <h3 className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm font-medium mb-1">
-                  Total Sparepart
+                  {t('totalSpareparts')}
                 </h3>
                 <p className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
                   {spareparts.length}
@@ -1776,11 +1804,11 @@ export default function LaporanPekerjaan() {
               {/* Recent Reports */}
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
                 <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
-                  Laporan Terbaru
+                  {t('recentReports')}
                 </h2>
                 {recentReports.length === 0 ? (
                   <p className="text-gray-500 dark:text-gray-400 text-center py-8">
-                    Belum ada laporan
+                    {t('noReportsYet')}
                   </p>
                 ) : (
                   <div className="space-y-3">
@@ -1808,11 +1836,11 @@ export default function LaporanPekerjaan() {
               {/* Top Locations with Unit Names */}
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
                 <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
-                  Lokasi Terbanyak
+                  {t('topLocations')}
                 </h2>
                 {topLokasi.length === 0 ? (
                   <p className="text-gray-500 dark:text-gray-400 text-center py-8">
-                    Belum ada data
+                    {t('noDataYet')}
                   </p>
                 ) : (
                   <div className="space-y-3">
@@ -1864,11 +1892,11 @@ export default function LaporanPekerjaan() {
               {/* Ongoing Tasks by Priority */}
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
                 <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
-                  Task Berlangsung (Prioritas)
+                  {t('ongoingTasksByPriority')}
                 </h2>
                 {tasks.filter((t) => t.progress < 100).length === 0 ? (
                   <p className="text-gray-500 dark:text-gray-400 text-center py-8">
-                    Tidak ada task berlangsung
+                    {t('noOngoingTasks')}
                   </p>
                 ) : (
                   <div className="space-y-3">
@@ -1944,11 +1972,11 @@ export default function LaporanPekerjaan() {
               {/* Ongoing Tasks by Deadline */}
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
                 <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
-                  Task Berlangsung (Deadline)
+                  {t('ongoingTasksByDeadline')}
                 </h2>
                 {tasks.filter((t) => t.progress < 100 && t.deadline).length === 0 ? (
                   <p className="text-gray-500 dark:text-gray-400 text-center py-8">
-                    Tidak ada task dengan deadline
+                    {t('noTasksWithDeadline')}
                   </p>
                 ) : (
                   <div className="space-y-3">
@@ -2019,11 +2047,11 @@ export default function LaporanPekerjaan() {
               {/* Completed Tasks */}
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
                 <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
-                  Task Selesai
+                  {t('completedTasks')}
                 </h2>
                 {tasks.filter((t) => t.progress >= 100).length === 0 ? (
                   <p className="text-gray-500 dark:text-gray-400 text-center py-8">
-                    Belum ada task selesai
+                    {t('noCompletedTasks')}
                   </p>
                 ) : (
                   <div className="space-y-3">
@@ -2149,7 +2177,7 @@ export default function LaporanPekerjaan() {
                   />
                   <input
                     type="text"
-                    placeholder="Cari proyek, lokasi, kegiatan, atau unit alat..."
+                    placeholder={t('searchReports')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
@@ -2161,13 +2189,13 @@ export default function LaporanPekerjaan() {
             {showForm && (
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
                 <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
-                  {editingId ? "Edit Laporan" : "Buat Laporan Baru"}
+                  {editingId ? t('editReport') : t('createReport')}
                 </h2>
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                        Tanggal *
+                        {t('date')} *
                       </label>
                       <input
                         type="date"
@@ -2179,7 +2207,7 @@ export default function LaporanPekerjaan() {
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                        Lokasi *
+                        {t('location')} *
                       </label>
                       <input
                         type="text"
@@ -2192,7 +2220,7 @@ export default function LaporanPekerjaan() {
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                        Nama Proyek *
+                        {t('projectName')} *
                       </label>
                       <input
                         type="text"
@@ -2205,7 +2233,7 @@ export default function LaporanPekerjaan() {
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                        Jenis Kegiatan *
+                        {t('activityType')} *
                       </label>
                       <input
                         type="text"
@@ -2218,7 +2246,7 @@ export default function LaporanPekerjaan() {
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                        Unit Alat *
+                        {t('equipment')} *
                       </label>
                       <input
                         type="text"
@@ -2232,7 +2260,7 @@ export default function LaporanPekerjaan() {
                     <div></div>
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                        Jam Mulai
+                        {t('startTime')}
                       </label>
                       <input
                         type="time"
@@ -2244,7 +2272,7 @@ export default function LaporanPekerjaan() {
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                        Jam Selesai
+                        {t('endTime')}
                       </label>
                       <input
                         type="time"
@@ -2258,7 +2286,7 @@ export default function LaporanPekerjaan() {
 
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                      Deskripsi Pekerjaan *
+                      {t('description')} *
                     </label>
                     <textarea
                       name="deskripsi"
@@ -2272,7 +2300,7 @@ export default function LaporanPekerjaan() {
 
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                      Catatan Tambahan
+                      {t('notes')}
                     </label>
                     <textarea
                       name="catatan"
@@ -2295,7 +2323,7 @@ export default function LaporanPekerjaan() {
                       ) : (
                         <Check size={20} />
                       )}
-                      {editingId ? "Update Laporan" : "Simpan Laporan"}
+                      {editingId ? t('update') : t('save')}
                     </button>
                     <button
                       onClick={handleCancel}
@@ -2303,7 +2331,7 @@ export default function LaporanPekerjaan() {
                       className="flex-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:bg-gray-100 text-gray-800 dark:text-white px-6 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors"
                     >
                       <X size={20} />
-                      Batal
+                      {t('cancel')}
                     </button>
                   </div>
                 </div>
@@ -2319,13 +2347,13 @@ export default function LaporanPekerjaan() {
                   />
                   <h3 className="text-xl font-semibold text-gray-600 dark:text-gray-300 mb-2">
                     {searchTerm
-                      ? "Tidak ada laporan yang sesuai"
-                      : "Belum ada laporan"}
+                      ? t('noReportsFound')
+                      : t('noReports')}
                   </h3>
                   <p className="text-gray-500 dark:text-gray-400">
                     {searchTerm
-                      ? "Coba ubah kata kunci pencarian"
-                      : 'Klik tombol "Laporan Baru" untuk mulai mendata pekerjaan'}
+                      ? t('tryDifferentKeyword')
+                      : t('createFirstReport')}
                   </p>
                 </div>
               ) : (
@@ -2440,7 +2468,7 @@ export default function LaporanPekerjaan() {
                   />
                   <input
                     type="text"
-                    placeholder="Cari task..."
+                    placeholder={t('searchTasks')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
@@ -2452,9 +2480,9 @@ export default function LaporanPekerjaan() {
                     onChange={(e) => setTaskSortBy(e.target.value)}
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
-                    <option value="deadline">Urutkan: Deadline</option>
-                    <option value="priority">Urutkan: Prioritas</option>
-                    <option value="name">Urutkan: Nama (A-Z)</option>
+                    <option value="deadline">{t('sortByDeadline')}</option>
+                    <option value="priority">{t('sortByPriority')}</option>
+                    <option value="name">{t('sortByName')}</option>
                   </select>
                 </div>
               </div>
@@ -2463,13 +2491,13 @@ export default function LaporanPekerjaan() {
             {showTaskForm && (
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
                 <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
-                  {editingTaskId ? "Edit Task" : "Buat Task Baru"}
+                  {editingTaskId ? t('editTask') : t('createTask')}
                 </h2>
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                        Nama Task *
+                        {t('taskName')} *
                       </label>
                       <input
                         type="text"
@@ -2482,7 +2510,7 @@ export default function LaporanPekerjaan() {
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                        Prioritas
+                        {t('priority')}
                       </label>
                       <select
                         name="prioritas"
@@ -2490,14 +2518,14 @@ export default function LaporanPekerjaan() {
                         onChange={handleTaskInputChange}
                         className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       >
-                        <option value="low">Rendah</option>
-                        <option value="medium">Sedang</option>
-                        <option value="high">Tinggi</option>
+                        <option value="low">{t('low')}</option>
+                        <option value="medium">{t('medium')}</option>
+                        <option value="high">{t('high')}</option>
                       </select>
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                        Deadline
+                        {t('deadline')}
                       </label>
                       <input
                         type="date"
@@ -2509,7 +2537,7 @@ export default function LaporanPekerjaan() {
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                        Progress (Otomatis dari Riwayat)
+                        {t('progress')} ({t('progressUpdate')})
                       </label>
                       <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
                         <div className="flex justify-between items-center mb-2">
@@ -2549,7 +2577,7 @@ export default function LaporanPekerjaan() {
                   {/* Deskripsi Task */}
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                      Deskripsi Task *
+                      {t('description')} *
                     </label>
                     <textarea
                       name="deskripsi"
@@ -2570,12 +2598,12 @@ export default function LaporanPekerjaan() {
                     }`}
                   >
                     <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
-                      {editingLogId ? "Edit Progress" : "Tambah Progress"}
+                      {editingLogId ? t('edit') + " " + t('progress') : t('addProgressLog')}
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div>
                         <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                          Tanggal
+                          {t('date')}
                         </label>
                         <input
                           type="date"
@@ -2591,7 +2619,7 @@ export default function LaporanPekerjaan() {
                       </div>
                       <div>
                         <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                          Penambahan Progress (%)
+                          {t('progressIncrement')} (%)
                         </label>
                         <input
                           type="number"
@@ -2610,7 +2638,7 @@ export default function LaporanPekerjaan() {
                       </div>
                       <div>
                         <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                          Deskripsi
+                          {t('description')}
                         </label>
                         <input
                           type="text"
@@ -3230,7 +3258,7 @@ export default function LaporanPekerjaan() {
           <div className="bg-white dark:bg-gray-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
             <div className="sticky top-0 bg-white dark:bg-gray-800 border-b dark:border-gray-700 px-6 py-4 flex justify-between items-center z-10">
               <h2 className="text-xl font-bold text-gray-800 dark:text-white">
-                {editingSparepartId ? "Edit Sparepart" : "Tambah Sparepart Baru"}
+                {editingSparepartId ? t('editSparepart') : t('createSparepart')}
               </h2>
               <button
                 onClick={() => {
@@ -3256,7 +3284,7 @@ export default function LaporanPekerjaan() {
             <div className="p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                  Nama Sparepart *
+                  {t('partName')} *
                 </label>
                 <input
                   type="text"
@@ -3270,7 +3298,7 @@ export default function LaporanPekerjaan() {
 
               <div>
                 <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                  Deskripsi
+                  {t('description')}
                 </label>
                 <textarea
                   name="deskripsi"
@@ -3285,7 +3313,7 @@ export default function LaporanPekerjaan() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                    Jumlah *
+                    {t('quantity')} *
                   </label>
                   <input
                     type="number"
@@ -3299,7 +3327,7 @@ export default function LaporanPekerjaan() {
 
                 <div>
                   <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                    Satuan
+                    {t('unit')}
                   </label>
                   <input
                     type="text"
@@ -3318,7 +3346,7 @@ export default function LaporanPekerjaan() {
                   disabled={saving}
                   className="flex-1 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold disabled:opacity-50"
                 >
-                  {editingSparepartId ? "Update" : "Simpan"}
+                  {editingSparepartId ? t('update') : t('save')}
                 </button>
                 <button
                   onClick={() => {
