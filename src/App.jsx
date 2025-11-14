@@ -1031,12 +1031,12 @@ export default function LaporanPekerjaan() {
 
     // Validate required fields based on status
     if (selectedSparepart.status === 'ordered' && !selectedSparepart.tanggalDipesan) {
-      alert("Tanggal dipesan harus diisi untuk status 'Sudah Dipesan'");
+      alert(t('orderDateRequired'));
       return;
     }
 
     if (selectedSparepart.status === 'arrived' && !selectedSparepart.tanggalDatang) {
-      alert("Tanggal datang harus diisi untuk status 'Sudah Datang'");
+      alert(t('arrivalDateRequired'));
       return;
     }
 
@@ -1256,10 +1256,10 @@ export default function LaporanPekerjaan() {
               </div>
               <div>
                 <h1 className="text-sm sm:text-base md:text-xl font-bold text-gray-800 dark:text-white leading-tight">
-                  HVE ELECTRICAL SPIL
+                  {t('appTitle')}
                 </h1>
                 <p className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 hidden sm:block">
-                  Heavy Equipment Electrical PT. Salam Pasific Indonesia Lines
+                  {t('appSubtitle')}
                 </p>
               </div>
             </div>
@@ -1312,7 +1312,7 @@ export default function LaporanPekerjaan() {
                   className="hidden lg:flex bg-blue-600 hover:bg-blue-700 text-white p-2 sm:px-4 sm:py-2 rounded-lg font-semibold items-center gap-1 sm:gap-2 transition-colors"
                 >
                   <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
-                  <span className="text-sm">Laporan Baru</span>
+                  <span className="text-sm">{t('newReport')}</span>
                 </button>
               )}
               {activeTab === "tasks" && (
@@ -1321,7 +1321,7 @@ export default function LaporanPekerjaan() {
                   className="hidden lg:flex bg-green-600 hover:bg-green-700 text-white p-2 sm:px-4 sm:py-2 rounded-lg font-semibold items-center gap-1 sm:gap-2 transition-colors"
                 >
                   <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
-                  <span className="text-sm">Task Baru</span>
+                  <span className="text-sm">{t('newTask')}</span>
                 </button>
               )}
               {activeTab === "spareparts" && (
@@ -1351,7 +1351,7 @@ export default function LaporanPekerjaan() {
               }`}
             >
               <BarChart3 size={14} className="sm:w-[18px] sm:h-[18px]" />
-              <span>Dashboard</span>
+              <span>{t('dashboard')}</span>
             </button>
             <button
               onClick={() => {
@@ -1365,7 +1365,7 @@ export default function LaporanPekerjaan() {
               }`}
             >
               <FileText size={14} className="sm:w-[18px] sm:h-[18px]" />
-              <span>Laporan</span>
+              <span>{t('reports')}</span>
             </button>
             <button
               onClick={() => {
@@ -1379,7 +1379,7 @@ export default function LaporanPekerjaan() {
               }`}
             >
               <ListTodo size={14} className="sm:w-[18px] sm:h-[18px]" />
-              <span>Task</span>
+              <span>{t('tasks')}</span>
             </button>
             <button
               onClick={() => {
@@ -1394,7 +1394,7 @@ export default function LaporanPekerjaan() {
               }`}
             >
               <Wrench size={14} className="sm:w-[18px] sm:h-[18px]" />
-              <span>Sparepart</span>
+              <span>{t('spareparts')}</span>
             </button>
             <button
               onClick={() => {
@@ -1403,7 +1403,7 @@ export default function LaporanPekerjaan() {
               className="px-2 sm:px-4 py-2 sm:py-3 font-semibold transition-colors whitespace-nowrap text-xs sm:text-base flex items-center gap-1 sm:gap-2 text-gray-600 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400"
             >
               <Monitor size={14} className="sm:w-[18px] sm:h-[18px]" />
-              <span>Monitoring Reach Stacker</span>
+              <span>{t('monitoring')}</span>
             </button>
           </div>
         </div>
@@ -1424,7 +1424,7 @@ export default function LaporanPekerjaan() {
               {/* Header */}
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-lg font-bold text-gray-800 dark:text-white">
-                  Menu
+                  {t('menu')}
                 </h2>
                 <button
                   onClick={() => setShowMobileMenu(false)}
@@ -1450,7 +1450,7 @@ export default function LaporanPekerjaan() {
                   }`}
                 >
                   <BarChart3 size={20} />
-                  <span>Dashboard</span>
+                  <span>{t('dashboard')}</span>
                 </button>
 
                 <button
@@ -1466,7 +1466,7 @@ export default function LaporanPekerjaan() {
                   }`}
                 >
                   <FileText size={20} />
-                  <span>Laporan</span>
+                  <span>{t('reports')}</span>
                 </button>
 
                 <button
@@ -1482,7 +1482,7 @@ export default function LaporanPekerjaan() {
                   }`}
                 >
                   <ListTodo size={20} />
-                  <span>Task</span>
+                  <span>{t('tasks')}</span>
                 </button>
 
                 <button
@@ -1499,7 +1499,7 @@ export default function LaporanPekerjaan() {
                   }`}
                 >
                   <Wrench size={20} />
-                  <span>Sparepart</span>
+                  <span>{t('spareparts')}</span>
                 </button>
 
                 <button
@@ -1510,7 +1510,7 @@ export default function LaporanPekerjaan() {
                   className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold transition-colors text-gray-700 dark:text-gray-300 hover:bg-orange-100 dark:hover:bg-orange-900/30 hover:text-orange-600 dark:hover:text-orange-400"
                 >
                   <Monitor size={20} />
-                  <span>Monitoring Reach Stacker</span>
+                  <span>{t('monitoring')}</span>
                 </button>
               </nav>
 
@@ -1544,7 +1544,7 @@ export default function LaporanPekerjaan() {
                   className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
                 >
                   <RefreshCw size={20} className={loading ? "animate-spin" : ""} />
-                  <span>Refresh Data</span>
+                  <span>{t('refresh')} Data</span>
                 </button>
               </div>
 
@@ -1562,7 +1562,7 @@ export default function LaporanPekerjaan() {
                         className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
                       >
                         <Plus size={20} />
-                        <span>Buat Laporan Baru</span>
+                        <span>{t('createNewReport')}</span>
                       </button>
                     )}
                     {activeTab === "tasks" && (
@@ -1574,7 +1574,7 @@ export default function LaporanPekerjaan() {
                         className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors"
                       >
                         <Plus size={20} />
-                        <span>Buat Task Baru</span>
+                        <span>{t('createNewTask')}</span>
                       </button>
                     )}
                     {activeTab === "spareparts" && (
@@ -1586,7 +1586,7 @@ export default function LaporanPekerjaan() {
                         className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-colors"
                       >
                         <Plus size={20} />
-                        <span>Order Sparepart</span>
+                        <span>{t('orderSparepart')}</span>
                       </button>
                     )}
                   </div>
@@ -1606,7 +1606,7 @@ export default function LaporanPekerjaan() {
                 size={24}
               />
               <span className="text-lg font-semibold dark:text-white">
-                Menyimpan data...
+                {t('saving')}
               </span>
             </div>
           </div>
