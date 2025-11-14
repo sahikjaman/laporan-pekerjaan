@@ -1058,16 +1058,9 @@ export default function LaporanPekerjaan() {
             </button>
             <button
               onClick={() => {
-                setActiveTab("monitoring");
-                setShowForm(false);
-                setShowTaskForm(false);
-                setShowSparepartForm(false);
+                window.open("https://reach-stacker-monitor.vercel.app/", "_blank", "noopener,noreferrer");
               }}
-              className={`px-2 sm:px-4 py-2 sm:py-3 font-semibold transition-colors whitespace-nowrap text-xs sm:text-base flex items-center gap-1 sm:gap-2 ${
-                activeTab === "monitoring"
-                  ? "text-orange-600 dark:text-orange-400 border-b-2 border-orange-600 dark:border-orange-400"
-                  : "text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100"
-              }`}
+              className="px-2 sm:px-4 py-2 sm:py-3 font-semibold transition-colors whitespace-nowrap text-xs sm:text-base flex items-center gap-1 sm:gap-2 text-gray-600 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400"
             >
               <Monitor size={14} className="sm:w-[18px] sm:h-[18px]" />
               <span>Monitoring Reach Stacker</span>
@@ -1171,17 +1164,10 @@ export default function LaporanPekerjaan() {
 
                 <button
                   onClick={() => {
-                    setActiveTab("monitoring");
-                    setShowForm(false);
-                    setShowTaskForm(false);
-                    setShowSparepartForm(false);
+                    window.open("https://reach-stacker-monitor.vercel.app/", "_blank", "noopener,noreferrer");
                     setShowMobileMenu(false);
                   }}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold transition-colors ${
-                    activeTab === "monitoring"
-                      ? "bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400"
-                      : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  }`}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold transition-colors text-gray-700 dark:text-gray-300 hover:bg-orange-100 dark:hover:bg-orange-900/30 hover:text-orange-600 dark:hover:text-orange-400"
                 >
                   <Monitor size={20} />
                   <span>Monitoring Reach Stacker</span>
@@ -3100,35 +3086,6 @@ export default function LaporanPekerjaan() {
                 >
                   Batal
                 </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Monitoring Reach Stacker Tab */}
-      {activeTab === "monitoring" && (
-        <div className="space-y-6">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-            <div className="mb-6">
-              <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
-                Monitoring Reach Stacker
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400">
-                Sistem monitoring real-time untuk Reach Stacker
-              </p>
-            </div>
-
-            {/* Iframe Container */}
-            <div className="w-full bg-gray-100 dark:bg-gray-900 rounded-lg overflow-hidden">
-              <div className="relative w-full" style={{ paddingBottom: '75%' }}>
-                <iframe
-                  src="https://reach-stacker-monitor.vercel.app/"
-                  className="absolute top-0 left-0 w-full h-full border-0"
-                  title="Monitoring Reach Stacker"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
               </div>
             </div>
           </div>
