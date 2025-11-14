@@ -22,6 +22,7 @@ import {
   Monitor,
   ClipboardList,
   MessageSquare,
+  Menu,
 } from "lucide-react";
 
 const API_URL = "/api/reports";
@@ -46,6 +47,7 @@ export default function LaporanPekerjaan() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   // Theme: 'system' | 'light' | 'dark'
   const THEME_KEY = "theme";
@@ -933,21 +935,30 @@ export default function LaporanPekerjaan() {
               </div>
             </div>
             <div className="flex gap-1 sm:gap-2">
+              {/* Mobile Menu Button */}
+              <button
+                onClick={() => setShowMobileMenu(!showMobileMenu)}
+                className="lg:hidden bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 p-2 rounded-lg font-semibold flex items-center transition-colors"
+                title="Menu"
+              >
+                <Menu size={20} />
+              </button>
+
               {/* Theme Toggle Button */}
               <button
                 onClick={cycleTheme}
-                className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 p-2 sm:px-4 sm:py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
+                className="hidden lg:flex bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 p-2 sm:px-4 sm:py-2 rounded-lg font-semibold items-center gap-2 transition-colors"
                 title={`Current: ${getThemeLabel()} - Click to change`}
               >
                 {getThemeIcon()}
-                <span className="hidden lg:inline text-sm">
+                <span className="text-sm">
                   {getThemeLabel()}
                 </span>
               </button>
               <button
                 onClick={loadReports}
                 disabled={loading}
-                className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 p-2 sm:px-4 sm:py-2 rounded-lg font-semibold flex items-center transition-colors"
+                className="hidden lg:flex bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 p-2 sm:px-4 sm:py-2 rounded-lg font-semibold items-center transition-colors"
                 title="Refresh"
               >
                 <RefreshCw
@@ -958,33 +969,35 @@ export default function LaporanPekerjaan() {
               {activeTab === "laporan" && (
                 <button
                   onClick={() => setShowForm(true)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white p-2 sm:px-4 sm:py-2 rounded-lg font-semibold flex items-center gap-1 sm:gap-2 transition-colors"
+                  className="hidden lg:flex bg-blue-600 hover:bg-blue-700 text-white p-2 sm:px-4 sm:py-2 rounded-lg font-semibold items-center gap-1 sm:gap-2 transition-colors"
                 >
                   <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
-                  <span className="hidden sm:inline text-sm">Laporan Baru</span>
+                  <span className="text-sm">Laporan Baru</span>
                 </button>
               )}
               {activeTab === "tasks" && (
                 <button
                   onClick={() => setShowTaskForm(true)}
-                  className="bg-green-600 hover:bg-green-700 text-white p-2 sm:px-4 sm:py-2 rounded-lg font-semibold flex items-center gap-1 sm:gap-2 transition-colors"
+                  className="hidden lg:flex bg-green-600 hover:bg-green-700 text-white p-2 sm:px-4 sm:py-2 rounded-lg font-semibold items-center gap-1 sm:gap-2 transition-colors"
                 >
                   <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
-                  <span className="hidden sm:inline text-sm">Task Baru</span>
+                  <span className="text-sm">Task Baru</span>
                 </button>
               )}
               {activeTab === "spareparts" && (
                 <button
                   onClick={() => setShowSparepartForm(true)}
-                  className="bg-purple-600 hover:bg-purple-700 text-white p-2 sm:px-4 sm:py-2 rounded-lg font-semibold flex items-center gap-1 sm:gap-2 transition-colors"
+                  className="hidden lg:flex bg-purple-600 hover:bg-purple-700 text-white p-2 sm:px-4 sm:py-2 rounded-lg font-semibold items-center gap-1 sm:gap-2 transition-colors"
                 >
                   <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
-                  <span className="hidden sm:inline text-sm">Sparepart Baru</span>
+                  <span className="text-sm">Sparepart Baru</span>
                 </button>
               )}
             </div>
           </div>
-          <div className="flex gap-1 sm:gap-4 border-t dark:border-gray-700 overflow-x-auto scrollbar-hide">
+
+          {/* Desktop Tab Navigation */}
+          <div className="hidden lg:flex gap-1 sm:gap-4 border-t dark:border-gray-700">
             <button
               onClick={() => {
                 setActiveTab("dashboard");
@@ -1043,9 +1056,212 @@ export default function LaporanPekerjaan() {
               <Wrench size={14} className="sm:w-[18px] sm:h-[18px]" />
               <span>Sparepart</span>
             </button>
+            <button
+              onClick={() => {
+                setActiveTab("monitoring");
+                setShowForm(false);
+                setShowTaskForm(false);
+                setShowSparepartForm(false);
+              }}
+              className={`px-2 sm:px-4 py-2 sm:py-3 font-semibold transition-colors whitespace-nowrap text-xs sm:text-base flex items-center gap-1 sm:gap-2 ${
+                activeTab === "monitoring"
+                  ? "text-orange-600 dark:text-orange-400 border-b-2 border-orange-600 dark:border-orange-400"
+                  : "text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100"
+              }`}
+            >
+              <Monitor size={14} className="sm:w-[18px] sm:h-[18px]" />
+              <span>Monitoring Reach Stacker</span>
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Mobile Menu Sidebar */}
+      {showMobileMenu && (
+        <div className="lg:hidden fixed inset-0 z-50">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black bg-opacity-50"
+            onClick={() => setShowMobileMenu(false)}
+          ></div>
+
+          {/* Sidebar */}
+          <div className="absolute top-0 left-0 h-full w-64 bg-white dark:bg-gray-800 shadow-2xl transform transition-transform duration-300">
+            <div className="p-4">
+              {/* Header */}
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-lg font-bold text-gray-800 dark:text-white">
+                  Menu
+                </h2>
+                <button
+                  onClick={() => setShowMobileMenu(false)}
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+                >
+                  <X size={20} className="text-gray-600 dark:text-gray-300" />
+                </button>
+              </div>
+
+              {/* Navigation Links */}
+              <nav className="space-y-2">
+                <button
+                  onClick={() => {
+                    setActiveTab("dashboard");
+                    setShowForm(false);
+                    setShowTaskForm(false);
+                    setShowMobileMenu(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold transition-colors ${
+                    activeTab === "dashboard"
+                      ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
+                      : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  }`}
+                >
+                  <BarChart3 size={20} />
+                  <span>Dashboard</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setActiveTab("laporan");
+                    setShowTaskForm(false);
+                    setShowMobileMenu(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold transition-colors ${
+                    activeTab === "laporan"
+                      ? "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
+                      : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  }`}
+                >
+                  <FileText size={20} />
+                  <span>Laporan</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setActiveTab("tasks");
+                    setShowForm(false);
+                    setShowMobileMenu(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold transition-colors ${
+                    activeTab === "tasks"
+                      ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
+                      : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  }`}
+                >
+                  <ListTodo size={20} />
+                  <span>Task</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setActiveTab("spareparts");
+                    setShowForm(false);
+                    setShowTaskForm(false);
+                    setShowMobileMenu(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold transition-colors ${
+                    activeTab === "spareparts"
+                      ? "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400"
+                      : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  }`}
+                >
+                  <Wrench size={20} />
+                  <span>Sparepart</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setActiveTab("monitoring");
+                    setShowForm(false);
+                    setShowTaskForm(false);
+                    setShowSparepartForm(false);
+                    setShowMobileMenu(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold transition-colors ${
+                    activeTab === "monitoring"
+                      ? "bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400"
+                      : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  }`}
+                >
+                  <Monitor size={20} />
+                  <span>Monitoring Reach Stacker</span>
+                </button>
+              </nav>
+
+              {/* Divider */}
+              <div className="my-6 border-t border-gray-200 dark:border-gray-700"></div>
+
+              {/* Additional Actions */}
+              <div className="space-y-2">
+                <button
+                  onClick={cycleTheme}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                >
+                  {getThemeIcon()}
+                  <span>{getThemeLabel()} Mode</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    loadReports();
+                    setShowMobileMenu(false);
+                  }}
+                  disabled={loading}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+                >
+                  <RefreshCw size={20} className={loading ? "animate-spin" : ""} />
+                  <span>Refresh Data</span>
+                </button>
+              </div>
+
+              {/* Quick Add Buttons */}
+              {activeTab !== "dashboard" && (
+                <>
+                  <div className="my-6 border-t border-gray-200 dark:border-gray-700"></div>
+                  <div className="space-y-2">
+                    {activeTab === "laporan" && (
+                      <button
+                        onClick={() => {
+                          setShowForm(true);
+                          setShowMobileMenu(false);
+                        }}
+                        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
+                      >
+                        <Plus size={20} />
+                        <span>Buat Laporan Baru</span>
+                      </button>
+                    )}
+                    {activeTab === "tasks" && (
+                      <button
+                        onClick={() => {
+                          setShowTaskForm(true);
+                          setShowMobileMenu(false);
+                        }}
+                        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors"
+                      >
+                        <Plus size={20} />
+                        <span>Buat Task Baru</span>
+                      </button>
+                    )}
+                    {activeTab === "spareparts" && (
+                      <button
+                        onClick={() => {
+                          setShowSparepartForm(true);
+                          setShowMobileMenu(false);
+                        }}
+                        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-colors"
+                      >
+                        <Plus size={20} />
+                        <span>Order Sparepart</span>
+                      </button>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="max-w-6xl mx-auto p-3 sm:p-4 md:p-8">
         {saving && (
@@ -2885,6 +3101,33 @@ export default function LaporanPekerjaan() {
                   Batal
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Monitoring Reach Stacker Tab */}
+      {activeTab === "monitoring" && (
+        <div className="space-y-6">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <Monitor className="text-orange-600 dark:text-orange-400" size={32} />
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+                Monitoring Reach Stacker
+              </h2>
+            </div>
+            
+            <div className="relative w-full" style={{ paddingBottom: '75%' }}>
+              <iframe
+                src="https://reach-stacker-monitor.vercel.app/"
+                className="absolute top-0 left-0 w-full h-full border-0 rounded-lg"
+                title="Monitoring Reach Stacker"
+                allow="fullscreen"
+              />
+            </div>
+            
+            <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
+              <p>Sistem monitoring real-time untuk Reach Stacker</p>
             </div>
           </div>
         </div>
