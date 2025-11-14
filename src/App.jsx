@@ -23,11 +23,260 @@ import {
   ClipboardList,
   MessageSquare,
   Menu,
+  Globe,
 } from "lucide-react";
 
 const API_URL = "/api/reports";
 const TASK_API_URL = "/api/tasks";
 const SPAREPART_API_URL = "/api/spareparts";
+
+// Translations
+const translations = {
+  id: {
+    // Navigation & Header
+    appTitle: "HVE ELECTRICAL SPIL",
+    appSubtitle: "Heavy Equipment Electrical PT. Salam Pasific Indonesia Lines",
+    menu: "Menu",
+    refresh: "Refresh",
+    loading: "Memuat data...",
+    saving: "Menyimpan data...",
+    
+    // Tabs
+    dashboard: "Dashboard",
+    reports: "Laporan",
+    tasks: "Task",
+    spareparts: "Sparepart",
+    monitoring: "Monitoring Reach Stacker",
+    
+    // Buttons
+    newReport: "Laporan Baru",
+    newTask: "Task Baru",
+    save: "Simpan",
+    cancel: "Batal",
+    edit: "Edit",
+    delete: "Hapus",
+    update: "Update",
+    create: "Buat",
+    close: "Tutup",
+    search: "Cari",
+    sort: "Urutkan",
+    
+    // Dashboard
+    createNewReport: "Buat Laporan Baru",
+    recordFieldWork: "Catat pekerjaan lapangan Anda",
+    createNewTask: "Buat Task Baru",
+    planYourWork: "Rencanakan pekerjaan Anda",
+    orderSparepart: "Order Sparepart",
+    manageInventory: "Kelola inventori sparepart",
+    totalReports: "Total Laporan",
+    completedTasks: "Task Selesai",
+    ongoingTasks: "Task Berlangsung",
+    sparepartOrdered: "Sparepart Dipesan",
+    recentReports: "Laporan Terbaru",
+    topLocations: "Lokasi Teratas",
+    ongoingTasksPriority: "Task Berlangsung (Prioritas)",
+    ongoingTasksDeadline: "Task Berlangsung (Deadline)",
+    noOngoingTasks: "Tidak ada task berlangsung",
+    sparepartSummary: "Ringkasan Sparepart",
+    
+    // Reports
+    searchReports: "Cari proyek, lokasi, kegiatan, atau unit alat...",
+    noReports: "Belum ada laporan",
+    noReportsFound: "Tidak ada laporan yang sesuai",
+    createFirstReport: 'Klik tombol "Laporan Baru" untuk mulai membuat laporan',
+    tryDifferentKeyword: "Coba ubah kata kunci pencarian",
+    editReport: "Edit Laporan",
+    createReport: "Buat Laporan Baru",
+    date: "Tanggal",
+    location: "Lokasi",
+    projectName: "Nama Proyek",
+    activityType: "Jenis Kegiatan",
+    equipment: "Unit Alat",
+    description: "Deskripsi",
+    startTime: "Jam Mulai",
+    endTime: "Jam Selesai",
+    notes: "Catatan",
+    duration: "Durasi",
+    hours: "jam",
+    
+    // Tasks
+    searchTasks: "Cari task...",
+    sortByDeadline: "Urutkan: Deadline",
+    sortByPriority: "Urutkan: Prioritas",
+    sortByName: "Urutkan: Nama (A-Z)",
+    noTasks: "Belum ada task",
+    noTasksFound: "Tidak ada task yang sesuai",
+    createFirstTask: 'Klik tombol "Task Baru" untuk mulai membuat task',
+    editTask: "Edit Task",
+    createTask: "Buat Task Baru",
+    taskName: "Nama Task",
+    priority: "Prioritas",
+    deadline: "Deadline",
+    progress: "Progress",
+    high: "Tinggi",
+    medium: "Sedang",
+    low: "Rendah",
+    completed: "Selesai",
+    addProgressLog: "Tambah Log Progress",
+    progressLogs: "Log Progress",
+    noProgressLogs: "Belum ada log progress",
+    progressUpdate: "Update Progress",
+    progressIncrement: "Penambahan Progress",
+    
+    // Spareparts
+    noSpareparts: "Belum ada sparepart yang diorder",
+    editSparepart: "Edit Sparepart",
+    createSparepart: "Order Sparepart Baru",
+    partName: "Nama Part",
+    quantity: "Jumlah",
+    unit: "Unit",
+    status: "Status",
+    pending: "Belum Dipesan",
+    ordered: "Sudah Dipesan",
+    arrived: "Sudah Datang",
+    orderedDate: "Tanggal Dipesan",
+    arrivedDate: "Tanggal Datang",
+    orderedBy: "Dipesan Oleh",
+    editDates: "Edit Tanggal Sparepart",
+    required: "wajib diisi",
+    optional: "Opsional",
+    enterOrderDate: "Masukkan tanggal saat sparepart dipesan",
+    enterArrivalDate: "Masukkan tanggal saat sparepart tiba",
+    statusPendingInfo: "Sparepart belum dipesan. Ubah status ke \"Sudah Dipesan\" untuk memasukkan tanggal pemesanan.",
+    
+    // Messages
+    confirmDelete: "Yakin ingin menghapus",
+    deleteSuccess: "Berhasil dihapus",
+    deleteFailed: "Gagal menghapus",
+    saveSuccess: "Berhasil disimpan",
+    saveFailed: "Gagal menyimpan",
+    fillRequired: "Harap isi semua field yang wajib",
+    orderDateRequired: "Tanggal dipesan harus diisi untuk status 'Sudah Dipesan'",
+    arrivalDateRequired: "Tanggal datang harus diisi untuk status 'Sudah Datang'",
+  },
+  en: {
+    // Navigation & Header
+    appTitle: "HVE ELECTRICAL SPIL",
+    appSubtitle: "Heavy Equipment Electrical PT. Salam Pacific Indonesia Lines",
+    menu: "Menu",
+    refresh: "Refresh",
+    loading: "Loading data...",
+    saving: "Saving data...",
+    
+    // Tabs
+    dashboard: "Dashboard",
+    reports: "Reports",
+    tasks: "Tasks",
+    spareparts: "Spareparts",
+    monitoring: "Reach Stacker Monitoring",
+    
+    // Buttons
+    newReport: "New Report",
+    newTask: "New Task",
+    save: "Save",
+    cancel: "Cancel",
+    edit: "Edit",
+    delete: "Delete",
+    update: "Update",
+    create: "Create",
+    close: "Close",
+    search: "Search",
+    sort: "Sort",
+    
+    // Dashboard
+    createNewReport: "Create New Report",
+    recordFieldWork: "Record your field work",
+    createNewTask: "Create New Task",
+    planYourWork: "Plan your work",
+    orderSparepart: "Order Sparepart",
+    manageInventory: "Manage sparepart inventory",
+    totalReports: "Total Reports",
+    completedTasks: "Completed Tasks",
+    ongoingTasks: "Ongoing Tasks",
+    sparepartOrdered: "Spareparts Ordered",
+    recentReports: "Recent Reports",
+    topLocations: "Top Locations",
+    ongoingTasksPriority: "Ongoing Tasks (Priority)",
+    ongoingTasksDeadline: "Ongoing Tasks (Deadline)",
+    noOngoingTasks: "No ongoing tasks",
+    sparepartSummary: "Sparepart Summary",
+    
+    // Reports
+    searchReports: "Search project, location, activity, or equipment...",
+    noReports: "No reports yet",
+    noReportsFound: "No matching reports found",
+    createFirstReport: 'Click "New Report" button to start creating reports',
+    tryDifferentKeyword: "Try different search keywords",
+    editReport: "Edit Report",
+    createReport: "Create New Report",
+    date: "Date",
+    location: "Location",
+    projectName: "Project Name",
+    activityType: "Activity Type",
+    equipment: "Equipment Unit",
+    description: "Description",
+    startTime: "Start Time",
+    endTime: "End Time",
+    notes: "Notes",
+    duration: "Duration",
+    hours: "hours",
+    
+    // Tasks
+    searchTasks: "Search tasks...",
+    sortByDeadline: "Sort: Deadline",
+    sortByPriority: "Sort: Priority",
+    sortByName: "Sort: Name (A-Z)",
+    noTasks: "No tasks yet",
+    noTasksFound: "No matching tasks found",
+    createFirstTask: 'Click "New Task" button to start creating tasks',
+    editTask: "Edit Task",
+    createTask: "Create New Task",
+    taskName: "Task Name",
+    priority: "Priority",
+    deadline: "Deadline",
+    progress: "Progress",
+    high: "High",
+    medium: "Medium",
+    low: "Low",
+    completed: "Completed",
+    addProgressLog: "Add Progress Log",
+    progressLogs: "Progress Logs",
+    noProgressLogs: "No progress logs yet",
+    progressUpdate: "Progress Update",
+    progressIncrement: "Progress Increment",
+    
+    // Spareparts
+    noSpareparts: "No spareparts ordered yet",
+    editSparepart: "Edit Sparepart",
+    createSparepart: "Order New Sparepart",
+    partName: "Part Name",
+    quantity: "Quantity",
+    unit: "Unit",
+    status: "Status",
+    pending: "Not Ordered",
+    ordered: "Ordered",
+    arrived: "Arrived",
+    orderedDate: "Order Date",
+    arrivedDate: "Arrival Date",
+    orderedBy: "Ordered By",
+    editDates: "Edit Sparepart Dates",
+    required: "required",
+    optional: "Optional",
+    enterOrderDate: "Enter the date when sparepart was ordered",
+    enterArrivalDate: "Enter the date when sparepart arrived",
+    statusPendingInfo: "Sparepart not ordered yet. Change status to \"Ordered\" to enter order date.",
+    
+    // Messages
+    confirmDelete: "Are you sure you want to delete",
+    deleteSuccess: "Successfully deleted",
+    deleteFailed: "Failed to delete",
+    saveSuccess: "Successfully saved",
+    saveFailed: "Failed to save",
+    fillRequired: "Please fill all required fields",
+    orderDateRequired: "Order date is required for 'Ordered' status",
+    arrivalDateRequired: "Arrival date is required for 'Arrived' status",
+  }
+};
 
 export default function LaporanPekerjaan() {
   const [reports, setReports] = useState([]);
@@ -49,6 +298,32 @@ export default function LaporanPekerjaan() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [taskSortBy, setTaskSortBy] = useState("deadline"); // 'deadline', 'priority', 'name'
+
+  // Language: 'id' | 'en'
+  const LANGUAGE_KEY = "language";
+  const [language, setLanguage] = useState(() => {
+    try {
+      return localStorage.getItem(LANGUAGE_KEY) || "id";
+    } catch (e) {
+      return "id";
+    }
+  });
+
+  // Translation helper
+  const t = (key) => translations[language][key] || key;
+
+  // Save language to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem(LANGUAGE_KEY, language);
+    } catch (e) {
+      console.error("Failed to save language:", e);
+    }
+  }, [language]);
+
+  const toggleLanguage = () => {
+    setLanguage((current) => (current === "id" ? "en" : "id"));
+  };
 
   // Theme: 'system' | 'light' | 'dark'
   const THEME_KEY = "theme";
@@ -946,7 +1221,7 @@ export default function LaporanPekerjaan() {
               size={48}
             />
             <div className="text-lg text-white dark:text-gray-200">
-              Memuat data...
+              {t('loading')}
             </div>
           </div>
         </div>
@@ -1009,6 +1284,17 @@ export default function LaporanPekerjaan() {
                   {getThemeLabel()}
                 </span>
               </button>
+
+              {/* Language Toggle Button */}
+              <button
+                onClick={toggleLanguage}
+                className="hidden lg:flex bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 p-2 sm:px-4 sm:py-2 rounded-lg font-semibold items-center gap-2 transition-colors"
+                title="Change Language"
+              >
+                <Globe size={16} className="sm:w-[18px] sm:h-[18px]" />
+                <span className="text-sm">{language === "id" ? "ID" : "EN"}</span>
+              </button>
+
               <button
                 onClick={loadReports}
                 disabled={loading}
@@ -1239,6 +1525,14 @@ export default function LaporanPekerjaan() {
                 >
                   {getThemeIcon()}
                   <span>{getThemeLabel()} Mode</span>
+                </button>
+
+                <button
+                  onClick={toggleLanguage}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                >
+                  <Globe size={20} />
+                  <span>{language === "id" ? "Bahasa Indonesia" : "English"}</span>
                 </button>
 
                 <button
