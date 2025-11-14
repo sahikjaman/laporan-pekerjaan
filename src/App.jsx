@@ -42,20 +42,20 @@ const translations = {
     saving: "Menyimpan data...",
     
     // Tabs
-    dashboard: "Dashboard",
+    dashboard: "Dasbor",
     reports: "Laporan",
-    tasks: "Task",
-    spareparts: "Sparepart",
+    tasks: "Tugas",
+    spareparts: "Suku Cadang",
     monitoring: "Monitoring Reach Stacker",
     
     // Buttons
     newReport: "Laporan Baru",
-    newTask: "Task Baru",
+    newTask: "Tugas Baru",
     save: "Simpan",
     cancel: "Batal",
-    edit: "Edit",
+    edit: "Ubah",
     delete: "Hapus",
-    update: "Update",
+    update: "Perbarui",
     create: "Buat",
     close: "Tutup",
     search: "Cari",
@@ -64,26 +64,26 @@ const translations = {
     // Dashboard
     createNewReport: "Buat Laporan Baru",
     recordFieldWork: "Catat pekerjaan lapangan Anda",
-    createNewTask: "Buat Task Baru",
+    createNewTask: "Buat Tugas Baru",
     planYourWork: "Rencanakan pekerjaan Anda",
-    orderSparepart: "Order Sparepart",
-    addSparepartRequest: "Tambahkan permintaan sparepart",
-    manageInventory: "Kelola inventori sparepart",
+    orderSparepart: "Pesan Suku Cadang",
+    addSparepartRequest: "Tambahkan permintaan suku cadang",
+    manageInventory: "Kelola inventori suku cadang",
     totalReports: "Total Laporan",
-    totalSpareparts: "Total Sparepart",
-    completedTasks: "Task Selesai",
-    noCompletedTasks: "Belum ada task selesai",
-    ongoingTasks: "Task Berlangsung",
-    ongoingTasksByPriority: "Task Berlangsung (Prioritas)",
-    ongoingTasksByDeadline: "Task Berlangsung (Deadline)",
-    noOngoingTasks: "Tidak ada task berlangsung",
-    noTasksWithDeadline: "Tidak ada task dengan deadline",
+    totalSpareparts: "Total Suku Cadang",
+    completedTasks: "Tugas Selesai",
+    noCompletedTasks: "Belum ada tugas selesai",
+    ongoingTasks: "Tugas Berlangsung",
+    ongoingTasksByPriority: "Tugas Berlangsung (Prioritas)",
+    ongoingTasksByDeadline: "Tugas Berlangsung (Tenggat Waktu)",
+    noOngoingTasks: "Tidak ada tugas berlangsung",
+    noTasksWithDeadline: "Tidak ada tugas dengan tenggat waktu",
     noDataYet: "Belum ada data",
     noReportsYet: "Belum ada laporan",
-    sparepartOrdered: "Sparepart Dipesan",
+    sparepartOrdered: "Suku Cadang Dipesan",
     recentReports: "Laporan Terbaru",
     topLocations: "Lokasi Terbanyak",
-    sparepartSummary: "Ringkasan Sparepart",
+    sparepartSummary: "Ringkasan Suku Cadang",
     
     // Reports
     searchReports: "Cari proyek, lokasi, kegiatan, atau unit alat...",
@@ -106,39 +106,39 @@ const translations = {
     hours: "jam",
     
     // Tasks
-    searchTasks: "Cari task...",
-    sortByDeadline: "Urutkan: Deadline",
+    searchTasks: "Cari tugas...",
+    sortByDeadline: "Urutkan: Tenggat Waktu",
     sortByPriority: "Urutkan: Prioritas",
     sortByName: "Urutkan: Nama (A-Z)",
-    noTasks: "Belum ada task",
-    noTasksFound: "Tidak ada task yang sesuai",
-    createFirstTask: 'Klik tombol "Task Baru" untuk mulai membuat task',
-    editTask: "Edit Task",
-    createTask: "Buat Task Baru",
-    taskName: "Nama Task",
+    noTasks: "Belum ada tugas",
+    noTasksFound: "Tidak ada tugas yang sesuai",
+    createFirstTask: 'Klik tombol "Tugas Baru" untuk mulai membuat tugas',
+    editTask: "Ubah Tugas",
+    createTask: "Buat Tugas Baru",
+    taskName: "Nama Tugas",
     priority: "Prioritas",
     "priority.high": "Tinggi",
     "priority.medium": "Sedang",
     "priority.low": "Rendah",
-    deadline: "Deadline",
-    progress: "Progress",
+    deadline: "Tenggat Waktu",
+    progress: "Progres",
     high: "Tinggi",
     medium: "Sedang",
     low: "Rendah",
     completed: "Selesai",
-    addProgressLog: "Tambah Log Progress",
-    progressLogs: "Log Progress",
-    noProgressLogs: "Belum ada log progress",
-    progressUpdate: "Update Progress",
-    progressIncrement: "Penambahan Progress",
+    addProgressLog: "Tambah Riwayat Progres",
+    progressLogs: "Riwayat Progres",
+    noProgressLogs: "Belum ada riwayat progres",
+    progressUpdate: "Pembaruan Progres",
+    progressIncrement: "Penambahan Progres",
     
     // Spareparts
-    noSpareparts: "Belum ada sparepart yang diorder",
-    editSparepart: "Edit Sparepart",
-    createSparepart: "Order Sparepart Baru",
-    partName: "Nama Part",
+    noSpareparts: "Belum ada suku cadang yang dipesan",
+    editSparepart: "Ubah Suku Cadang",
+    createSparepart: "Pesan Suku Cadang Baru",
+    partName: "Nama Suku Cadang",
     quantity: "Jumlah",
-    unit: "Unit",
+    unit: "Satuan",
     status: "Status",
     pending: "Belum Dipesan",
     ordered: "Sudah Dipesan",
@@ -146,12 +146,12 @@ const translations = {
     orderedDate: "Tanggal Dipesan",
     arrivedDate: "Tanggal Datang",
     orderedBy: "Dipesan Oleh",
-    editDates: "Edit Tanggal Sparepart",
+    editDates: "Ubah Tanggal Suku Cadang",
     required: "wajib diisi",
     optional: "Opsional",
-    enterOrderDate: "Masukkan tanggal saat sparepart dipesan",
-    enterArrivalDate: "Masukkan tanggal saat sparepart tiba",
-    statusPendingInfo: "Sparepart belum dipesan. Ubah status ke \"Sudah Dipesan\" untuk memasukkan tanggal pemesanan.",
+    enterOrderDate: "Masukkan tanggal saat suku cadang dipesan",
+    enterArrivalDate: "Masukkan tanggal saat suku cadang tiba",
+    statusPendingInfo: "Suku cadang belum dipesan. Ubah status ke \"Sudah Dipesan\" untuk memasukkan tanggal pemesanan.",
     
     // Messages
     confirmDelete: "Yakin ingin menghapus",
@@ -159,12 +159,12 @@ const translations = {
     deleteFailed: "Gagal menghapus",
     saveSuccess: "Berhasil disimpan",
     saveFailed: "Gagal menyimpan",
-    updateFailed: "Gagal mengupdate data",
+    updateFailed: "Gagal memperbarui data",
     errorSaving: "Terjadi kesalahan saat menyimpan data",
-    fillRequired: "Harap isi semua field yang wajib",
-    fillTaskRequired: "Harap isi nama task dan deskripsi",
-    fillPartRequired: "Harap isi nama part dan jumlah",
-    fillProgressRequired: "Harap isi deskripsi progress",
+    fillRequired: "Harap isi semua kolom yang wajib diisi",
+    fillTaskRequired: "Harap isi nama tugas dan deskripsi",
+    fillPartRequired: "Harap isi nama suku cadang dan jumlah",
+    fillProgressRequired: "Harap isi deskripsi progres",
     orderDateRequired: "Tanggal dipesan harus diisi untuk status 'Sudah Dipesan'",
     arrivalDateRequired: "Tanggal datang harus diisi untuk status 'Sudah Datang'",
   },
@@ -2542,7 +2542,7 @@ export default function LaporanPekerjaan() {
                       <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
                         <div className="flex justify-between items-center mb-2">
                           <span className="text-sm text-gray-600 dark:text-gray-300">
-                            Total Progress
+                            Total Progres
                           </span>
                           <span className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
                             {taskFormData.progress}%
@@ -2567,7 +2567,7 @@ export default function LaporanPekerjaan() {
                           }}
                         ></div>
                         <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                          Progress dihitung otomatis dari total riwayat progress
+                          Progres dihitung otomatis dari total riwayat progres
                           yang ditambahkan
                         </p>
                       </div>
