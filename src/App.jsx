@@ -1065,7 +1065,7 @@ export default function LaporanPekerjaan() {
         {activeTab === "dashboard" && (
           <div className="space-y-6">
             {/* Quick Action Buttons */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <button
                 onClick={() => {
                   setActiveTab("laporan");
@@ -1073,22 +1073,22 @@ export default function LaporanPekerjaan() {
                   setShowTaskForm(false);
                   setShowSparepartForm(false);
                 }}
-                className="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white p-6 rounded-xl shadow-lg flex items-center justify-between transition-all hover:shadow-xl group"
+                className="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white p-4 sm:p-6 rounded-xl shadow-lg flex items-center justify-between transition-all hover:shadow-xl group"
               >
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-white bg-opacity-20 rounded-lg group-hover:scale-110 transition-transform">
-                    <FileText size={32} />
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <div className="p-2 sm:p-3 bg-white bg-opacity-20 rounded-lg group-hover:scale-110 transition-transform">
+                    <FileText size={24} className="sm:w-8 sm:h-8" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-xl font-bold">Buat Laporan Baru</h3>
-                    <p className="text-sm text-blue-100">
+                    <h3 className="text-base sm:text-xl font-bold">Buat Laporan Baru</h3>
+                    <p className="text-xs sm:text-sm text-blue-100">
                       Catat pekerjaan lapangan Anda
                     </p>
                   </div>
                 </div>
                 <Plus
-                  size={32}
-                  className="group-hover:rotate-90 transition-transform"
+                  size={24}
+                  className="sm:w-8 sm:h-8 group-hover:rotate-90 transition-transform flex-shrink-0"
                 />
               </button>
 
@@ -1099,22 +1099,22 @@ export default function LaporanPekerjaan() {
                   setShowForm(false);
                   setShowSparepartForm(false);
                 }}
-                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white p-6 rounded-xl shadow-lg flex items-center justify-between transition-all hover:shadow-xl group"
+                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white p-4 sm:p-6 rounded-xl shadow-lg flex items-center justify-between transition-all hover:shadow-xl group"
               >
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-white bg-opacity-20 rounded-lg group-hover:scale-110 transition-transform">
-                    <ListTodo size={32} />
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <div className="p-2 sm:p-3 bg-white bg-opacity-20 rounded-lg group-hover:scale-110 transition-transform">
+                    <ListTodo size={24} className="sm:w-8 sm:h-8" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-xl font-bold">Buat Task Baru</h3>
-                    <p className="text-sm text-green-100">
+                    <h3 className="text-base sm:text-xl font-bold">Buat Task Baru</h3>
+                    <p className="text-xs sm:text-sm text-green-100">
                       Rencanakan pekerjaan Anda
                     </p>
                   </div>
                 </div>
                 <Plus
-                  size={32}
-                  className="group-hover:rotate-90 transition-transform"
+                  size={24}
+                  className="sm:w-8 sm:h-8 group-hover:rotate-90 transition-transform flex-shrink-0"
                 />
               </button>
 
@@ -1125,96 +1125,96 @@ export default function LaporanPekerjaan() {
                   setShowForm(false);
                   setShowTaskForm(false);
                 }}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white p-6 rounded-xl shadow-lg flex items-center justify-between transition-all hover:shadow-xl group"
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white p-4 sm:p-6 rounded-xl shadow-lg flex items-center justify-between transition-all hover:shadow-xl group"
               >
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-white bg-opacity-20 rounded-lg group-hover:scale-110 transition-transform">
-                    <Wrench size={32} />
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <div className="p-2 sm:p-3 bg-white bg-opacity-20 rounded-lg group-hover:scale-110 transition-transform">
+                    <Wrench size={24} className="sm:w-8 sm:h-8" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-xl font-bold">Order Sparepart</h3>
-                    <p className="text-sm text-purple-100">
+                    <h3 className="text-base sm:text-xl font-bold">Order Sparepart</h3>
+                    <p className="text-xs sm:text-sm text-purple-100">
                       Tambahkan permintaan sparepart
                     </p>
                   </div>
                 </div>
                 <Plus
-                  size={32}
-                  className="group-hover:rotate-90 transition-transform"
+                  size={24}
+                  className="sm:w-8 sm:h-8 group-hover:rotate-90 transition-transform flex-shrink-0"
                 />
               </button>
             </div>
 
             {/* Statistics Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6">
                 <div className="flex items-center justify-between mb-2">
-                  <div className="p-3 bg-indigo-100 dark:bg-indigo-900/50 rounded-lg">
+                  <div className="p-2 sm:p-3 bg-indigo-100 dark:bg-indigo-900/50 rounded-lg">
                     <FileText
                       className="text-indigo-600 dark:text-indigo-400"
-                      size={24}
+                      size={20}
                     />
                   </div>
                   <TrendingUp
                     className="text-indigo-600 dark:text-indigo-400"
-                    size={20}
+                    size={18}
                   />
                 </div>
-                <h3 className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">
+                <h3 className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm font-medium mb-1">
                   Total Laporan
                 </h3>
-                <p className="text-3xl font-bold text-gray-800 dark:text-white">
+                <p className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
                   {totalReports}
                 </p>
               </div>
 
-              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6">
                 <div className="flex items-center justify-between mb-2">
-                  <div className="p-3 bg-green-100 dark:bg-green-900/50 rounded-lg">
+                  <div className="p-2 sm:p-3 bg-green-100 dark:bg-green-900/50 rounded-lg">
                     <CheckCircle
                       className="text-green-600 dark:text-green-400"
-                      size={24}
+                      size={20}
                     />
                   </div>
                 </div>
-                <h3 className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">
+                <h3 className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm font-medium mb-1">
                   Task Selesai
                 </h3>
-                <p className="text-3xl font-bold text-gray-800 dark:text-white">
+                <p className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
                   {completedTasks}
                 </p>
               </div>
 
-              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6">
                 <div className="flex items-center justify-between mb-2">
-                  <div className="p-3 bg-blue-100 dark:bg-blue-900/50 rounded-lg">
+                  <div className="p-2 sm:p-3 bg-blue-100 dark:bg-blue-900/50 rounded-lg">
                     <Target
                       className="text-blue-600 dark:text-blue-400"
-                      size={24}
+                      size={20}
                     />
                   </div>
                 </div>
-                <h3 className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">
+                <h3 className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm font-medium mb-1">
                   Task Berlangsung
                 </h3>
-                <p className="text-3xl font-bold text-gray-800 dark:text-white">
+                <p className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
                   {ongoingTasks}
                 </p>
               </div>
 
-              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6">
                 <div className="flex items-center justify-between mb-2">
-                  <div className="p-3 bg-purple-100 dark:bg-purple-900/50 rounded-lg">
+                  <div className="p-2 sm:p-3 bg-purple-100 dark:bg-purple-900/50 rounded-lg">
                     <Wrench
                       className="text-purple-600 dark:text-purple-400"
-                      size={24}
+                      size={20}
                     />
                   </div>
                 </div>
-                <h3 className="text-gray-600 dark:text-gray-300 text-sm font-medium mb-1">
+                <h3 className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm font-medium mb-1">
                   Total Sparepart
                 </h3>
-                <p className="text-3xl font-bold text-gray-800 dark:text-white">
+                <p className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
                   {spareparts.length}
                 </p>
               </div>
@@ -1504,8 +1504,8 @@ export default function LaporanPekerjaan() {
             </div>
 
             {/* Sparepart Summary */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-              <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-white mb-4">
                 Ringkasan Sparepart
               </h2>
               {spareparts.length === 0 ? (
@@ -1515,28 +1515,28 @@ export default function LaporanPekerjaan() {
               ) : (
                 <div className="space-y-4">
                   {/* Status Summary */}
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                  <div className="grid grid-cols-3 gap-2 sm:gap-4">
+                    <div className="p-3 sm:p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
                       <p className="text-xs text-yellow-700 dark:text-yellow-400 mb-1">
                         Pending
                       </p>
-                      <p className="text-2xl font-bold text-yellow-800 dark:text-yellow-300">
+                      <p className="text-xl sm:text-2xl font-bold text-yellow-800 dark:text-yellow-300">
                         {spareparts.filter((s) => s.status === "pending").length}
                       </p>
                     </div>
-                    <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                    <div className="p-3 sm:p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
                       <p className="text-xs text-blue-700 dark:text-blue-400 mb-1">
                         Dipesan
                       </p>
-                      <p className="text-2xl font-bold text-blue-800 dark:text-blue-300">
+                      <p className="text-xl sm:text-2xl font-bold text-blue-800 dark:text-blue-300">
                         {spareparts.filter((s) => s.status === "ordered").length}
                       </p>
                     </div>
-                    <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                    <div className="p-3 sm:p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
                       <p className="text-xs text-green-700 dark:text-green-400 mb-1">
                         Datang
                       </p>
-                      <p className="text-2xl font-bold text-green-800 dark:text-green-300">
+                      <p className="text-xl sm:text-2xl font-bold text-green-800 dark:text-green-300">
                         {spareparts.filter((s) => s.status === "arrived").length}
                       </p>
                     </div>
@@ -1544,17 +1544,17 @@ export default function LaporanPekerjaan() {
 
                   {/* Recent Spareparts */}
                   <div>
-                    <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                    <h3 className="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
                       Sparepart Terbaru
                     </h3>
                     <div className="space-y-2">
                       {spareparts.slice(0, 5).map((part) => (
                         <div
                           key={part.id}
-                          className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg flex items-center justify-between"
+                          className="p-2 sm:p-3 bg-gray-50 dark:bg-gray-700 rounded-lg flex items-center justify-between gap-2"
                         >
-                          <div className="flex-1">
-                            <p className="font-semibold text-gray-800 dark:text-white text-sm">
+                          <div className="flex-1 min-w-0">
+                            <p className="font-semibold text-gray-800 dark:text-white text-xs sm:text-sm truncate">
                               {part.namaPart}
                             </p>
                             <p className="text-xs text-gray-600 dark:text-gray-400">
@@ -1562,7 +1562,7 @@ export default function LaporanPekerjaan() {
                             </p>
                           </div>
                           <span
-                            className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                            className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
                               part.status === "arrived"
                                 ? "bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300"
                                 : part.status === "ordered"
