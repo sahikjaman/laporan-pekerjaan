@@ -48,6 +48,7 @@ export default function LaporanPekerjaan() {
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [taskSortBy, setTaskSortBy] = useState("deadline"); // 'deadline', 'priority', 'name'
 
   // Theme: 'system' | 'light' | 'dark'
   const THEME_KEY = "theme";
@@ -841,6 +842,25 @@ export default function LaporanPekerjaan() {
       task.namaTask?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       task.deskripsi?.toLowerCase().includes(searchTerm.toLowerCase())
     );
+  });
+
+  // Sort tasks based on selected option
+  const sortedTasks = [...filteredTasks].sort((a, b) => {
+    if (taskSortBy === "deadline") {
+      // Sort by deadline (earliest first), tasks without deadline go to end
+      if (!a.deadline && !b.deadline) return 0;
+      if (!a.deadline) return 1;
+      if (!b.deadline) return -1;
+      return new Date(a.deadline) - new Date(b.deadline);
+    } else if (taskSortBy === "priority") {
+      // Sort by priority: high > medium > low
+      const priorityOrder = { high: 3, medium: 2, low: 1 };
+      return (priorityOrder[b.prioritas] || 0) - (priorityOrder[a.prioritas] || 0);
+    } else if (taskSortBy === "name") {
+      // Sort alphabetically by name
+      return (a.namaTask || "").localeCompare(b.namaTask || "");
+    }
+    return 0;
   });
 
   const totalReports = reports.length;
@@ -2121,6 +2141,17 @@ export default function LaporanPekerjaan() {
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                   />
                 </div>
+                <div className="md:w-56">
+                  <select
+                    value={taskSortBy}
+                    onChange={(e) => setTaskSortBy(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  >
+                    <option value="deadline">Urutkan: Deadline</option>
+                    <option value="priority">Urutkan: Prioritas</option>
+                    <option value="name">Urutkan: Nama (A-Z)</option>
+                  </select>
+                </div>
               </div>
             </div>
 
@@ -2425,7 +2456,7 @@ export default function LaporanPekerjaan() {
             )}
 
             <div className="space-y-4">
-              {filteredTasks.length === 0 ? (
+              {sortedTasks.length === 0 ? (
                 <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-12 text-center">
                   <ListTodo
                     size={64}
@@ -2443,7 +2474,7 @@ export default function LaporanPekerjaan() {
                   </p>
                 </div>
               ) : (
-                filteredTasks.map((task) => (
+                sortedTasks.map((task) => (
                   <div
                     key={task.id}
                     className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow cursor-pointer"
