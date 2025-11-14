@@ -1297,7 +1297,7 @@ export default function LaporanPekerjaan() {
                   <img
                     src="/logo-spil.png"
                     alt="SPIL Logo"
-                    className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 object-contain"
+                    className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 object-contain transition-transform duration-300 hover:scale-110 cursor-pointer"
                   />
                 </div>
                 <div>
