@@ -754,6 +754,17 @@ export default function LaporanPekerjaan() {
   const handleUpdateSparepartDates = async () => {
     if (!selectedSparepart) return;
 
+    // Validate required fields based on status
+    if (selectedSparepart.status === 'ordered' && !selectedSparepart.tanggalDipesan) {
+      alert("Tanggal dipesan harus diisi untuk status 'Sudah Dipesan'");
+      return;
+    }
+
+    if (selectedSparepart.status === 'arrived' && !selectedSparepart.tanggalDatang) {
+      alert("Tanggal datang harus diisi untuk status 'Sudah Datang'");
+      return;
+    }
+
     setSaving(true);
     try {
       const response = await fetch(SPAREPART_API_URL, {
@@ -3075,12 +3086,16 @@ export default function LaporanPekerjaan() {
                 </label>
                 <select
                   value={selectedSparepart.status}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    const newStatus = e.target.value;
                     setSelectedSparepart({
                       ...selectedSparepart,
-                      status: e.target.value,
-                    })
-                  }
+                      status: newStatus,
+                      // Clear dates based on status
+                      tanggalDipesan: newStatus === 'pending' ? '' : selectedSparepart.tanggalDipesan,
+                      tanggalDatang: newStatus === 'pending' || newStatus === 'ordered' ? '' : selectedSparepart.tanggalDatang,
+                    });
+                  }}
                   className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 >
                   <option value="pending">Belum Dipesan</option>
@@ -3089,39 +3104,84 @@ export default function LaporanPekerjaan() {
                 </select>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                  Tanggal Dipesan
-                </label>
-                <input
-                  type="date"
-                  value={selectedSparepart.tanggalDipesan || ""}
-                  onChange={(e) =>
-                    setSelectedSparepart({
-                      ...selectedSparepart,
-                      tanggalDipesan: e.target.value,
-                    })
-                  }
-                  className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                />
-              </div>
+              {/* Conditional Date Fields based on Status */}
+              {selectedSparepart.status === 'ordered' && (
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                    Tanggal Dipesan <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    value={selectedSparepart.tanggalDipesan || ""}
+                    onChange={(e) =>
+                      setSelectedSparepart({
+                        ...selectedSparepart,
+                        tanggalDipesan: e.target.value,
+                      })
+                    }
+                    className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    required
+                  />
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Masukkan tanggal saat sparepart dipesan
+                  </p>
+                </div>
+              )}
 
-              <div>
-                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                  Tanggal Datang
-                </label>
-                <input
-                  type="date"
-                  value={selectedSparepart.tanggalDatang || ""}
-                  onChange={(e) =>
-                    setSelectedSparepart({
-                      ...selectedSparepart,
-                      tanggalDatang: e.target.value,
-                    })
-                  }
-                  className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                />
-              </div>
+              {selectedSparepart.status === 'arrived' && (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                      Tanggal Dipesan
+                    </label>
+                    <input
+                      type="date"
+                      value={selectedSparepart.tanggalDipesan || ""}
+                      onChange={(e) =>
+                        setSelectedSparepart({
+                          ...selectedSparepart,
+                          tanggalDipesan: e.target.value,
+                        })
+                      }
+                      className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    />
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      Opsional: Tanggal saat sparepart dipesan
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                      Tanggal Datang <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      value={selectedSparepart.tanggalDatang || ""}
+                      onChange={(e) =>
+                        setSelectedSparepart({
+                          ...selectedSparepart,
+                          tanggalDatang: e.target.value,
+                        })
+                      }
+                      className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      required
+                    />
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      Masukkan tanggal saat sparepart tiba
+                    </p>
+                  </div>
+                </>
+              )}
+
+              {selectedSparepart.status === 'pending' && (
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                  <p className="text-sm text-blue-800 dark:text-blue-300">
+                    <strong>Status: Belum Dipesan</strong>
+                    <br />
+                    Sparepart belum dipesan. Ubah status ke "Sudah Dipesan" untuk memasukkan tanggal pemesanan.
+                  </p>
+                </div>
+              )}
 
               <div className="flex gap-3 pt-4">
                 <button
