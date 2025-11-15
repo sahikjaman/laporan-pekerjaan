@@ -327,7 +327,10 @@ export default function LaporanPekerjaan() {
   const [editingSparepartId, setEditingSparepartId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState("dashboard");
+  const [activeTab, setActiveTab] = useState(() => {
+    const hash = window.location.hash.slice(1) || "dashboard";
+    return hash;
+  });
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [taskSortBy, setTaskSortBy] = useState("deadline"); // 'deadline', 'priority', 'name'
 
@@ -352,6 +355,48 @@ export default function LaporanPekerjaan() {
       console.error("Failed to save language:", e);
     }
   }, [language]);
+
+  // Handle browser history for tab navigation
+  useEffect(() => {
+    const handlePopState = (event) => {
+      const hash = window.location.hash.slice(1) || "dashboard";
+      setActiveTab(hash);
+      
+      // Close modals when navigating back
+      if (event.state?.modal) {
+        // If the state has modal info, we're going back to a modal
+        if (event.state.modal === "form") setShowForm(true);
+        else if (event.state.modal === "taskForm") setShowTaskForm(true);
+        else if (event.state.modal === "sparepartForm") setShowSparepartForm(true);
+        else if (event.state.modal === "progressModal") setShowProgressModal(true);
+      } else {
+        // Close all modals when going back to main view
+        setShowForm(false);
+        setShowTaskForm(false);
+        setShowSparepartForm(false);
+        setShowProgressModal(false);
+        setShowSparepartDateModal(false);
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    
+    // Set initial URL
+    if (!window.location.hash) {
+      window.history.replaceState({ tab: "dashboard" }, "", "#dashboard");
+    }
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, []);
+
+  // Update URL when tab changes
+  useEffect(() => {
+    if (window.location.hash.slice(1) !== activeTab) {
+      window.history.pushState({ tab: activeTab }, "", `#${activeTab}`);
+    }
+  }, [activeTab]);
 
   const toggleLanguage = () => {
     setLanguage((current) => (current === "id" ? "en" : "id"));
@@ -680,6 +725,7 @@ export default function LaporanPekerjaan() {
     setEditingId(report.id);
     setShowForm(true);
     setActiveTab("laporan");
+    window.history.pushState({ tab: "laporan", modal: "form" }, "", "#laporan");
   };
 
   const handleEditTask = (task, event) => {
@@ -694,11 +740,13 @@ export default function LaporanPekerjaan() {
     setShowTaskForm(true);
     setShowProgressModal(false);
     setActiveTab("tasks");
+    window.history.pushState({ tab: "tasks", modal: "taskForm" }, "", "#tasks");
   };
 
   const handleTaskCardClick = (task) => {
     setSelectedTask(task);
     setShowProgressModal(true);
+    window.history.pushState({ tab: activeTab, modal: "progressModal" }, "", `#${activeTab}`);
     setNewProgressLog({
       tanggal: new Date().toISOString().split("T")[0],
       deskripsi: "",
@@ -764,6 +812,9 @@ export default function LaporanPekerjaan() {
     });
     setEditingId(null);
     setShowForm(false);
+    if (window.history.state?.modal) {
+      window.history.back();
+    }
   };
 
   const handleTaskCancel = () => {
@@ -782,6 +833,9 @@ export default function LaporanPekerjaan() {
       deskripsi: "",
       progressIncrement: 0,
     });
+    if (window.history.state?.modal) {
+      window.history.back();
+    }
   };
 
   const handleAddProgressLog = () => {
@@ -1049,6 +1103,7 @@ export default function LaporanPekerjaan() {
     setSparepartFormData(sparepart);
     setEditingSparepartId(sparepart.id);
     setShowSparepartForm(true);
+    window.history.pushState({ tab: "spareparts", modal: "sparepartForm" }, "", "#spareparts");
   };
 
   const handleUpdateSparepartDates = async () => {
@@ -2257,6 +2312,7 @@ export default function LaporanPekerjaan() {
                         deskripsi: "",
                         catatan: "",
                       });
+                      window.history.pushState({ tab: "laporan", modal: "form" }, "", "#laporan");
                     }}
                     className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors hover-lift whitespace-nowrap"
                   >
@@ -2595,6 +2651,7 @@ export default function LaporanPekerjaan() {
                         progress: 0,
                         progressLogs: [],
                       });
+                      window.history.pushState({ tab: "tasks", modal: "taskForm" }, "", "#tasks");
                     }}
                     className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors hover-lift whitespace-nowrap"
                   >
@@ -2662,6 +2719,7 @@ export default function LaporanPekerjaan() {
                           className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                         />
                       </div>
+                      {editingTaskId && (
                       <div>
                         <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
                           {t("progress")} ({t("progressUpdate")})
@@ -2699,6 +2757,7 @@ export default function LaporanPekerjaan() {
                           </p>
                         </div>
                       </div>
+                      )}
                     </div>
 
                     {/* Deskripsi Task */}
@@ -2716,7 +2775,9 @@ export default function LaporanPekerjaan() {
                       />
                     </div>
 
-                    {/* Progress Logs Section */}
+                    {/* Progress Logs Section - Only show when editing existing task */}
+                    {editingTaskId && (
+                    <>
                     <div
                       className={`p-4 rounded-lg ${
                         editingLogId
@@ -2890,6 +2951,8 @@ export default function LaporanPekerjaan() {
                         </p>
                       )}
                     </div>
+                    </>
+                    )}
 
                     <div className="flex gap-3 mt-6">
                       <button
@@ -3294,6 +3357,7 @@ export default function LaporanPekerjaan() {
                       tanggalDatang: "",
                       createdBy: "",
                     });
+                    window.history.pushState({ tab: "spareparts", modal: "sparepartForm" }, "", "#spareparts");
                   }}
                   className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors hover-lift"
                 >
