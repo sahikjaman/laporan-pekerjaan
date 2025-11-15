@@ -1339,7 +1339,7 @@ export default function LaporanPekerjaan() {
           <div className="max-w-6xl mx-auto px-2 sm:px-4 md:px-8">
             <div className="flex items-center justify-between py-2 sm:py-4">
               <div 
-                className="flex items-center gap-2 sm:gap-4 cursor-pointer" 
+                className="flex items-center gap-2 sm:gap-4 cursor-pointer group" 
                 onClick={() => {
                   setActiveTab("dashboard");
                   window.history.pushState({ tab: "dashboard" }, "", "#dashboard");
@@ -1352,11 +1352,11 @@ export default function LaporanPekerjaan() {
                     className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 object-contain transition-transform duration-300 hover:scale-110 cursor-pointer"
                   />
                 </div>
-                <div>
-                  <h1 className="text-sm sm:text-base md:text-xl font-bold text-gray-800 dark:text-white leading-tight">
+                <div className="transition-all duration-300 group-hover:translate-x-2">
+                  <h1 className="text-sm sm:text-base md:text-xl font-bold text-gray-800 dark:text-white leading-tight transition-all duration-300 group-hover:text-green-600 dark:group-hover:text-green-400">
                     {t("appTitle")}
                   </h1>
-                  <p className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 hidden sm:block">
+                  <p className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 hidden sm:block transition-all duration-300 group-hover:text-green-500 dark:group-hover:text-green-300">
                     {t("appSubtitle")}
                   </p>
                 </div>
