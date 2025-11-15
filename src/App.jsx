@@ -694,10 +694,6 @@ export default function LaporanPekerjaan() {
     setShowTaskForm(true);
     setShowProgressModal(false);
     setActiveTab("tasks");
-    // Auto scroll to form
-    setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }, 100);
   };
 
   const handleTaskCardClick = (task) => {
@@ -1050,8 +1046,9 @@ export default function LaporanPekerjaan() {
   };
 
   const handleSparepartCardClick = (sparepart) => {
-    setSelectedSparepart(sparepart);
-    setShowSparepartDateModal(true);
+    setSparepartFormData(sparepart);
+    setEditingSparepartId(sparepart.id);
+    setShowSparepartForm(true);
   };
 
   const handleUpdateSparepartDates = async () => {
@@ -2586,15 +2583,44 @@ export default function LaporanPekerjaan() {
                       <option value="name">{t("sortByName")}</option>
                     </select>
                   </div>
+                  <button
+                    onClick={() => {
+                      setShowTaskForm(true);
+                      setEditingTaskId(null);
+                      setTaskFormData({
+                        namaTask: "",
+                        deskripsi: "",
+                        prioritas: "medium",
+                        deadline: "",
+                        progress: 0,
+                        progressLogs: [],
+                      });
+                    }}
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors hover-lift whitespace-nowrap"
+                  >
+                    <Plus size={20} />
+                    {t("newTask")}
+                  </button>
                 </div>
               </div>
 
               {showTaskForm && (
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-                  <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
-                    {editingTaskId ? t("editTask") : t("createTask")}
-                  </h2>
-                  <div className="space-y-4">
+                <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 modal-backdrop" onClick={handleTaskCancel}>
+                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto modal-content" onClick={(e) => e.stopPropagation()}>
+                    <div className="sticky top-0 bg-white dark:bg-gray-800 border-b dark:border-gray-700 px-6 py-4 flex justify-between items-center z-10">
+                      <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+                        {editingTaskId ? t("editTask") : t("createTask")}
+                      </h2>
+                      <button
+                        onClick={handleTaskCancel}
+                        disabled={saving}
+                        className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
+                      >
+                        <X size={24} />
+                      </button>
+                    </div>
+                    <div className="p-6">
+                      <div className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
@@ -2886,6 +2912,8 @@ export default function LaporanPekerjaan() {
                         <X size={20} />
                         Batal
                       </button>
+                    </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -3250,8 +3278,28 @@ export default function LaporanPekerjaan() {
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 fade-in">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-                  Sparepart
+                  {t("spareparts")}
                 </h2>
+                <button
+                  onClick={() => {
+                    setShowSparepartForm(true);
+                    setEditingSparepartId(null);
+                    setSparepartFormData({
+                      namaPart: "",
+                      deskripsi: "",
+                      jumlah: 0,
+                      unit: "",
+                      status: "pending",
+                      tanggalDipesan: "",
+                      tanggalDatang: "",
+                      createdBy: "",
+                    });
+                  }}
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors hover-lift"
+                >
+                  <Plus size={20} />
+                  {t("newSparepart")}
+                </button>
               </div>
 
               {/* Sparepart List */}
@@ -3363,8 +3411,21 @@ export default function LaporanPekerjaan() {
 
         {/* Sparepart Form Modal */}
         {showSparepartForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 modal-backdrop">
-            <div className="bg-white dark:bg-gray-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl modal-content">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 modal-backdrop" onClick={() => {
+            setShowSparepartForm(false);
+            setEditingSparepartId(null);
+            setSparepartFormData({
+              namaPart: "",
+              deskripsi: "",
+              jumlah: 0,
+              unit: "",
+              status: "pending",
+              tanggalDipesan: "",
+              tanggalDatang: "",
+              createdBy: "",
+            });
+          }}>
+            <div className="bg-white dark:bg-gray-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl modal-content" onClick={(e) => e.stopPropagation()}>
               <div className="sticky top-0 bg-white dark:bg-gray-800 border-b dark:border-gray-700 px-6 py-4 flex justify-between items-center z-10">
                 <h2 className="text-xl font-bold text-gray-800 dark:text-white">
                   {editingSparepartId
