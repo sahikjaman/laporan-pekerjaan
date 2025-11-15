@@ -1406,33 +1406,6 @@ export default function LaporanPekerjaan() {
                     }`}
                   />
                 </button>
-                {activeTab === "laporan" && (
-                  <button
-                    onClick={() => setShowForm(true)}
-                    className="hidden lg:flex bg-blue-600 hover:bg-blue-700 text-white p-2 sm:px-4 sm:py-2 rounded-lg font-semibold items-center gap-1 sm:gap-2 transition-colors"
-                  >
-                    <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
-                    <span className="text-sm">{t("newReport")}</span>
-                  </button>
-                )}
-                {activeTab === "tasks" && (
-                  <button
-                    onClick={() => setShowTaskForm(true)}
-                    className="hidden lg:flex bg-green-600 hover:bg-green-700 text-white p-2 sm:px-4 sm:py-2 rounded-lg font-semibold items-center gap-1 sm:gap-2 transition-colors"
-                  >
-                    <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
-                    <span className="text-sm">{t("newTask")}</span>
-                  </button>
-                )}
-                {activeTab === "spareparts" && (
-                  <button
-                    onClick={() => setShowSparepartForm(true)}
-                    className="hidden lg:flex bg-purple-600 hover:bg-purple-700 text-white p-2 sm:px-4 sm:py-2 rounded-lg font-semibold items-center gap-1 sm:gap-2 transition-colors"
-                  >
-                    <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
-                    <span className="text-sm">Sparepart Baru</span>
-                  </button>
-                )}
               </div>
             </div>
 
