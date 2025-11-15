@@ -5,7 +5,7 @@
   
   ### Heavy Equipment Electrical PT. Salam Pasific Indonesia Lines
   
-  A modern, professional field work management system built with React and Google Sheets integration.
+  A modern, professional field work management system
 
   [![React](https://img.shields.io/badge/React-18.2.0-61DAFB?style=flat&logo=react&logoColor=white)](https://reactjs.org/)
   [![Vite](https://img.shields.io/badge/Vite-5.0-646CFF?style=flat&logo=vite&logoColor=white)](https://vitejs.dev/)
@@ -115,7 +115,7 @@
 
 4. **Open in browser**
    ```
-   http://localhost:5174
+   http://localhost
    ```
 
 ### Build for Production
@@ -147,30 +147,6 @@ npm run preview
 
 ---
 
-## 📁 Project Structure
-
-```
-laporan-pekerjaan/
-├── public/
-│   ├── logo-spil.png          # Company logo
-│   └── background.webp        # Background image
-├── src/
-│   ├── App.jsx                # Main application component
-│   ├── main.jsx               # Application entry point
-│   └── index.css              # Global styles and animations
-├── api/
-│   ├── reports.js             # Google Sheets API for reports
-│   ├── tasks.js               # Google Sheets API for tasks
-│   └── spareparts.js          # Google Sheets API for spareparts
-├── index.html                 # HTML entry point
-├── vite.config.js             # Vite configuration
-├── tailwind.config.js         # Tailwind CSS configuration
-├── postcss.config.js          # PostCSS configuration
-└── package.json               # Project dependencies
-```
-
----
-
 ## 🎨 Key Features Breakdown
 
 ### Animation System
@@ -196,42 +172,6 @@ laporan-pekerjaan/
 
 ---
 
-## 🔧 Configuration
-
-### Google Sheets Setup
-
-1. Create a Google Sheet with three tabs: `Laporan`, `Tasks`, `Spareparts`
-2. Deploy the Apps Script APIs (see `SETUP_GOOGLE_SHEETS.md`)
-3. Update API URLs in `src/App.jsx`:
-   ```javascript
-   const REPORT_API_URL = "YOUR_REPORT_API_URL";
-   const TASK_API_URL = "YOUR_TASK_API_URL";
-   const SPAREPART_API_URL = "YOUR_SPAREPART_API_URL";
-   ```
-
----
-
-## 🌐 Deployment
-
-### Vercel (Recommended)
-
-1. Push your code to GitHub
-2. Import project in Vercel dashboard
-3. Deploy with default settings
-
-### Netlify
-
-1. Connect repository to Netlify
-2. Build command: `npm run build`
-3. Publish directory: `dist`
-
-### GitHub Pages
-
-1. Run `npm run build`
-2. Deploy `dist` folder to `gh-pages` branch
-
----
-
 ## 📱 Browser Support
 
 - ✅ Chrome (latest)
@@ -251,12 +191,6 @@ Contributions, issues, and feature requests are welcome!
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
-
----
-
-## 📝 License
-
-This project is private and proprietary to **PT. Salam Pasific Indonesia Lines**.
 
 ---
 
