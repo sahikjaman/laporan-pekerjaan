@@ -1338,7 +1338,13 @@ export default function LaporanPekerjaan() {
         <div className="bg-white/90 dark:bg-gray-800/90 shadow-md border-b-4 border-green-600 dark:border-green-500 backdrop-blur-md">
           <div className="max-w-6xl mx-auto px-2 sm:px-4 md:px-8">
             <div className="flex items-center justify-between py-2 sm:py-4">
-              <div className="flex items-center gap-2 sm:gap-4">
+              <div 
+                className="flex items-center gap-2 sm:gap-4 cursor-pointer" 
+                onClick={() => {
+                  setActiveTab("dashboard");
+                  window.history.pushState({ tab: "dashboard" }, "", "#dashboard");
+                }}
+              >
                 <div className="flex-shrink-0">
                   <img
                     src="/logo-spil.png"
