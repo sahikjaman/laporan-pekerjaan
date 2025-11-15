@@ -1512,7 +1512,7 @@ export default function LaporanPekerjaan() {
           <div className="lg:hidden fixed inset-0 z-[100]">
             {/* Backdrop */}
             <div
-              className="absolute inset-0 bg-black bg-opacity-50"
+              className="absolute inset-0 bg-black bg-opacity-60"
               onClick={() => setShowMobileMenu(false)}
             ></div>
 
@@ -1706,7 +1706,7 @@ export default function LaporanPekerjaan() {
 
         <div className="max-w-6xl mx-auto p-3 sm:p-4 md:p-8">
           {saving && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[100] modal-backdrop">
+            <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[100] modal-backdrop">
               <div className="bg-white dark:bg-gray-800 rounded-xl p-6 flex items-center gap-3 modal-content">
                 <RefreshCw
                   className="animate-spin text-green-600 dark:text-green-400"
@@ -2321,7 +2321,7 @@ export default function LaporanPekerjaan() {
               </div>
 
               {showForm && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 z-[100] flex items-center justify-center p-4 modal-backdrop" onClick={handleCancel}>
+                <div className="fixed inset-0 bg-black bg-opacity-60 z-[100] flex items-center justify-center p-4 modal-backdrop" onClick={handleCancel}>
                   <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto modal-content" onClick={(e) => e.stopPropagation()}>
                     <div className="sticky top-0 bg-white dark:bg-gray-800 border-b dark:border-gray-700 px-6 py-4 flex justify-between items-center z-10">
                       <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
@@ -2660,7 +2660,7 @@ export default function LaporanPekerjaan() {
               </div>
 
               {showTaskForm && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 z-[100] flex items-center justify-center p-4 modal-backdrop" onClick={handleTaskCancel}>
+                <div className="fixed inset-0 bg-black bg-opacity-60 z-[100] flex items-center justify-center p-4 modal-backdrop" onClick={handleTaskCancel}>
                   <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto modal-content" onClick={(e) => e.stopPropagation()}>
                     <div className="sticky top-0 bg-white dark:bg-gray-800 border-b dark:border-gray-700 px-6 py-4 flex justify-between items-center z-10">
                       <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
@@ -3130,7 +3130,7 @@ export default function LaporanPekerjaan() {
 
         {/* Progress Modal */}
         {showProgressModal && selectedTask && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 z-[100] flex items-center justify-center p-2 sm:p-4 modal-backdrop">
+          <div className="fixed inset-0 bg-black bg-opacity-60 z-[100] flex items-center justify-center p-2 sm:p-4 modal-backdrop">
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto modal-content">
               {/* Modal Header */}
               <div className="sticky top-0 bg-white dark:bg-gray-800 border-b dark:border-gray-700 p-4 sm:p-6">
@@ -3473,7 +3473,7 @@ export default function LaporanPekerjaan() {
 
         {/* Sparepart Form Modal */}
         {showSparepartForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[100] modal-backdrop" onClick={() => {
+          <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-[100] modal-backdrop" onClick={() => {
             setShowSparepartForm(false);
             setEditingSparepartId(null);
             setSparepartFormData({
@@ -3609,7 +3609,7 @@ export default function LaporanPekerjaan() {
 
         {/* Sparepart Date Edit Modal */}
         {showSparepartDateModal && selectedSparepart && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[100] modal-backdrop">
+          <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-[100] modal-backdrop">
             <div className="bg-white dark:bg-gray-800 rounded-xl max-w-md w-full shadow-2xl modal-content">
               <div className="border-b dark:border-gray-700 px-6 py-4 flex justify-between items-center">
                 <h2 className="text-xl font-bold text-gray-800 dark:text-white">
