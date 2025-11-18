@@ -24,6 +24,8 @@ import {
   MessageSquare,
   Menu,
   Globe,
+  ChevronDown,
+  Gauge,
 } from "lucide-react";
 
 const API_URL = "/api/reports";
@@ -46,7 +48,9 @@ const translations = {
     reports: "Laporan",
     tasks: "Tugas",
     spareparts: "Suku Cadang",
-    monitoring: "Monitoring Reach Stacker",
+    monitoring: "Monitoring",
+    reachStacker: "Reach Stacker",
+    fuelMonitoring: "Monitoring BBM",
 
     // Buttons
     newReport: "Laporan Baru",
@@ -185,7 +189,9 @@ const translations = {
     reports: "Reports",
     tasks: "Tasks",
     spareparts: "Spareparts",
-    monitoring: "Reach Stacker Monitoring",
+    monitoring: "Monitoring",
+    reachStacker: "Reach Stacker",
+    fuelMonitoring: "Fuel Monitoring",
 
     // Buttons
     newReport: "New Report",
@@ -1336,10 +1342,11 @@ export default function LaporanPekerjaan() {
       <div className="relative z-10">
         {/* Navigation */}
         <div className="bg-white/90 dark:bg-gray-800/90 shadow-md border-b-4 border-green-600 dark:border-green-500 backdrop-blur-md">
-          <div className="max-w-6xl mx-auto px-2 sm:px-4 md:px-8">
-            <div className="flex items-center justify-between py-2 sm:py-4">
+          <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-8">
+            <div className="flex items-center justify-between gap-4 py-2 sm:py-4">
+              {/* Logo and Title */}
               <div 
-                className="flex items-center gap-2 sm:gap-4 cursor-pointer" 
+                className="flex items-center gap-2 sm:gap-3 cursor-pointer flex-shrink-0" 
                 onClick={() => {
                   setActiveTab("dashboard");
                   window.history.pushState({ tab: "dashboard" }, "", "#dashboard");
@@ -1349,26 +1356,25 @@ export default function LaporanPekerjaan() {
                   <img
                     src="/logo-spil.png"
                     alt="SPIL Logo"
-                    className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 object-contain transition-transform duration-300 hover:scale-110 cursor-pointer"
+                    className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 object-contain transition-transform duration-300 hover:scale-110 cursor-pointer"
                   />
                 </div>
-                <div>
-                  <h1 className="text-sm sm:text-base md:text-xl font-bold text-gray-800 dark:text-white leading-tight flex">
+                <div className="hidden md:block">
+                  <h1 className="text-xs sm:text-sm md:text-base font-bold text-gray-800 dark:text-white leading-tight flex">
                     {t("appTitle").split("").map((char, index) => (
                       <span
                         key={index}
-                        className="inline-block transition-all duration-200 hover:scale-150 hover:text-green-600 dark:hover:text-green-400 hover:-translate-y-1"
-                        style={{ transitionDelay: `${index * 10}ms` }}
+                        className="inline-block transition-all duration-300 ease-out hover:scale-150 hover:text-green-600 dark:hover:text-green-400 hover:-translate-y-1"
                       >
                         {char === " " ? "\u00A0" : char}
                       </span>
                     ))}
                   </h1>
-                  <p className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 hidden sm:flex">
+                  <p className="text-[8px] sm:text-[10px] text-gray-600 dark:text-gray-400 flex">
                     {t("appSubtitle").split("").map((char, index) => (
                       <span
                         key={index}
-                        className="inline-block transition-all duration-200 hover:scale-125 hover:text-green-500 dark:hover:text-green-300"
+                        className="inline-block transition-all duration-300 ease-out hover:scale-125 hover:text-green-500 dark:hover:text-green-300"
                       >
                         {char === " " ? "\u00A0" : char}
                       </span>
@@ -1376,7 +1382,119 @@ export default function LaporanPekerjaan() {
                   </p>
                 </div>
               </div>
-              <div className="flex gap-1 sm:gap-2">
+
+              {/* Desktop Tab Navigation - Horizontal */}
+              <nav className="hidden lg:flex items-center gap-1 flex-1 justify-center">
+                <button
+                  onClick={() => {
+                    setActiveTab("dashboard");
+                    setShowForm(false);
+                    setShowTaskForm(false);
+                    window.history.pushState({ tab: "dashboard" }, "", "#dashboard");
+                  }}
+                  className={`px-3 py-2 font-semibold transition-all duration-200 whitespace-nowrap text-sm flex items-center gap-2 rounded-lg ${
+                    activeTab === "dashboard"
+                      ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
+                      : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  }`}
+                >
+                  <BarChart3 size={16} />
+                  <span>{t("dashboard")}</span>
+                </button>
+                
+                <button
+                  onClick={() => {
+                    setActiveTab("laporan");
+                    setShowTaskForm(false);
+                    window.history.pushState({ tab: "laporan" }, "", "#laporan");
+                  }}
+                  className={`px-3 py-2 font-semibold transition-all duration-200 whitespace-nowrap text-sm flex items-center gap-2 rounded-lg ${
+                    activeTab === "laporan"
+                      ? "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
+                      : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  }`}
+                >
+                  <FileText size={16} />
+                  <span>{t("reports")}</span>
+                </button>
+                
+                <button
+                  onClick={() => {
+                    setActiveTab("tasks");
+                    setShowForm(false);
+                    window.history.pushState({ tab: "tasks" }, "", "#tasks");
+                  }}
+                  className={`px-3 py-2 font-semibold transition-all duration-200 whitespace-nowrap text-sm flex items-center gap-2 rounded-lg ${
+                    activeTab === "tasks"
+                      ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
+                      : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  }`}
+                >
+                  <ListTodo size={16} />
+                  <span>{t("tasks")}</span>
+                </button>
+                
+                <button
+                  onClick={() => {
+                    setActiveTab("spareparts");
+                    setShowForm(false);
+                    setShowTaskForm(false);
+                    window.history.pushState({ tab: "spareparts" }, "", "#spareparts");
+                  }}
+                  className={`px-3 py-2 font-semibold transition-all duration-200 whitespace-nowrap text-sm flex items-center gap-2 rounded-lg ${
+                    activeTab === "spareparts"
+                      ? "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400"
+                      : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  }`}
+                >
+                  <Wrench size={16} />
+                  <span>{t("spareparts")}</span>
+                </button>
+                
+                {/* Monitoring Dropdown */}
+                <div className="relative group">
+                  <button
+                    className="px-3 py-2 font-semibold transition-all duration-200 whitespace-nowrap text-sm flex items-center gap-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    <Monitor size={16} />
+                    <span>{t("monitoring")}</span>
+                    <ChevronDown size={14} className="transition-transform group-hover:rotate-180" />
+                  </button>
+                  
+                  {/* Dropdown Menu */}
+                  <div className="absolute top-full left-0 mt-1 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    <div className="py-2">
+                      <a
+                        href="https://reach-stacker-monitor.vercel.app/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-orange-900/20 hover:text-orange-600 dark:hover:text-orange-400 transition-colors"
+                      >
+                        <Monitor size={16} />
+                        <div>
+                          <div className="font-semibold">Reach Stacker</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">Monitor alat berat</div>
+                        </div>
+                      </a>
+                      <a
+                        href="https://bbm-dashboard.vercel.app/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-orange-900/20 hover:text-orange-600 dark:hover:text-orange-400 transition-colors"
+                      >
+                        <Gauge size={16} />
+                        <div>
+                          <div className="font-semibold">Monitoring BBM</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">Dashboard konsumsi BBM</div>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </nav>
+
+              {/* Right Actions */}
+              <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
                 {/* Mobile Menu Button */}
                 <button
                   onClick={() => setShowMobileMenu(!showMobileMenu)}
@@ -1389,114 +1507,34 @@ export default function LaporanPekerjaan() {
                 {/* Theme Toggle Button */}
                 <button
                   onClick={cycleTheme}
-                  className="hidden lg:flex bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 p-2 sm:px-4 sm:py-2 rounded-lg font-semibold items-center gap-2 transition-colors"
+                  className="hidden lg:flex bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 p-2 rounded-lg font-semibold items-center transition-colors"
                   title={`Current: ${getThemeLabel()} - Click to change`}
                 >
                   {getThemeIcon()}
-                  <span className="text-sm">{getThemeLabel()}</span>
                 </button>
 
                 {/* Language Toggle Button */}
                 <button
                   onClick={toggleLanguage}
-                  className="hidden lg:flex bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 p-2 sm:px-4 sm:py-2 rounded-lg font-semibold items-center gap-2 transition-colors"
+                  className="hidden lg:flex bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 p-2 rounded-lg font-semibold items-center transition-colors"
                   title="Change Language"
                 >
-                  <Globe size={16} className="sm:w-[18px] sm:h-[18px]" />
-                  <span className="text-sm">
-                    {language === "id" ? "ID" : "EN"}
-                  </span>
+                  <Globe size={16} />
                 </button>
 
+                {/* Refresh Button */}
                 <button
                   onClick={loadReports}
                   disabled={loading}
-                  className="hidden lg:flex bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 p-2 sm:px-4 sm:py-2 rounded-lg font-semibold items-center transition-colors"
+                  className="hidden lg:flex bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 p-2 rounded-lg font-semibold items-center transition-colors"
                   title="Refresh"
                 >
                   <RefreshCw
                     size={16}
-                    className={`sm:w-[18px] sm:h-[18px] ${
-                      loading ? "animate-spin" : ""
-                    }`}
+                    className={loading ? "animate-spin" : ""}
                   />
                 </button>
               </div>
-            </div>
-
-            {/* Desktop Tab Navigation */}
-            <div className="hidden lg:flex gap-1 sm:gap-4 border-t dark:border-gray-700">
-              <button
-                onClick={() => {
-                  setActiveTab("dashboard");
-                  setShowForm(false);
-                  setShowTaskForm(false);
-                }}
-                className={`px-2 sm:px-4 py-2 sm:py-3 font-semibold transition-colors whitespace-nowrap text-xs sm:text-base flex items-center gap-1 sm:gap-2 ${
-                  activeTab === "dashboard"
-                    ? "text-green-600 dark:text-green-400 border-b-2 border-green-600 dark:border-green-400"
-                    : "text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100"
-                }`}
-              >
-                <BarChart3 size={14} className="sm:w-[18px] sm:h-[18px]" />
-                <span>{t("dashboard")}</span>
-              </button>
-              <button
-                onClick={() => {
-                  setActiveTab("laporan");
-                  setShowTaskForm(false);
-                }}
-                className={`px-2 sm:px-4 py-2 sm:py-3 font-semibold transition-colors whitespace-nowrap text-xs sm:text-base flex items-center gap-1 sm:gap-2 ${
-                  activeTab === "laporan"
-                    ? "text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400"
-                    : "text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100"
-                }`}
-              >
-                <FileText size={14} className="sm:w-[18px] sm:h-[18px]" />
-                <span>{t("reports")}</span>
-              </button>
-              <button
-                onClick={() => {
-                  setActiveTab("tasks");
-                  setShowForm(false);
-                }}
-                className={`px-2 sm:px-4 py-2 sm:py-3 font-semibold transition-colors whitespace-nowrap text-xs sm:text-base flex items-center gap-1 sm:gap-2 ${
-                  activeTab === "tasks"
-                    ? "text-green-600 dark:text-green-400 border-b-2 border-green-600 dark:border-green-400"
-                    : "text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100"
-                }`}
-              >
-                <ListTodo size={14} className="sm:w-[18px] sm:h-[18px]" />
-                <span>{t("tasks")}</span>
-              </button>
-              <button
-                onClick={() => {
-                  setActiveTab("spareparts");
-                  setShowForm(false);
-                  setShowTaskForm(false);
-                }}
-                className={`px-2 sm:px-4 py-2 sm:py-3 font-semibold transition-colors whitespace-nowrap text-xs sm:text-base flex items-center gap-1 sm:gap-2 ${
-                  activeTab === "spareparts"
-                    ? "text-purple-600 dark:text-purple-400 border-b-2 border-purple-600 dark:border-purple-400"
-                    : "text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100"
-                }`}
-              >
-                <Wrench size={14} className="sm:w-[18px] sm:h-[18px]" />
-                <span>{t("spareparts")}</span>
-              </button>
-              <button
-                onClick={() => {
-                  window.open(
-                    "https://reach-stacker-monitor.vercel.app/",
-                    "_blank",
-                    "noopener,noreferrer"
-                  );
-                }}
-                className="px-2 sm:px-4 py-2 sm:py-3 font-semibold transition-colors whitespace-nowrap text-xs sm:text-base flex items-center gap-1 sm:gap-2 text-gray-600 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400"
-              >
-                <Monitor size={14} className="sm:w-[18px] sm:h-[18px]" />
-                <span>{t("monitoring")}</span>
-              </button>
             </div>
           </div>
         </div>
@@ -1594,20 +1632,32 @@ export default function LaporanPekerjaan() {
                     <span>{t("spareparts")}</span>
                   </button>
 
-                  <button
-                    onClick={() => {
-                      window.open(
-                        "https://reach-stacker-monitor.vercel.app/",
-                        "_blank",
-                        "noopener,noreferrer"
-                      );
-                      setShowMobileMenu(false);
-                    }}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold transition-colors text-gray-700 dark:text-gray-300 hover:bg-orange-100 dark:hover:bg-orange-900/30 hover:text-orange-600 dark:hover:text-orange-400"
-                  >
-                    <Monitor size={20} />
-                    <span>{t("monitoring")}</span>
-                  </button>
+                  {/* Monitoring Section */}
+                  <div className="pt-2">
+                    <div className="px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      {t("monitoring")}
+                    </div>
+                    <a
+                      href="https://reach-stacker-monitor.vercel.app/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setShowMobileMenu(false)}
+                      className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold transition-colors text-gray-700 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-orange-900/20 hover:text-orange-600 dark:hover:text-orange-400"
+                    >
+                      <Monitor size={20} />
+                      <span>{t("reachStacker")}</span>
+                    </a>
+                    <a
+                      href="https://bbm-dashboard.vercel.app/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setShowMobileMenu(false)}
+                      className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold transition-colors text-gray-700 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-orange-900/20 hover:text-orange-600 dark:hover:text-orange-400"
+                    >
+                      <Gauge size={20} />
+                      <span>{t("fuelMonitoring")}</span>
+                    </a>
+                  </div>
                 </nav>
 
                 {/* Divider */}
