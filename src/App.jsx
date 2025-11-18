@@ -1340,8 +1340,8 @@ export default function LaporanPekerjaan() {
 
       {/* Main Content */}
       <div className="relative z-10">
-        {/* Navigation */}
-        <div className="bg-white/90 dark:bg-gray-800/90 shadow-md border-b-4 border-green-600 dark:border-green-500 backdrop-blur-md">
+        {/* Navigation - Sticky Header */}
+        <div className="sticky top-0 z-50 bg-white/90 dark:bg-gray-800/90 shadow-md border-b-4 border-green-600 dark:border-green-500 backdrop-blur-md">
           <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-8">
             <div className="flex items-center justify-between gap-4 py-2 sm:py-4">
               {/* Logo and Title */}
