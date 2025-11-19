@@ -3387,7 +3387,7 @@ export default function LaporanPekerjaan() {
         {/* Sparepart Tab */}
         {activeTab === "spareparts" && (
           <div className="space-y-6 tab-content">
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 fade-in">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 fade-in max-w-6xl mx-auto">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
                   {t("spareparts")}
