@@ -1103,6 +1103,11 @@ export default function LaporanPekerjaan() {
     setShowSparepartForm(true);
   };
 
+  const handleEditSparepartDates = (sparepart) => {
+    setSelectedSparepart(sparepart);
+    setShowSparepartDateModal(true);
+  };
+
   const handleSparepartCardClick = (sparepart) => {
     setSparepartFormData(sparepart);
     setEditingSparepartId(sparepart.id);
@@ -3454,35 +3459,54 @@ export default function LaporanPekerjaan() {
                             </span>
                           </div>
                           {part.tanggalDipesan && (
-                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                              📅 Dipesan:{" "}
+                            <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 flex items-center gap-1">
+                              <Calendar size={12} className="text-blue-500" />
+                              <span className="font-medium">Dipesan:</span>{" "}
                               {new Date(part.tanggalDipesan).toLocaleDateString(
                                 "id-ID",
                                 {
-                                  weekday: "long",
+                                  weekday: "short",
                                   year: "numeric",
-                                  month: "long",
+                                  month: "short",
                                   day: "numeric",
                                 }
                               )}
                             </p>
                           )}
                           {part.tanggalDatang && (
-                            <p className="text-xs text-green-600 dark:text-green-400 mt-1 font-semibold">
-                              ✅ Datang:{" "}
+                            <p className="text-xs text-green-600 dark:text-green-400 mt-1 font-semibold flex items-center gap-1">
+                              <CheckCircle size={12} className="text-green-500" />
+                              <span>Datang:</span>{" "}
                               {new Date(part.tanggalDatang).toLocaleDateString(
                                 "id-ID",
                                 {
-                                  weekday: "long",
+                                  weekday: "short",
                                   year: "numeric",
-                                  month: "long",
+                                  month: "short",
                                   day: "numeric",
                                 }
                               )}
                             </p>
                           )}
+                          {!part.tanggalDipesan && part.status === "pending" && (
+                            <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-2 flex items-center gap-1">
+                              <Clock size={12} />
+                              <span className="italic">Belum ada tanggal pemesanan</span>
+                            </p>
+                          )}
                         </div>
                         <div className="flex flex-col gap-2 ml-4">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEditSparepartDates(part);
+                            }}
+                            disabled={saving}
+                            className="p-2 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/30 rounded"
+                            title="Atur Tanggal Pemesanan & Kedatangan"
+                          >
+                            <Calendar size={16} />
+                          </button>
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
