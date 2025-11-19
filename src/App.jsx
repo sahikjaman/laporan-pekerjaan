@@ -3501,17 +3501,6 @@ export default function LaporanPekerjaan() {
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleEditSparepartDates(part);
-                            }}
-                            disabled={saving}
-                            className="p-2 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/30 rounded"
-                            title="Atur Tanggal Pemesanan & Kedatangan"
-                          >
-                            <Calendar size={16} />
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
                               handleEditSparepart(part);
                             }}
                             disabled={saving}
@@ -3683,7 +3672,7 @@ export default function LaporanPekerjaan() {
             <div className="bg-white dark:bg-gray-800 rounded-xl max-w-lg w-full shadow-2xl modal-content max-h-[90vh] overflow-y-auto">
               <div className="sticky top-0 bg-white dark:bg-gray-800 border-b dark:border-gray-700 px-6 py-4 flex justify-between items-center z-10">
                 <h2 className="text-xl font-bold text-gray-800 dark:text-white">
-                  Kelola Sparepart
+                  Update Status Sparepart
                 </h2>
                 <button
                   onClick={() => {
@@ -3697,82 +3686,20 @@ export default function LaporanPekerjaan() {
               </div>
 
               <div className="p-6 space-y-5">
-                {/* Sparepart Info Section */}
+                {/* Sparepart Info Display (Read-only) */}
                 <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-                  <h3 className="font-semibold text-lg text-gray-800 dark:text-white mb-3 flex items-center gap-2">
-                    <Wrench size={18} className="text-purple-600" />
-                    Informasi Sparepart
+                  <h3 className="font-semibold text-lg text-gray-800 dark:text-white mb-2">
+                    {selectedSparepart.namaPart}
                   </h3>
-                  <div className="space-y-3">
-                    <div>
-                      <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                        Nama Sparepart
-                      </label>
-                      <input
-                        type="text"
-                        value={selectedSparepart.namaPart}
-                        onChange={(e) =>
-                          setSelectedSparepart({
-                            ...selectedSparepart,
-                            namaPart: e.target.value,
-                          })
-                        }
-                        className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white text-sm"
-                        placeholder="Nama sparepart"
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                          Jumlah
-                        </label>
-                        <input
-                          type="number"
-                          value={selectedSparepart.jumlah}
-                          onChange={(e) =>
-                            setSelectedSparepart({
-                              ...selectedSparepart,
-                              jumlah: parseInt(e.target.value) || 0,
-                            })
-                          }
-                          className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white text-sm"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                          Unit
-                        </label>
-                        <input
-                          type="text"
-                          value={selectedSparepart.unit}
-                          onChange={(e) =>
-                            setSelectedSparepart({
-                              ...selectedSparepart,
-                              unit: e.target.value,
-                            })
-                          }
-                          className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white text-sm"
-                          placeholder="pcs, unit, kg"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                        Deskripsi
-                      </label>
-                      <textarea
-                        value={selectedSparepart.deskripsi || ""}
-                        onChange={(e) =>
-                          setSelectedSparepart({
-                            ...selectedSparepart,
-                            deskripsi: e.target.value,
-                          })
-                        }
-                        rows={2}
-                        className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white text-sm"
-                        placeholder="Deskripsi sparepart (opsional)"
-                      />
-                    </div>
+                  <div className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                    <p>
+                      <span className="font-medium">Jumlah:</span> {selectedSparepart.jumlah} {selectedSparepart.unit}
+                    </p>
+                    {selectedSparepart.deskripsi && (
+                      <p>
+                        <span className="font-medium">Deskripsi:</span> {selectedSparepart.deskripsi}
+                      </p>
+                    )}
                   </div>
                 </div>
 
