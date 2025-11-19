@@ -55,6 +55,7 @@ const translations = {
     // Buttons
     newReport: "Laporan Baru",
     newTask: "Tugas Baru",
+    newSparepart: "Tambah",
     save: "Simpan",
     cancel: "Batal",
     edit: "Ubah",
@@ -196,6 +197,7 @@ const translations = {
     // Buttons
     newReport: "New Report",
     newTask: "New Task",
+    newSparepart: "Add",
     save: "Save",
     cancel: "Cancel",
     edit: "Edit",
@@ -1109,10 +1111,10 @@ export default function LaporanPekerjaan() {
   };
 
   const handleSparepartCardClick = (sparepart) => {
-    setSparepartFormData(sparepart);
-    setEditingSparepartId(sparepart.id);
-    setShowSparepartForm(true);
-    window.history.pushState({ tab: "spareparts", modal: "sparepartForm" }, "", "#spareparts");
+    // Open date modal instead of form modal when clicking card
+    setSelectedSparepart(sparepart);
+    setShowSparepartDateModal(true);
+    window.history.pushState({ tab: "spareparts", modal: "sparepartDateModal" }, "", "#spareparts");
   };
 
   const handleUpdateSparepartDates = async () => {
@@ -3678,10 +3680,10 @@ export default function LaporanPekerjaan() {
         {/* Sparepart Date Edit Modal */}
         {showSparepartDateModal && selectedSparepart && (
           <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-[100] modal-backdrop">
-            <div className="bg-white dark:bg-gray-800 rounded-xl max-w-md w-full shadow-2xl modal-content">
-              <div className="border-b dark:border-gray-700 px-6 py-4 flex justify-between items-center">
+            <div className="bg-white dark:bg-gray-800 rounded-xl max-w-lg w-full shadow-2xl modal-content max-h-[90vh] overflow-y-auto">
+              <div className="sticky top-0 bg-white dark:bg-gray-800 border-b dark:border-gray-700 px-6 py-4 flex justify-between items-center z-10">
                 <h2 className="text-xl font-bold text-gray-800 dark:text-white">
-                  Edit Tanggal Sparepart
+                  Kelola Sparepart
                 </h2>
                 <button
                   onClick={() => {
@@ -3694,125 +3696,205 @@ export default function LaporanPekerjaan() {
                 </button>
               </div>
 
-              <div className="p-6 space-y-4">
-                <div>
-                  <h3 className="font-semibold text-lg text-gray-800 dark:text-white mb-2">
-                    {selectedSparepart.namaPart}
+              <div className="p-6 space-y-5">
+                {/* Sparepart Info Section */}
+                <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                  <h3 className="font-semibold text-lg text-gray-800 dark:text-white mb-3 flex items-center gap-2">
+                    <Wrench size={18} className="text-purple-600" />
+                    Informasi Sparepart
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {selectedSparepart.jumlah} {selectedSparepart.unit}
-                  </p>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                    Status
-                  </label>
-                  <select
-                    value={selectedSparepart.status}
-                    onChange={(e) => {
-                      const newStatus = e.target.value;
-                      setSelectedSparepart({
-                        ...selectedSparepart,
-                        status: newStatus,
-                        // Clear dates based on status
-                        tanggalDipesan:
-                          newStatus === "pending"
-                            ? ""
-                            : selectedSparepart.tanggalDipesan,
-                        tanggalDatang:
-                          newStatus === "pending" || newStatus === "ordered"
-                            ? ""
-                            : selectedSparepart.tanggalDatang,
-                      });
-                    }}
-                    className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                  >
-                    <option value="pending">Belum Dipesan</option>
-                    <option value="ordered">Sudah Dipesan</option>
-                    <option value="arrived">Sudah Datang</option>
-                  </select>
-                </div>
-
-                {/* Conditional Date Fields based on Status */}
-                {selectedSparepart.status === "ordered" && (
-                  <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                      Tanggal Dipesan <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="date"
-                      value={selectedSparepart.tanggalDipesan || ""}
-                      onChange={(e) =>
-                        setSelectedSparepart({
-                          ...selectedSparepart,
-                          tanggalDipesan: e.target.value,
-                        })
-                      }
-                      className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                      required
-                    />
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      Masukkan tanggal saat sparepart dipesan
-                    </p>
-                  </div>
-                )}
-
-                {selectedSparepart.status === "arrived" && (
-                  <>
+                  <div className="space-y-3">
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                        Tanggal Dipesan
+                      <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                        Nama Sparepart
                       </label>
                       <input
-                        type="date"
-                        value={selectedSparepart.tanggalDipesan || ""}
+                        type="text"
+                        value={selectedSparepart.namaPart}
                         onChange={(e) =>
                           setSelectedSparepart({
                             ...selectedSparepart,
-                            tanggalDipesan: e.target.value,
+                            namaPart: e.target.value,
                           })
                         }
-                        className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white text-sm"
+                        placeholder="Nama sparepart"
                       />
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        Opsional: Tanggal saat sparepart dipesan
-                      </p>
                     </div>
-
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                          Jumlah
+                        </label>
+                        <input
+                          type="number"
+                          value={selectedSparepart.jumlah}
+                          onChange={(e) =>
+                            setSelectedSparepart({
+                              ...selectedSparepart,
+                              jumlah: parseInt(e.target.value) || 0,
+                            })
+                          }
+                          className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                          Unit
+                        </label>
+                        <input
+                          type="text"
+                          value={selectedSparepart.unit}
+                          onChange={(e) =>
+                            setSelectedSparepart({
+                              ...selectedSparepart,
+                              unit: e.target.value,
+                            })
+                          }
+                          className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white text-sm"
+                          placeholder="pcs, unit, kg"
+                        />
+                      </div>
+                    </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                        Tanggal Datang <span className="text-red-500">*</span>
+                      <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                        Deskripsi
                       </label>
-                      <input
-                        type="date"
-                        value={selectedSparepart.tanggalDatang || ""}
+                      <textarea
+                        value={selectedSparepart.deskripsi || ""}
                         onChange={(e) =>
                           setSelectedSparepart({
                             ...selectedSparepart,
-                            tanggalDatang: e.target.value,
+                            deskripsi: e.target.value,
                           })
                         }
-                        className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                        required
+                        rows={2}
+                        className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white text-sm"
+                        placeholder="Deskripsi sparepart (opsional)"
                       />
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        Masukkan tanggal saat sparepart tiba
-                      </p>
                     </div>
-                  </>
-                )}
-
-                {selectedSparepart.status === "pending" && (
-                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-                    <p className="text-sm text-blue-800 dark:text-blue-300">
-                      <strong>Status: Belum Dipesan</strong>
-                      <br />
-                      Sparepart belum dipesan. Ubah status ke "Sudah Dipesan"
-                      untuk memasukkan tanggal pemesanan.
-                    </p>
                   </div>
-                )}
+                </div>
+
+                {/* Status & Date Management Section */}
+                <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4 border border-purple-200 dark:border-purple-800">
+                  <h3 className="font-semibold text-lg text-gray-800 dark:text-white mb-3 flex items-center gap-2">
+                    <Calendar size={18} className="text-purple-600" />
+                    Status & Tanggal
+                  </h3>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                        Status Pemesanan
+                      </label>
+                      <select
+                        value={selectedSparepart.status}
+                        onChange={(e) => {
+                          const newStatus = e.target.value;
+                          setSelectedSparepart({
+                            ...selectedSparepart,
+                            status: newStatus,
+                            // Clear dates based on status
+                            tanggalDipesan:
+                              newStatus === "pending"
+                                ? ""
+                                : selectedSparepart.tanggalDipesan,
+                            tanggalDatang:
+                              newStatus === "pending" || newStatus === "ordered"
+                                ? ""
+                                : selectedSparepart.tanggalDatang,
+                          });
+                        }}
+                        className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      >
+                        <option value="pending">Belum Dipesan</option>
+                        <option value="ordered">Sudah Dipesan</option>
+                        <option value="arrived">Sudah Datang</option>
+                      </select>
+                    </div>
+
+                    {/* Conditional Date Fields based on Status */}
+                    {selectedSparepart.status === "ordered" && (
+                      <div>
+                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                          Tanggal Dipesan <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="date"
+                          value={selectedSparepart.tanggalDipesan || ""}
+                          onChange={(e) =>
+                            setSelectedSparepart({
+                              ...selectedSparepart,
+                              tanggalDipesan: e.target.value,
+                            })
+                          }
+                          className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                          required
+                        />
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                          Masukkan tanggal saat sparepart dipesan
+                        </p>
+                      </div>
+                    )}
+
+                    {selectedSparepart.status === "arrived" && (
+                      <>
+                        <div>
+                          <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                            Tanggal Dipesan
+                          </label>
+                          <input
+                            type="date"
+                            value={selectedSparepart.tanggalDipesan || ""}
+                            onChange={(e) =>
+                              setSelectedSparepart({
+                                ...selectedSparepart,
+                                tanggalDipesan: e.target.value,
+                              })
+                            }
+                            className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                          />
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            Opsional: Tanggal saat sparepart dipesan
+                          </p>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                            Tanggal Datang <span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            type="date"
+                            value={selectedSparepart.tanggalDatang || ""}
+                            onChange={(e) =>
+                              setSelectedSparepart({
+                                ...selectedSparepart,
+                                tanggalDatang: e.target.value,
+                              })
+                            }
+                            className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            required
+                          />
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            Masukkan tanggal saat sparepart tiba
+                          </p>
+                        </div>
+                      </>
+                    )}
+
+                    {selectedSparepart.status === "pending" && (
+                      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                        <p className="text-sm text-blue-800 dark:text-blue-300">
+                          <strong>Status: Belum Dipesan</strong>
+                          <br />
+                          Sparepart belum dipesan. Ubah status ke "Sudah Dipesan"
+                          untuk memasukkan tanggal pemesanan.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
 
                 <div className="flex gap-3 pt-4">
                   <button
