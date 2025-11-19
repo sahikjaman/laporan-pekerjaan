@@ -2293,7 +2293,16 @@ export default function LaporanPekerjaan() {
                         {spareparts.slice(0, 5).map((part) => (
                           <div
                             key={part.id}
-                            className="p-2 sm:p-3 bg-gray-50 dark:bg-gray-700 rounded-lg flex items-center justify-between gap-2"
+                            onClick={() => {
+                              setSelectedSparepart(part);
+                              setShowSparepartDateModal(true);
+                              window.history.pushState(
+                                { tab: "spareparts", modal: "sparepartDateModal" },
+                                "",
+                                "#spareparts"
+                              );
+                            }}
+                            className="p-2 sm:p-3 bg-gray-50 dark:bg-gray-700 rounded-lg flex items-center justify-between gap-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
                           >
                             <div className="flex-1 min-w-0">
                               <p className="font-semibold text-gray-800 dark:text-white text-xs sm:text-sm truncate">
