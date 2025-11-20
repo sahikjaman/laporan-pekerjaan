@@ -403,7 +403,9 @@ export default function LaporanPekerjaan() {
   const [showRepairForm, setShowRepairForm] = useState(false);
   const [showProgressModal, setShowProgressModal] = useState(false);
   const [showSparepartDateModal, setShowSparepartDateModal] = useState(false);
+  const [showRepairStatusModal, setShowRepairStatusModal] = useState(false);
   const [selectedSparepart, setSelectedSparepart] = useState(null);
+  const [selectedRepair, setSelectedRepair] = useState(null);
   const [selectedTask, setSelectedTask] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [editingId, setEditingId] = useState(null);
@@ -1338,6 +1340,45 @@ export default function LaporanPekerjaan() {
     setEditingRepairId(repair.id);
     setRepairFormData(repair);
     setShowRepairForm(true);
+  };
+
+  const handleRepairCardClick = (repair) => {
+    setSelectedRepair(repair);
+    setShowRepairStatusModal(true);
+  };
+
+  const handleUpdateRepairStatus = async () => {
+    if (!selectedRepair) return;
+    
+    // Validate required fields based on status
+    if (selectedRepair.status === "in-progress" && !selectedRepair.tanggalMulai) {
+      alert("Tanggal mulai diperbaiki harus diisi untuk status 'Sedang Diperbaiki'");
+      return;
+    }
+
+    if (selectedRepair.status === "completed" && !selectedRepair.tanggalSelesai) {
+      alert("Tanggal selesai harus diisi untuk status 'Selesai'");
+      return;
+    }
+    
+    setSaving(true);
+    try {
+      const updates = {
+        status: selectedRepair.status,
+        start_date: selectedRepair.tanggalMulai || null,
+        completion_date: selectedRepair.tanggalSelesai || null,
+      };
+      
+      await repairsAPI.update(selectedRepair.id, updates);
+      await loadRepairs();
+      setShowRepairStatusModal(false);
+      setSelectedRepair(null);
+    } catch (error) {
+      console.error("Error updating repair status:", error);
+      alert("Gagal mengupdate status. Silakan coba lagi.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleDeleteRepair = async (id) => {
@@ -2731,12 +2772,12 @@ export default function LaporanPekerjaan() {
                         {repairs.slice(0, 5).map((repair) => (
                           <div
                             key={repair.id}
-                            onClick={() => {
-                              handleEditRepair(repair);
-                            }}
-                            className="p-2 sm:p-3 bg-gray-50 dark:bg-gray-700 rounded-lg flex items-center justify-between gap-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+                            className="p-2 sm:p-3 bg-gray-50 dark:bg-gray-700 rounded-lg flex items-center justify-between gap-2 group"
                           >
-                            <div className="flex-1 min-w-0">
+                            <div
+                              onClick={() => handleRepairCardClick(repair)}
+                              className="flex-1 min-w-0 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors rounded p-2 -m-2"
+                            >
                               <p className="font-semibold text-gray-800 dark:text-white text-xs sm:text-sm truncate">
                                 {repair.itemRepair}
                               </p>
@@ -2744,21 +2785,33 @@ export default function LaporanPekerjaan() {
                                 {repair.unitAlat} - {repair.lokasiOperasi}
                               </p>
                             </div>
-                            <span
-                              className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
-                                repair.status === "completed"
-                                  ? "bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300"
+                            <div className="flex items-center gap-2">
+                              <span
+                                className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
+                                  repair.status === "completed"
+                                    ? "bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300"
+                                    : repair.status === "in-progress"
+                                    ? "bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300"
+                                    : "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300"
+                                }`}
+                              >
+                                {repair.status === "completed"
+                                  ? t("statusCompleted").slice(0, 7)
                                   : repair.status === "in-progress"
-                                  ? "bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300"
-                                  : "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300"
-                              }`}
-                            >
-                              {repair.status === "completed"
-                                ? t("statusCompleted").slice(0, 7)
-                                : repair.status === "in-progress"
-                                ? "Progress"
-                                : t("statusReceived").slice(0, 7)}
-                            </span>
+                                  ? "Progress"
+                                  : t("statusReceived").slice(0, 7)}
+                              </span>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleEditRepair(repair);
+                                }}
+                                className="p-1.5 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded"
+                                title="Edit"
+                              >
+                                <Edit2 className="w-4 h-4" />
+                              </button>
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -4395,10 +4448,13 @@ export default function LaporanPekerjaan() {
                   filteredRepairs.map((repair) => (
                     <div
                       key={repair.id}
-                      className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer card-transition hover-lift"
+                      className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow card-transition hover-lift"
                     >
                       <div className="flex justify-between items-start">
-                        <div className="flex-1">
+                        <div
+                          className="flex-1 cursor-pointer"
+                          onClick={() => handleRepairCardClick(repair)}
+                        >
                           <div className="flex items-center gap-3 mb-2">
                             <h3 className="font-semibold text-lg text-gray-800 dark:text-white">
                               {repair.itemRepair}
@@ -4471,6 +4527,194 @@ export default function LaporanPekerjaan() {
                     </div>
                   ))
                 )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Repair Status Update Modal */}
+        {showRepairStatusModal && selectedRepair && (
+          <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-[100] modal-backdrop">
+            <div className="bg-white dark:bg-gray-800 rounded-xl max-w-lg w-full shadow-2xl modal-content max-h-[90vh] overflow-y-auto">
+              <div className="sticky top-0 bg-white dark:bg-gray-800 border-b dark:border-gray-700 px-6 py-4 flex justify-between items-center z-10">
+                <h2 className="text-xl font-bold text-gray-800 dark:text-white">
+                  Update Status Repair
+                </h2>
+                <button
+                  onClick={() => {
+                    setShowRepairStatusModal(false);
+                    setSelectedRepair(null);
+                  }}
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+
+              <div className="p-6 space-y-5">
+                {/* Repair Info Display (Read-only) */}
+                <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                  <h3 className="font-semibold text-lg text-gray-800 dark:text-white mb-2">
+                    {selectedRepair.itemRepair}
+                  </h3>
+                  <div className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                    <p>
+                      <span className="font-medium">Unit Alat:</span> {selectedRepair.unitAlat}
+                    </p>
+                    <p>
+                      <span className="font-medium">Lokasi Operasi:</span> {selectedRepair.lokasiOperasi}
+                    </p>
+                    <p>
+                      <span className="font-medium">Tanggal Masuk:</span>{" "}
+                      {new Date(selectedRepair.tanggalMasuk).toLocaleDateString("id-ID")}
+                    </p>
+                    {selectedRepair.deskripsiKerusakan && (
+                      <p>
+                        <span className="font-medium">Deskripsi:</span> {selectedRepair.deskripsiKerusakan}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Status & Date Management Section */}
+                <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
+                  <h3 className="font-semibold text-lg text-gray-800 dark:text-white mb-3 flex items-center gap-2">
+                    <Calendar size={18} className="text-blue-600" />
+                    Status & Tanggal
+                  </h3>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                        Status Repair
+                      </label>
+                      <select
+                        value={selectedRepair.status}
+                        onChange={(e) => {
+                          const newStatus = e.target.value;
+                          setSelectedRepair({
+                            ...selectedRepair,
+                            status: newStatus,
+                            // Clear dates based on status
+                            tanggalMulai:
+                              newStatus === "received"
+                                ? ""
+                                : selectedRepair.tanggalMulai,
+                            tanggalSelesai:
+                              newStatus === "received" || newStatus === "in-progress"
+                                ? ""
+                                : selectedRepair.tanggalSelesai,
+                          });
+                        }}
+                        className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      >
+                        <option value="received">{t("statusReceived")}</option>
+                        <option value="in-progress">{t("statusInProgress")}</option>
+                        <option value="completed">{t("statusCompleted")}</option>
+                      </select>
+                    </div>
+
+                    {/* Conditional Date Fields based on Status */}
+                    {selectedRepair.status === "in-progress" && (
+                      <div>
+                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                          Tanggal Mulai Diperbaiki <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="date"
+                          value={selectedRepair.tanggalMulai || ""}
+                          onChange={(e) =>
+                            setSelectedRepair({
+                              ...selectedRepair,
+                              tanggalMulai: e.target.value,
+                            })
+                          }
+                          className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                          required
+                        />
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                          Masukkan tanggal saat mulai diperbaiki
+                        </p>
+                      </div>
+                    )}
+
+                    {selectedRepair.status === "completed" && (
+                      <>
+                        <div>
+                          <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                            Tanggal Mulai Diperbaiki
+                          </label>
+                          <input
+                            type="date"
+                            value={selectedRepair.tanggalMulai || ""}
+                            onChange={(e) =>
+                              setSelectedRepair({
+                                ...selectedRepair,
+                                tanggalMulai: e.target.value,
+                              })
+                            }
+                            className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                          />
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            Opsional: Tanggal saat mulai diperbaiki
+                          </p>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                            Tanggal Selesai <span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            type="date"
+                            value={selectedRepair.tanggalSelesai || ""}
+                            onChange={(e) =>
+                              setSelectedRepair({
+                                ...selectedRepair,
+                                tanggalSelesai: e.target.value,
+                              })
+                            }
+                            className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            required
+                          />
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            Masukkan tanggal saat repair selesai
+                          </p>
+                        </div>
+                      </>
+                    )}
+
+                    {selectedRepair.status === "received" && (
+                      <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+                        <p className="text-sm text-yellow-800 dark:text-yellow-300">
+                          <strong>Status: Baru Diterima</strong>
+                          <br />
+                          Repair belum dimulai. Ubah status ke "Sedang Diperbaiki"
+                          untuk memasukkan tanggal mulai perbaikan.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleUpdateRepairStatus}
+                    disabled={saving}
+                    className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold disabled:opacity-50"
+                  >
+                    {saving ? "Menyimpan..." : "Update Status"}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowRepairStatusModal(false);
+                      setSelectedRepair(null);
+                    }}
+                    className="px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-white"
+                  >
+                    Batal
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -4549,79 +4793,6 @@ export default function LaporanPekerjaan() {
                       className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                       required
                     />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                      {t("dateReceived")} <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="date"
-                      value={repairFormData.tanggalMasuk}
-                      onChange={(e) =>
-                        setRepairFormData({
-                          ...repairFormData,
-                          tanggalMasuk: e.target.value,
-                        })
-                      }
-                      className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                      {t("dateStarted")}
-                    </label>
-                    <input
-                      type="date"
-                      value={repairFormData.tanggalMulai}
-                      onChange={(e) =>
-                        setRepairFormData({
-                          ...repairFormData,
-                          tanggalMulai: e.target.value,
-                        })
-                      }
-                      className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                      {t("dateCompleted")}
-                    </label>
-                    <input
-                      type="date"
-                      value={repairFormData.tanggalSelesai}
-                      onChange={(e) =>
-                        setRepairFormData({
-                          ...repairFormData,
-                          tanggalSelesai: e.target.value,
-                        })
-                      }
-                      className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                      {t("repairStatus")} <span className="text-red-500">*</span>
-                    </label>
-                    <select
-                      value={repairFormData.status}
-                      onChange={(e) =>
-                        setRepairFormData({
-                          ...repairFormData,
-                          status: e.target.value,
-                        })
-                      }
-                      className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                      required
-                    >
-                      <option value="received">{t("statusReceived")}</option>
-                      <option value="in-progress">{t("statusInProgress")}</option>
-                      <option value="completed">{t("statusCompleted")}</option>
-                    </select>
                   </div>
 
                   <div className="md:col-span-2">
