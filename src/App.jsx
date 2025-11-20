@@ -992,11 +992,19 @@ export default function LaporanPekerjaan() {
       // Update task progress in database
       await tasksAPI.update(taskId, { progress });
       
-      // Reload tasks and update UI
+      // Reload tasks and progress logs from database
       await loadTasks();
-      const updatedTask = tasks.find((t) => t.id === taskId);
-      if (updatedTask) {
-        setSelectedTask(updatedTask);
+      
+      // Update selectedTask with fresh data from loaded tasks
+      const freshTask = tasks.find((t) => t.id === taskId);
+      if (freshTask && showProgressModal) {
+        // Load fresh progress logs for this task
+        const freshLogs = await progressLogsAPI.getByTaskId(taskId);
+        const displayLogs = freshLogs.map(progressLogToDisplay);
+        setSelectedTask({
+          ...freshTask,
+          progressLogs: displayLogs
+        });
       }
       
       // Reset form
@@ -1029,26 +1037,18 @@ export default function LaporanPekerjaan() {
           created_at: newProgressLog.tanggal ? `${newProgressLog.tanggal}T00:00:00Z` : new Date().toISOString()
         });
 
-        // Calculate new total progress
-        const updatedLogs = (selectedTask.progressLogs || []).map((log) =>
-          log.id === editingLogId
-            ? {
-                ...log,
-                tanggal: newProgressLog.tanggal,
-                deskripsi: newProgressLog.deskripsi,
-                progressIncrement:
-                  parseInt(newProgressLog.progressIncrement) || 0,
-              }
-            : log
-        );
+        // Reload ALL progress logs from database untuk task ini
+        const freshLogs = await progressLogsAPI.getByTaskId(selectedTask.id);
+        const displayLogs = freshLogs.map(progressLogToDisplay);
 
-        const totalProgress = updatedLogs.reduce(
+        // Recalculate total progress dari database
+        const totalProgress = displayLogs.reduce(
           (sum, log) => sum + (log.progressIncrement || 0),
           0
         );
         const newProgress = Math.min(100, totalProgress);
 
-        updateTaskProgress(selectedTask.id, updatedLogs, newProgress);
+        updateTaskProgress(selectedTask.id, displayLogs, newProgress);
         setEditingLogId(null);
         return;
       }
@@ -1098,18 +1098,17 @@ export default function LaporanPekerjaan() {
 
       // For modal mode
       if (showProgressModal && selectedTask) {
-        const logToDelete = (selectedTask.progressLogs || []).find(
-          (log) => log.id === logId
-        );
-        const updatedLogs = (selectedTask.progressLogs || []).filter(
-          (log) => log.id !== logId
-        );
-        const newProgress = Math.max(
-          0,
-          selectedTask.progress - (logToDelete?.progressIncrement || 0)
+        // Reload ALL progress logs from database untuk task ini
+        const freshLogs = await progressLogsAPI.getByTaskId(selectedTask.id);
+        const displayLogs = freshLogs.map(progressLogToDisplay);
+        
+        // Recalculate total progress dari database
+        const newProgress = displayLogs.reduce(
+          (sum, log) => sum + (log.progressIncrement || 0),
+          0
         );
 
-        updateTaskProgress(selectedTask.id, updatedLogs, newProgress);
+        updateTaskProgress(selectedTask.id, displayLogs, newProgress);
         return;
       }
 

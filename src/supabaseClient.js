@@ -186,6 +186,19 @@ export const progressLogsAPI = {
     return data;
   },
 
+  // Update progress log
+  async update(id, updates) {
+    const { data, error } = await supabase
+      .from('progress_logs')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (error) throw error;
+    return data;
+  },
+
   // Delete progress log
   async delete(id) {
     const { error } = await supabase
