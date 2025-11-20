@@ -1986,16 +1986,6 @@ export default function LaporanPekerjaan() {
           {/* Dashboard Tab */}
           {activeTab === "dashboard" && (
             <div className="space-y-8 tab-content">
-              {/* Welcome Header */}
-              <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-2xl shadow-2xl p-6 sm:p-8 text-white fade-in">
-                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2">
-                  Dashboard Laporan Pekerjaan
-                </h1>
-                <p className="text-sm sm:text-base text-indigo-100">
-                  Kelola laporan lapangan, tugas, sparepart, dan repair dengan mudah
-                </p>
-              </div>
-
               {/* Quick Action Buttons */}
               <div>
                 <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
