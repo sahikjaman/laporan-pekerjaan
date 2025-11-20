@@ -31,6 +31,7 @@ import {
 const API_URL = "/api/reports";
 const TASK_API_URL = "/api/tasks";
 const SPAREPART_API_URL = "/api/spareparts";
+const REPAIR_API_URL = "/api/repairs";
 
 // Translations
 const translations = {
@@ -45,9 +46,10 @@ const translations = {
 
     // Tabs
     dashboard: "Dasbor",
-    reports: "Laporan",
+    reports: "Laporan Lapangan",
     tasks: "Tugas",
     spareparts: "Suku Cadang",
+    repairs: "Repair",
     monitoring: "Monitoring",
     reachStacker: "Reach Stacker",
     fuelMonitoring: "Monitoring BBM",
@@ -56,6 +58,9 @@ const translations = {
     newReport: "Laporan Baru",
     newTask: "Tugas Baru",
     newSparepart: "Tambah",
+    newRepair: "Repair Baru",
+    downloadExcel: "Download Excel",
+    downloadPDF: "Download PDF",
     save: "Simpan",
     cancel: "Batal",
     edit: "Ubah",
@@ -67,7 +72,7 @@ const translations = {
     sort: "Urutkan",
 
     // Dashboard
-    createNewReport: "Buat Laporan Baru",
+    createNewReport: "Buat Laporan Lapangan Baru",
     recordFieldWork: "Catat pekerjaan lapangan Anda",
     createNewTask: "Buat Tugas Baru",
     planYourWork: "Rencanakan pekerjaan Anda",
@@ -90,14 +95,14 @@ const translations = {
     topLocations: "Lokasi Terbanyak",
     sparepartSummary: "Ringkasan Suku Cadang",
 
-    // Reports
+    // Field Reports
     searchReports: "Cari proyek, lokasi, kegiatan, atau unit alat...",
-    noReports: "Belum ada laporan",
-    noReportsFound: "Tidak ada laporan yang sesuai",
-    createFirstReport: 'Klik tombol "Laporan Baru" untuk mulai membuat laporan',
+    noReports: "Belum ada laporan lapangan",
+    noReportsFound: "Tidak ada laporan lapangan yang sesuai",
+    createFirstReport: 'Klik tombol "Laporan Baru" untuk mulai membuat laporan lapangan',
     tryDifferentKeyword: "Coba ubah kata kunci pencarian",
-    editReport: "Edit Laporan",
-    createReport: "Buat Laporan Baru",
+    editReport: "Edit Laporan Lapangan",
+    createReport: "Buat Laporan Lapangan Baru",
     date: "Tanggal",
     location: "Lokasi",
     projectName: "Nama Proyek",
@@ -159,6 +164,28 @@ const translations = {
     statusPendingInfo:
       'Suku cadang belum dipesan. Ubah status ke "Sudah Dipesan" untuk memasukkan tanggal pemesanan.',
 
+    // Repairs
+    noRepairs: "Belum ada repair",
+    noRepairsFound: "Tidak ada repair yang sesuai",
+    createFirstRepair: 'Klik tombol "Repair Baru" untuk mulai membuat repair',
+    editRepair: "Edit Repair",
+    createRepair: "Buat Repair Baru",
+    repairItem: "Item Repair",
+    dateReceived: "Tanggal Masuk",
+    dateStarted: "Tanggal Mulai Dikerjakan",
+    dateCompleted: "Tanggal Selesai",
+    equipmentUnit: "Unit Alat",
+    operatingLocation: "Lokasi Operasi Alat",
+    damageDescription: "Deskripsi Kerusakan",
+    repairStatus: "Status Repair",
+    statusReceived: "Sudah Masuk",
+    statusInProgress: "Sedang Dikerjakan",
+    statusCompleted: "Selesai",
+    searchRepairs: "Cari item repair, unit alat, atau lokasi...",
+    totalRepairs: "Total Repair",
+    recentRepairs: "Repair Terbaru",
+    repairSummary: "Ringkasan Repair",
+
     // Messages
     confirmDelete: "Yakin ingin menghapus",
     deleteSuccess: "Berhasil dihapus",
@@ -187,9 +214,10 @@ const translations = {
 
     // Tabs
     dashboard: "Dashboard",
-    reports: "Reports",
+    reports: "Field Reports",
     tasks: "Tasks",
     spareparts: "Spareparts",
+    repairs: "Repairs",
     monitoring: "Monitoring",
     reachStacker: "Reach Stacker",
     fuelMonitoring: "Fuel Monitoring",
@@ -198,6 +226,9 @@ const translations = {
     newReport: "New Report",
     newTask: "New Task",
     newSparepart: "Add",
+    newRepair: "New Repair",
+    downloadExcel: "Download Excel",
+    downloadPDF: "Download PDF",
     save: "Save",
     cancel: "Cancel",
     edit: "Edit",
@@ -209,7 +240,7 @@ const translations = {
     sort: "Sort",
 
     // Dashboard
-    createNewReport: "Create New Report",
+    createNewReport: "Create New Field Report",
     recordFieldWork: "Record your field work",
     createNewTask: "Create New Task",
     planYourWork: "Plan your work",
@@ -232,14 +263,14 @@ const translations = {
     topLocations: "Top Locations",
     sparepartSummary: "Sparepart Summary",
 
-    // Reports
+    // Field Reports
     searchReports: "Search project, location, activity, or equipment...",
-    noReports: "No reports yet",
-    noReportsFound: "No matching reports found",
-    createFirstReport: 'Click "New Report" button to start creating reports',
+    noReports: "No field reports yet",
+    noReportsFound: "No matching field reports found",
+    createFirstReport: 'Click "New Report" button to start creating field reports',
     tryDifferentKeyword: "Try different search keywords",
-    editReport: "Edit Report",
-    createReport: "Create New Report",
+    editReport: "Edit Field Report",
+    createReport: "Create New Field Report",
     date: "Date",
     location: "Location",
     projectName: "Project Name",
@@ -301,6 +332,28 @@ const translations = {
     statusPendingInfo:
       'Sparepart not ordered yet. Change status to "Ordered" to enter order date.',
 
+    // Repairs
+    noRepairs: "No repairs yet",
+    noRepairsFound: "No matching repairs found",
+    createFirstRepair: 'Click "New Repair" button to start creating repairs',
+    editRepair: "Edit Repair",
+    createRepair: "Create New Repair",
+    repairItem: "Repair Item",
+    dateReceived: "Date Received",
+    dateStarted: "Date Started",
+    dateCompleted: "Date Completed",
+    equipmentUnit: "Equipment Unit",
+    operatingLocation: "Operating Location",
+    damageDescription: "Damage Description",
+    repairStatus: "Repair Status",
+    statusReceived: "Received",
+    statusInProgress: "In Progress",
+    statusCompleted: "Completed",
+    searchRepairs: "Search repair item, equipment, or location...",
+    totalRepairs: "Total Repairs",
+    recentRepairs: "Recent Repairs",
+    repairSummary: "Repair Summary",
+
     // Messages
     confirmDelete: "Are you sure you want to delete",
     deleteSuccess: "Successfully deleted",
@@ -322,9 +375,11 @@ export default function LaporanPekerjaan() {
   const [reports, setReports] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [spareparts, setSpareparts] = useState([]);
+  const [repairs, setRepairs] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [showSparepartForm, setShowSparepartForm] = useState(false);
+  const [showRepairForm, setShowRepairForm] = useState(false);
   const [showProgressModal, setShowProgressModal] = useState(false);
   const [showSparepartDateModal, setShowSparepartDateModal] = useState(false);
   const [selectedSparepart, setSelectedSparepart] = useState(null);
@@ -333,6 +388,7 @@ export default function LaporanPekerjaan() {
   const [editingId, setEditingId] = useState(null);
   const [editingTaskId, setEditingTaskId] = useState(null);
   const [editingSparepartId, setEditingSparepartId] = useState(null);
+  const [editingRepairId, setEditingRepairId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState(() => {
@@ -511,6 +567,17 @@ export default function LaporanPekerjaan() {
     createdBy: "",
   });
 
+  const [repairFormData, setRepairFormData] = useState({
+    itemRepair: "",
+    tanggalMasuk: "",
+    tanggalMulai: "",
+    tanggalSelesai: "",
+    unitAlat: "",
+    lokasiOperasi: "",
+    deskripsiKerusakan: "",
+    status: "received",
+  });
+
   const [newProgressLog, setNewProgressLog] = useState({
     tanggal: new Date().toISOString().split("T")[0],
     deskripsi: "",
@@ -523,6 +590,7 @@ export default function LaporanPekerjaan() {
     loadReports();
     loadTasks();
     loadSpareparts();
+    loadRepairs();
   }, []);
 
   const loadReports = async () => {
@@ -564,6 +632,19 @@ export default function LaporanPekerjaan() {
       }
     } catch (error) {
       console.error("Error memuat spareparts:", error);
+    }
+  };
+
+  const loadRepairs = async () => {
+    try {
+      const response = await fetch(REPAIR_API_URL);
+      const result = await response.json();
+
+      if (result.success) {
+        setRepairs(result.data);
+      }
+    } catch (error) {
+      console.error("Error memuat repairs:", error);
     }
   };
 
@@ -1216,6 +1297,81 @@ export default function LaporanPekerjaan() {
     }
   };
 
+  // Repair Handlers
+  const handleSubmitRepair = async (e) => {
+    e.preventDefault();
+
+    if (!repairFormData.itemRepair || !repairFormData.tanggalMasuk) {
+      alert(t("fillRequired"));
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const method = editingRepairId ? "PUT" : "POST";
+      const payload = editingRepairId
+        ? { id: editingRepairId, ...repairFormData }
+        : repairFormData;
+
+      const response = await fetch(REPAIR_API_URL, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        await loadRepairs();
+        setShowRepairForm(false);
+        setEditingRepairId(null);
+        setRepairFormData({
+          itemRepair: "",
+          tanggalMasuk: "",
+          tanggalMulai: "",
+          tanggalSelesai: "",
+          unitAlat: "",
+          lokasiOperasi: "",
+          deskripsiKerusakan: "",
+          status: "received",
+        });
+      }
+    } catch (error) {
+      console.error("Error menyimpan repair:", error);
+      alert(t("saveFailed"));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleEditRepair = (repair) => {
+    setEditingRepairId(repair.id);
+    setRepairFormData(repair);
+    setShowRepairForm(true);
+  };
+
+  const handleDeleteRepair = async (id) => {
+    if (!confirm(t("confirmDelete") + "?")) return;
+
+    setSaving(true);
+    try {
+      const response = await fetch(REPAIR_API_URL, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        await loadRepairs();
+      }
+    } catch (error) {
+      console.error("Error menghapus repair:", error);
+      alert(t("deleteFailed"));
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const filteredReports = reports.filter((report) => {
     const matchesSearch =
       report.namaProyek?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -1230,6 +1386,15 @@ export default function LaporanPekerjaan() {
     return (
       task.namaTask?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       task.deskripsi?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
+
+  const filteredRepairs = repairs.filter((repair) => {
+    return (
+      repair.itemRepair?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      repair.unitAlat?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      repair.lokasiOperasi?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      repair.deskripsiKerusakan?.toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
 
@@ -1456,6 +1621,24 @@ export default function LaporanPekerjaan() {
                 >
                   <Wrench size={16} />
                   <span>{t("spareparts")}</span>
+                </button>
+                
+                <button
+                  onClick={() => {
+                    setActiveTab("repairs");
+                    setShowForm(false);
+                    setShowTaskForm(false);
+                    setShowSparepartForm(false);
+                    window.history.pushState({ tab: "repairs" }, "", "#repairs");
+                  }}
+                  className={`px-3 py-2 font-semibold transition-all duration-200 whitespace-nowrap text-sm flex items-center gap-2 rounded-lg ${
+                    activeTab === "repairs"
+                      ? "bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400"
+                      : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  }`}
+                >
+                  <ClipboardList size={16} />
+                  <span>{t("repairs")}</span>
                 </button>
                 
                 {/* Monitoring Dropdown */}
@@ -3851,6 +4034,334 @@ export default function LaporanPekerjaan() {
                   </button>
                 </div>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Repairs Tab */}
+        {activeTab === "repairs" && (
+          <div className="space-y-6 tab-content">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 fade-in max-w-6xl mx-auto">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+                  {t("repairs")}
+                </h2>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => {/* Download Excel */}}
+                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
+                  >
+                    <FileText size={18} />
+                    {t("downloadExcel")}
+                  </button>
+                  <button
+                    onClick={() => {/* Download PDF */}}
+                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
+                  >
+                    <FileText size={18} />
+                    {t("downloadPDF")}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowRepairForm(true);
+                      setEditingRepairId(null);
+                      setRepairFormData({
+                        itemRepair: "",
+                        tanggalMasuk: "",
+                        tanggalMulai: "",
+                        tanggalSelesai: "",
+                        unitAlat: "",
+                        lokasiOperasi: "",
+                        deskripsiKerusakan: "",
+                        status: "received",
+                      });
+                    }}
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors hover-lift"
+                  >
+                    <Plus size={20} />
+                    {t("newRepair")}
+                  </button>
+                </div>
+              </div>
+
+              {/* Repair List */}
+              <div className="space-y-4">
+                {filteredRepairs.length === 0 ? (
+                  <p className="text-center text-gray-500 dark:text-gray-400 py-8">
+                    {t("noRepairs")}
+                  </p>
+                ) : (
+                  filteredRepairs.map((repair) => (
+                    <div
+                      key={repair.id}
+                      className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer card-transition hover-lift"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <h3 className="font-semibold text-lg text-gray-800 dark:text-white">
+                              {repair.itemRepair}
+                            </h3>
+                            <span
+                              className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                                repair.status === "completed"
+                                  ? "bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300"
+                                  : repair.status === "in-progress"
+                                  ? "bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300"
+                                  : "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300"
+                              }`}
+                            >
+                              {repair.status === "completed"
+                                ? t("statusCompleted")
+                                : repair.status === "in-progress"
+                                ? t("statusInProgress")
+                                : t("statusReceived")}
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2 text-sm text-gray-600 dark:text-gray-400 mb-2">
+                            <p>
+                              <strong>{t("equipmentUnit")}:</strong> {repair.unitAlat}
+                            </p>
+                            <p>
+                              <strong>{t("operatingLocation")}:</strong> {repair.lokasiOperasi}
+                            </p>
+                            <p>
+                              <strong>{t("dateReceived")}:</strong>{" "}
+                              {new Date(repair.tanggalMasuk).toLocaleDateString("id-ID")}
+                            </p>
+                            {repair.tanggalSelesai && (
+                              <p>
+                                <strong>{t("dateCompleted")}:</strong>{" "}
+                                {new Date(repair.tanggalSelesai).toLocaleDateString("id-ID")}
+                              </p>
+                            )}
+                          </div>
+                          {repair.deskripsiKerusakan && (
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                              <strong>{t("damageDescription")}:</strong> {repair.deskripsiKerusakan}
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex flex-col gap-2 ml-4">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEditRepair(repair);
+                            }}
+                            disabled={saving}
+                            className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded"
+                            title="Edit Repair"
+                          >
+                            <Edit2 size={16} />
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteRepair(repair.id);
+                            }}
+                            disabled={saving}
+                            className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded"
+                            title="Hapus Repair"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Repair Form Modal */}
+        {showRepairForm && (
+          <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-[100] modal-backdrop">
+            <div className="bg-white dark:bg-gray-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl modal-content">
+              <div className="sticky top-0 bg-white dark:bg-gray-800 border-b dark:border-gray-700 px-6 py-4 flex justify-between items-center z-10">
+                <h2 className="text-xl font-bold text-gray-800 dark:text-white">
+                  {editingRepairId ? t("editRepair") : t("createRepair")}
+                </h2>
+                <button
+                  onClick={() => {
+                    setShowRepairForm(false);
+                    setEditingRepairId(null);
+                  }}
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+
+              <form onSubmit={handleSubmitRepair} className="p-6 space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                      {t("repairItem")} <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={repairFormData.itemRepair}
+                      onChange={(e) =>
+                        setRepairFormData({
+                          ...repairFormData,
+                          itemRepair: e.target.value,
+                        })
+                      }
+                      className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                      {t("equipmentUnit")} <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={repairFormData.unitAlat}
+                      onChange={(e) =>
+                        setRepairFormData({
+                          ...repairFormData,
+                          unitAlat: e.target.value,
+                        })
+                      }
+                      className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                      {t("operatingLocation")} <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={repairFormData.lokasiOperasi}
+                      onChange={(e) =>
+                        setRepairFormData({
+                          ...repairFormData,
+                          lokasiOperasi: e.target.value,
+                        })
+                      }
+                      className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                      {t("dateReceived")} <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      value={repairFormData.tanggalMasuk}
+                      onChange={(e) =>
+                        setRepairFormData({
+                          ...repairFormData,
+                          tanggalMasuk: e.target.value,
+                        })
+                      }
+                      className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                      {t("dateStarted")}
+                    </label>
+                    <input
+                      type="date"
+                      value={repairFormData.tanggalMulai}
+                      onChange={(e) =>
+                        setRepairFormData({
+                          ...repairFormData,
+                          tanggalMulai: e.target.value,
+                        })
+                      }
+                      className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                      {t("dateCompleted")}
+                    </label>
+                    <input
+                      type="date"
+                      value={repairFormData.tanggalSelesai}
+                      onChange={(e) =>
+                        setRepairFormData({
+                          ...repairFormData,
+                          tanggalSelesai: e.target.value,
+                        })
+                      }
+                      className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                      {t("repairStatus")} <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      value={repairFormData.status}
+                      onChange={(e) =>
+                        setRepairFormData({
+                          ...repairFormData,
+                          status: e.target.value,
+                        })
+                      }
+                      className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      required
+                    >
+                      <option value="received">{t("statusReceived")}</option>
+                      <option value="in-progress">{t("statusInProgress")}</option>
+                      <option value="completed">{t("statusCompleted")}</option>
+                    </select>
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                      {t("damageDescription")} <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      value={repairFormData.deskripsiKerusakan}
+                      onChange={(e) =>
+                        setRepairFormData({
+                          ...repairFormData,
+                          deskripsiKerusakan: e.target.value,
+                        })
+                      }
+                      rows={4}
+                      className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="flex gap-3 pt-4">
+                  <button
+                    type="submit"
+                    disabled={saving}
+                    className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold disabled:opacity-50"
+                  >
+                    {saving ? t("saving") : editingRepairId ? t("update") : t("save")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowRepairForm(false);
+                      setEditingRepairId(null);
+                    }}
+                    className="px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-white"
+                  >
+                    {t("cancel")}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}
