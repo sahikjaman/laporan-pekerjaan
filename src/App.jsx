@@ -1899,16 +1899,16 @@ export default function LaporanPekerjaan() {
                 {/* Mobile Menu Button */}
                 <button
                   onClick={() => setShowMobileMenu(!showMobileMenu)}
-                  className="lg:hidden bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 p-2 rounded-lg font-semibold flex items-center transition-colors"
+                  className="lg:hidden bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 p-1.5 sm:p-2 rounded-lg font-semibold flex items-center transition-colors"
                   title="Menu"
                 >
-                  <Menu size={20} />
+                  <Menu size={18} className="sm:w-5 sm:h-5" />
                 </button>
 
                 {/* Theme Toggle Button */}
                 <button
                   onClick={cycleTheme}
-                  className="hidden lg:flex bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 p-2 rounded-lg font-semibold items-center transition-colors"
+                  className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 p-1.5 sm:p-2 rounded-lg font-semibold flex items-center transition-colors"
                   title={`Current: ${getThemeLabel()} - Click to change`}
                 >
                   {getThemeIcon()}
@@ -1917,22 +1917,22 @@ export default function LaporanPekerjaan() {
                 {/* Language Toggle Button */}
                 <button
                   onClick={toggleLanguage}
-                  className="hidden lg:flex bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 p-2 rounded-lg font-semibold items-center transition-colors"
+                  className="hidden sm:flex bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 p-1.5 sm:p-2 rounded-lg font-semibold items-center transition-colors"
                   title="Change Language"
                 >
-                  <Globe size={16} />
+                  <Globe size={14} className="sm:w-4 sm:h-4" />
                 </button>
 
                 {/* Refresh Button */}
                 <button
                   onClick={loadReports}
                   disabled={loading}
-                  className="hidden lg:flex bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 p-2 rounded-lg font-semibold items-center transition-colors"
+                  className="hidden sm:flex bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 p-1.5 sm:p-2 rounded-lg font-semibold items-center transition-colors"
                   title="Refresh"
                 >
                   <RefreshCw
-                    size={16}
-                    className={loading ? "animate-spin" : ""}
+                    size={14}
+                    className={`sm:w-4 sm:h-4 ${loading ? "animate-spin" : ""}`}
                   />
                 </button>
               </div>
