@@ -2041,6 +2041,35 @@ export default function LaporanPekerjaan() {
                     className="sm:w-8 sm:h-8 group-hover:rotate-90 transition-transform flex-shrink-0"
                   />
                 </button>
+
+                <button
+                  onClick={() => {
+                    setActiveTab("repairs");
+                    setShowRepairForm(true);
+                    setShowForm(false);
+                    setShowTaskForm(false);
+                    setShowSparepartForm(false);
+                  }}
+                  className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white p-4 sm:p-6 rounded-xl shadow-lg flex items-center justify-between transition-all hover:shadow-xl group hover-lift"
+                >
+                  <div className="flex items-center gap-3 sm:gap-4">
+                    <div className="p-2 sm:p-3 bg-white bg-opacity-20 rounded-lg group-hover:scale-110 transition-transform">
+                      <ClipboardList size={24} className="sm:w-8 sm:h-8" />
+                    </div>
+                    <div className="text-left">
+                      <h3 className="text-base sm:text-xl font-bold">
+                        {t("newRepair")}
+                      </h3>
+                      <p className="text-xs sm:text-sm text-orange-100">
+                        Input repair request
+                      </p>
+                    </div>
+                  </div>
+                  <Plus
+                    size={24}
+                    className="sm:w-8 sm:h-8 group-hover:rotate-90 transition-transform flex-shrink-0"
+                  />
+                </button>
               </div>
 
               {/* Statistics Cards */}
@@ -2114,6 +2143,23 @@ export default function LaporanPekerjaan() {
                   </h3>
                   <p className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
                     {spareparts.length}
+                  </p>
+                </div>
+
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 hover-lift card-transition stagger-item">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="p-2 sm:p-3 bg-orange-100 dark:bg-orange-900/50 rounded-lg">
+                      <ClipboardList
+                        className="text-orange-600 dark:text-orange-400"
+                        size={20}
+                      />
+                    </div>
+                  </div>
+                  <h3 className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm font-medium mb-1">
+                    {t("totalRepairs")}
+                  </h3>
+                  <p className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
+                    {repairs.length}
                   </p>
                 </div>
               </div>
@@ -2517,6 +2563,90 @@ export default function LaporanPekerjaan() {
                   </div>
                 )}
               </div>
+
+              {/* Repair Summary */}
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6">
+                <h2 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-white mb-4">
+                  {t("repairSummary")}
+                </h2>
+                {repairs.length === 0 ? (
+                  <p className="text-gray-500 dark:text-gray-400 text-center py-8">
+                    {t("noRepairs")}
+                  </p>
+                ) : (
+                  <div className="space-y-4">
+                    {/* Status Summary */}
+                    <div className="grid grid-cols-3 gap-2 sm:gap-4">
+                      <div className="p-3 sm:p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                        <p className="text-xs text-yellow-700 dark:text-yellow-400 mb-1">
+                          {t("statusReceived")}
+                        </p>
+                        <p className="text-xl sm:text-2xl font-bold text-yellow-800 dark:text-yellow-300">
+                          {repairs.filter((r) => r.status === "received").length}
+                        </p>
+                      </div>
+                      <div className="p-3 sm:p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                        <p className="text-xs text-blue-700 dark:text-blue-400 mb-1">
+                          {t("statusInProgress")}
+                        </p>
+                        <p className="text-xl sm:text-2xl font-bold text-blue-800 dark:text-blue-300">
+                          {repairs.filter((r) => r.status === "in-progress").length}
+                        </p>
+                      </div>
+                      <div className="p-3 sm:p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                        <p className="text-xs text-green-700 dark:text-green-400 mb-1">
+                          {t("statusCompleted")}
+                        </p>
+                        <p className="text-xl sm:text-2xl font-bold text-green-800 dark:text-green-300">
+                          {repairs.filter((r) => r.status === "completed").length}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Recent Repairs */}
+                    <div>
+                      <h3 className="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                        {t("recentRepairs")}
+                      </h3>
+                      <div className="space-y-2">
+                        {repairs.slice(0, 5).map((repair) => (
+                          <div
+                            key={repair.id}
+                            onClick={() => {
+                              handleEditRepair(repair);
+                            }}
+                            className="p-2 sm:p-3 bg-gray-50 dark:bg-gray-700 rounded-lg flex items-center justify-between gap-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+                          >
+                            <div className="flex-1 min-w-0">
+                              <p className="font-semibold text-gray-800 dark:text-white text-xs sm:text-sm truncate">
+                                {repair.itemRepair}
+                              </p>
+                              <p className="text-xs text-gray-600 dark:text-gray-400">
+                                {repair.unitAlat} - {repair.lokasiOperasi}
+                              </p>
+                            </div>
+                            <span
+                              className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
+                                repair.status === "completed"
+                                  ? "bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300"
+                                  : repair.status === "in-progress"
+                                  ? "bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300"
+                                  : "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300"
+                              }`}
+                            >
+                              {repair.status === "completed"
+                                ? t("statusCompleted").slice(0, 7)
+                                : repair.status === "in-progress"
+                                ? "Progress"
+                                : t("statusReceived").slice(0, 7)}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
@@ -2538,28 +2668,46 @@ export default function LaporanPekerjaan() {
                       className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                     />
                   </div>
-                  <button
-                    onClick={() => {
-                      setShowForm(true);
-                      setEditingId(null);
-                      setFormData({
-                        tanggal: new Date().toISOString().split("T")[0],
-                        lokasi: "",
-                        namaProyek: "",
-                        jenisKegiatan: "",
-                        unitAlat: "",
-                        jamMulai: "",
-                        jamSelesai: "",
-                        deskripsi: "",
-                        catatan: "",
-                      });
-                      window.history.pushState({ tab: "laporan", modal: "form" }, "", "#laporan");
-                    }}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors hover-lift whitespace-nowrap"
-                  >
-                    <Plus size={20} />
-                    {t("newReport")}
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {/* Download Excel */}}
+                      className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap"
+                      title={t("downloadExcel")}
+                    >
+                      <FileText size={18} />
+                      <span className="hidden sm:inline">Excel</span>
+                    </button>
+                    <button
+                      onClick={() => {/* Download PDF */}}
+                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap"
+                      title={t("downloadPDF")}
+                    >
+                      <FileText size={18} />
+                      <span className="hidden sm:inline">PDF</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowForm(true);
+                        setEditingId(null);
+                        setFormData({
+                          tanggal: new Date().toISOString().split("T")[0],
+                          lokasi: "",
+                          namaProyek: "",
+                          jenisKegiatan: "",
+                          unitAlat: "",
+                          jamMulai: "",
+                          jamSelesai: "",
+                          deskripsi: "",
+                          catatan: "",
+                        });
+                        window.history.pushState({ tab: "laporan", modal: "form" }, "", "#laporan");
+                      }}
+                      className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors hover-lift whitespace-nowrap"
+                    >
+                      <Plus size={20} />
+                      {t("newReport")}
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -2880,25 +3028,43 @@ export default function LaporanPekerjaan() {
                       <option value="name">{t("sortByName")}</option>
                     </select>
                   </div>
-                  <button
-                    onClick={() => {
-                      setShowTaskForm(true);
-                      setEditingTaskId(null);
-                      setTaskFormData({
-                        namaTask: "",
-                        deskripsi: "",
-                        prioritas: "medium",
-                        deadline: "",
-                        progress: 0,
-                        progressLogs: [],
-                      });
-                      window.history.pushState({ tab: "tasks", modal: "taskForm" }, "", "#tasks");
-                    }}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors hover-lift whitespace-nowrap"
-                  >
-                    <Plus size={20} />
-                    {t("newTask")}
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {/* Download Excel */}}
+                      className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap"
+                      title={t("downloadExcel")}
+                    >
+                      <FileText size={18} />
+                      <span className="hidden sm:inline">Excel</span>
+                    </button>
+                    <button
+                      onClick={() => {/* Download PDF */}}
+                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap"
+                      title={t("downloadPDF")}
+                    >
+                      <FileText size={18} />
+                      <span className="hidden sm:inline">PDF</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowTaskForm(true);
+                        setEditingTaskId(null);
+                        setTaskFormData({
+                          namaTask: "",
+                          deskripsi: "",
+                          prioritas: "medium",
+                          deadline: "",
+                          progress: 0,
+                          progressLogs: [],
+                        });
+                        window.history.pushState({ tab: "tasks", modal: "taskForm" }, "", "#tasks");
+                      }}
+                      className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors hover-lift whitespace-nowrap"
+                    >
+                      <Plus size={20} />
+                      {t("newTask")}
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -3584,27 +3750,43 @@ export default function LaporanPekerjaan() {
                 <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
                   {t("spareparts")}
                 </h2>
-                <button
-                  onClick={() => {
-                    setShowSparepartForm(true);
-                    setEditingSparepartId(null);
-                    setSparepartFormData({
-                      namaPart: "",
-                      deskripsi: "",
-                      jumlah: 0,
-                      unit: "",
-                      status: "pending",
-                      tanggalDipesan: "",
-                      tanggalDatang: "",
-                      createdBy: "",
-                    });
-                    window.history.pushState({ tab: "spareparts", modal: "sparepartForm" }, "", "#spareparts");
-                  }}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors hover-lift"
-                >
-                  <Plus size={20} />
-                  {t("newSparepart")}
-                </button>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => {/* Download Excel */}}
+                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
+                  >
+                    <FileText size={18} />
+                    {t("downloadExcel")}
+                  </button>
+                  <button
+                    onClick={() => {/* Download PDF */}}
+                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
+                  >
+                    <FileText size={18} />
+                    {t("downloadPDF")}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowSparepartForm(true);
+                      setEditingSparepartId(null);
+                      setSparepartFormData({
+                        namaPart: "",
+                        deskripsi: "",
+                        jumlah: 0,
+                        unit: "",
+                        status: "pending",
+                        tanggalDipesan: "",
+                        tanggalDatang: "",
+                        createdBy: "",
+                      });
+                      window.history.pushState({ tab: "spareparts", modal: "sparepartForm" }, "", "#spareparts");
+                    }}
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors hover-lift"
+                  >
+                    <Plus size={20} />
+                    {t("newSparepart")}
+                  </button>
+                </div>
               </div>
 
               {/* Sparepart List */}
