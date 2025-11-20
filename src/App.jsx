@@ -1307,20 +1307,18 @@ export default function LaporanPekerjaan() {
 
     setSaving(true);
     try {
-      const repairData = {
-        item_repair: repairFormData.itemRepair,
-        unit_alat: repairFormData.unitAlat,
-        lokasi_operasi: repairFormData.lokasiOperasi,
-        deskripsi_kerusakan: repairFormData.deskripsiKerusakan,
+      // Prepare form data with current date for new repairs
+      const formDataToSave = {
+        ...repairFormData,
+        tanggalMasuk: editingRepairId ? repairFormData.tanggalMasuk : new Date().toISOString().split('T')[0],
+        status: editingRepairId ? repairFormData.status : "received",
       };
 
+      const repairData = repairFormDataToRepair(formDataToSave);
+
       if (editingRepairId) {
-        // When editing, only update these 4 fields
         await repairsAPI.update(editingRepairId, repairData);
       } else {
-        // When creating, add tanggal_masuk (today) and status (received)
-        repairData.tanggal_masuk = new Date().toISOString().split('T')[0];
-        repairData.status = "received";
         await repairsAPI.create(repairData);
       }
 
@@ -1372,13 +1370,10 @@ export default function LaporanPekerjaan() {
     
     setSaving(true);
     try {
-      const updates = {
-        status: selectedRepair.status,
-        start_date: selectedRepair.tanggalMulai || null,
-        completion_date: selectedRepair.tanggalSelesai || null,
-      };
+      // Update entire repair using mapper to maintain data structure
+      const repairData = repairFormDataToRepair(selectedRepair);
       
-      await repairsAPI.update(selectedRepair.id, updates);
+      await repairsAPI.update(selectedRepair.id, repairData);
       await loadRepairs();
       setShowRepairStatusModal(false);
       setSelectedRepair(null);
