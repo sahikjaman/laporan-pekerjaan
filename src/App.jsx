@@ -3623,7 +3623,7 @@ export default function LaporanPekerjaan() {
               </div>
             )}
 
-              <div className="space-y-4">
+            <div className="space-y-4">
                 {sortedTasks.length === 0 ? (
                   <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-12 text-center">
                     <ListTodo
