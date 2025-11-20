@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 import {
   Plus,
   Search,
@@ -1402,6 +1405,144 @@ export default function LaporanPekerjaan() {
     }
   };
 
+  // Download Functions
+  const downloadExcel = (data, filename, headers) => {
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Data");
+    XLSX.writeFile(wb, `${filename}.xlsx`);
+  };
+
+  const downloadPDF = (data, filename, columns, title) => {
+    const doc = new jsPDF();
+    
+    // Add title
+    doc.setFontSize(16);
+    doc.text(title, 14, 15);
+    
+    // Add date
+    doc.setFontSize(10);
+    doc.text(`Tanggal: ${new Date().toLocaleDateString("id-ID")}`, 14, 22);
+    
+    // Add table
+    doc.autoTable({
+      startY: 30,
+      head: [columns.map(col => col.header)],
+      body: data.map(row => columns.map(col => col.field ? row[col.field] : col.render(row))),
+      styles: { fontSize: 8 },
+      headStyles: { fillColor: [79, 70, 229] },
+    });
+    
+    doc.save(`${filename}.pdf`);
+  };
+
+  const handleDownloadReportsExcel = () => {
+    const data = filteredReports.map(report => ({
+      "Tanggal": new Date(report.tanggal).toLocaleDateString("id-ID"),
+      "Nama Proyek": report.namaProyek,
+      "Lokasi": report.lokasi,
+      "Jenis Kegiatan": report.jenisKegiatan,
+      "Unit Alat": report.unitAlat,
+      "Jam Kerja": report.jamKerja,
+      "Catatan": report.catatan || "-"
+    }));
+    downloadExcel(data, "Laporan_Lapangan", Object.keys(data[0] || {}));
+  };
+
+  const handleDownloadReportsPDF = () => {
+    const columns = [
+      { header: "Tanggal", render: (r) => new Date(r.tanggal).toLocaleDateString("id-ID") },
+      { header: "Nama Proyek", field: "namaProyek" },
+      { header: "Lokasi", field: "lokasi" },
+      { header: "Jenis Kegiatan", field: "jenisKegiatan" },
+      { header: "Unit Alat", field: "unitAlat" },
+      { header: "Jam Kerja", field: "jamKerja" },
+      { header: "Catatan", render: (r) => r.catatan || "-" }
+    ];
+    downloadPDF(filteredReports, "Laporan_Lapangan", columns, "LAPORAN LAPANGAN");
+  };
+
+  const handleDownloadTasksExcel = () => {
+    const data = filteredTasks.map(task => ({
+      "Nama Tugas": task.namaTask,
+      "Deskripsi": task.deskripsi,
+      "Prioritas": task.prioritas === "high" ? "Tinggi" : task.prioritas === "medium" ? "Sedang" : "Rendah",
+      "Progress": `${task.progress}%`,
+      "Deadline": task.deadline ? new Date(task.deadline).toLocaleDateString("id-ID") : "-"
+    }));
+    downloadExcel(data, "Daftar_Tugas", Object.keys(data[0] || {}));
+  };
+
+  const handleDownloadTasksPDF = () => {
+    const columns = [
+      { header: "Nama Tugas", field: "namaTask" },
+      { header: "Deskripsi", field: "deskripsi" },
+      { header: "Prioritas", render: (t) => t.prioritas === "high" ? "Tinggi" : t.prioritas === "medium" ? "Sedang" : "Rendah" },
+      { header: "Progress", render: (t) => `${t.progress}%` },
+      { header: "Deadline", render: (t) => t.deadline ? new Date(t.deadline).toLocaleDateString("id-ID") : "-" }
+    ];
+    downloadPDF(filteredTasks, "Daftar_Tugas", columns, "DAFTAR TUGAS");
+  };
+
+  const handleDownloadSparepartsExcel = () => {
+    const data = spareparts.filter(part =>
+      part.namaPart?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      part.deskripsi?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      part.unit?.toLowerCase().includes(searchTerm.toLowerCase())
+    ).map(part => ({
+      "Nama Sparepart": part.namaPart,
+      "Jumlah": part.jumlah,
+      "Unit": part.unit,
+      "Deskripsi": part.deskripsi || "-",
+      "Status": part.status === "arrived" ? "Datang" : part.status === "ordered" ? "Dipesan" : "Pending",
+      "Tanggal Order": part.tanggalOrder ? new Date(part.tanggalOrder).toLocaleDateString("id-ID") : "-",
+      "Tanggal Datang": part.tanggalDatang ? new Date(part.tanggalDatang).toLocaleDateString("id-ID") : "-"
+    }));
+    downloadExcel(data, "Sparepart", Object.keys(data[0] || {}));
+  };
+
+  const handleDownloadSparepartsPDF = () => {
+    const filteredData = spareparts.filter(part =>
+      part.namaPart?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      part.deskripsi?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      part.unit?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    const columns = [
+      { header: "Nama Sparepart", field: "namaPart" },
+      { header: "Jumlah", field: "jumlah" },
+      { header: "Unit", field: "unit" },
+      { header: "Deskripsi", render: (p) => p.deskripsi || "-" },
+      { header: "Status", render: (p) => p.status === "arrived" ? "Datang" : p.status === "ordered" ? "Dipesan" : "Pending" }
+    ];
+    downloadPDF(filteredData, "Sparepart", columns, "DAFTAR SPAREPART");
+  };
+
+  const handleDownloadRepairsExcel = () => {
+    const data = filteredRepairs.map(repair => ({
+      "Item Repair": repair.itemRepair,
+      "Unit Alat": repair.unitAlat,
+      "Lokasi Operasi": repair.lokasiOperasi,
+      "Tanggal Masuk": new Date(repair.tanggalMasuk).toLocaleDateString("id-ID"),
+      "Tanggal Mulai": repair.tanggalMulai ? new Date(repair.tanggalMulai).toLocaleDateString("id-ID") : "-",
+      "Tanggal Selesai": repair.tanggalSelesai ? new Date(repair.tanggalSelesai).toLocaleDateString("id-ID") : "-",
+      "Deskripsi Kerusakan": repair.deskripsiKerusakan || "-",
+      "Status": repair.status === "completed" ? "Selesai" : repair.status === "in-progress" ? "Dalam Proses" : "Diterima"
+    }));
+    downloadExcel(data, "Repair", Object.keys(data[0] || {}));
+  };
+
+  const handleDownloadRepairsPDF = () => {
+    const columns = [
+      { header: "Item Repair", field: "itemRepair" },
+      { header: "Unit Alat", field: "unitAlat" },
+      { header: "Lokasi", field: "lokasiOperasi" },
+      { header: "Tgl Masuk", render: (r) => new Date(r.tanggalMasuk).toLocaleDateString("id-ID") },
+      { header: "Deskripsi", render: (r) => r.deskripsiKerusakan || "-" },
+      { header: "Status", render: (r) => r.status === "completed" ? "Selesai" : r.status === "in-progress" ? "Proses" : "Diterima" }
+    ];
+    downloadPDF(filteredRepairs, "Repair", columns, "DAFTAR REPAIR");
+  };
+
   const filteredReports = reports.filter((report) => {
     const matchesSearch =
       report.namaProyek?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -2696,7 +2837,7 @@ export default function LaporanPekerjaan() {
                   </div>
                   <div className="flex gap-2">
                     <button
-                      onClick={() => {/* Download Excel */}}
+                      onClick={handleDownloadReportsExcel}
                       className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap"
                       title={t("downloadExcel")}
                     >
@@ -2704,7 +2845,7 @@ export default function LaporanPekerjaan() {
                       <span className="hidden sm:inline">Excel</span>
                     </button>
                     <button
-                      onClick={() => {/* Download PDF */}}
+                      onClick={handleDownloadReportsPDF}
                       className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap"
                       title={t("downloadPDF")}
                     >
@@ -3056,7 +3197,7 @@ export default function LaporanPekerjaan() {
                   </div>
                   <div className="flex gap-2">
                     <button
-                      onClick={() => {/* Download Excel */}}
+                      onClick={handleDownloadTasksExcel}
                       className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap"
                       title={t("downloadExcel")}
                     >
@@ -3064,7 +3205,7 @@ export default function LaporanPekerjaan() {
                       <span className="hidden sm:inline">Excel</span>
                     </button>
                     <button
-                      onClick={() => {/* Download PDF */}}
+                      onClick={handleDownloadTasksPDF}
                       className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap"
                       title={t("downloadPDF")}
                     >
@@ -3778,14 +3919,14 @@ export default function LaporanPekerjaan() {
                 </h2>
                 <div className="flex gap-3">
                   <button
-                    onClick={() => {/* Download Excel */}}
+                    onClick={handleDownloadSparepartsExcel}
                     className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
                   >
                     <FileText size={18} />
                     {t("downloadExcel")}
                   </button>
                   <button
-                    onClick={() => {/* Download PDF */}}
+                    onClick={handleDownloadSparepartsPDF}
                     className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
                   >
                     <FileText size={18} />
@@ -4256,14 +4397,14 @@ export default function LaporanPekerjaan() {
                 </h2>
                 <div className="flex gap-3">
                   <button
-                    onClick={() => {/* Download Excel */}}
+                    onClick={handleDownloadRepairsExcel}
                     className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
                   >
                     <FileText size={18} />
                     {t("downloadExcel")}
                   </button>
                   <button
-                    onClick={() => {/* Download PDF */}}
+                    onClick={handleDownloadRepairsPDF}
                     className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
                   >
                     <FileText size={18} />
