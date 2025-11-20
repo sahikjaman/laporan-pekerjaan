@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
-import "jspdf-autotable";
+import autoTable from "jspdf-autotable";
 import {
   Plus,
   Search,
@@ -1424,13 +1424,15 @@ export default function LaporanPekerjaan() {
     doc.setFontSize(10);
     doc.text(`Tanggal: ${new Date().toLocaleDateString("id-ID")}`, 14, 22);
     
-    // Add table
-    doc.autoTable({
+    // Add table using autoTable
+    autoTable(doc, {
       startY: 30,
       head: [columns.map(col => col.header)],
       body: data.map(row => columns.map(col => col.field ? row[col.field] : col.render(row))),
-      styles: { fontSize: 8 },
-      headStyles: { fillColor: [79, 70, 229] },
+      styles: { fontSize: 8, cellPadding: 2 },
+      headStyles: { fillColor: [79, 70, 229], textColor: 255 },
+      alternateRowStyles: { fillColor: [245, 245, 245] },
+      margin: { top: 30 },
     });
     
     doc.save(`${filename}.pdf`);
