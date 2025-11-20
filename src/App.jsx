@@ -1024,6 +1024,7 @@ export default function LaporanPekerjaan() {
           created_at: newProgressLog.tanggal ? `${newProgressLog.tanggal}T00:00:00Z` : new Date().toISOString()
         });
 
+        // Calculate new total progress
         const updatedLogs = (selectedTask.progressLogs || []).map((log) =>
           log.id === editingLogId
             ? {
@@ -1045,17 +1046,22 @@ export default function LaporanPekerjaan() {
         // Update task progress
         await tasksAPI.update(selectedTask.id, { progress: newProgress });
         
-        // Reload tasks
+        // Reload tasks to get fresh data
         await loadTasks();
-        const refreshedTask = tasks.find((t) => t.id === selectedTask.id);
-        setSelectedTask(refreshedTask);
         
+        // Close edit mode and reset form
         setEditingLogId(null);
         setNewProgressLog({
           tanggal: new Date().toISOString().split("T")[0],
           deskripsi: "",
           progressIncrement: 0,
         });
+        
+        // Close modal
+        setShowProgressModal(false);
+        setSelectedTask(null);
+        
+        alert('Riwayat progress berhasil diupdate!');
         return;
       }
 
