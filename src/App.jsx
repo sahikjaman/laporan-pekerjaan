@@ -2169,9 +2169,9 @@ export default function LaporanPekerjaan() {
             <div className="space-y-8 tab-content">
               {/* Quick Action Buttons */}
               <div>
-                <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-                  <Plus className="text-indigo-600 dark:text-indigo-400" size={24} />
-                  Aksi Cepat
+                <h2 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-white mb-3 sm:mb-4 flex items-center gap-2">
+                  <Plus className="text-indigo-600 dark:text-indigo-400" size={20} />
+                  <span className="text-base sm:text-xl">Aksi Cepat</span>
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   <button
@@ -2181,18 +2181,18 @@ export default function LaporanPekerjaan() {
                       setShowTaskForm(false);
                       setShowSparepartForm(false);
                     }}
-                    className="bg-gradient-to-br from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white p-5 rounded-xl shadow-lg transition-all hover:shadow-xl group hover-lift"
+                    className="bg-gradient-to-br from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white p-4 sm:p-5 rounded-xl shadow-lg transition-all hover:shadow-xl group hover-lift"
                   >
-                    <div className="flex items-center justify-center mb-3">
-                      <div className="p-3 bg-white bg-opacity-20 rounded-lg group-hover:scale-110 transition-transform">
-                        <FileText size={28} />
+                    <div className="flex items-center justify-center mb-2 sm:mb-3">
+                      <div className="p-2 sm:p-3 bg-white bg-opacity-20 rounded-lg group-hover:scale-110 transition-transform">
+                        <FileText size={24} className="sm:w-7 sm:h-7" />
                       </div>
                     </div>
                     <div className="text-center">
-                      <h3 className="text-base font-bold mb-1">
+                      <h3 className="text-sm sm:text-base font-bold mb-1">
                         {t("createNewReport")}
                       </h3>
-                      <p className="text-xs text-blue-100">
+                      <p className="text-xs text-blue-100 hidden sm:block">
                         {t("recordFieldWork")}
                       </p>
                     </div>
@@ -2205,18 +2205,18 @@ export default function LaporanPekerjaan() {
                       setShowForm(false);
                       setShowSparepartForm(false);
                     }}
-                    className="bg-gradient-to-br from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white p-5 rounded-xl shadow-lg transition-all hover:shadow-xl group hover-lift"
+                    className="bg-gradient-to-br from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white p-4 sm:p-5 rounded-xl shadow-lg transition-all hover:shadow-xl group hover-lift"
                   >
-                    <div className="flex items-center justify-center mb-3">
-                      <div className="p-3 bg-white bg-opacity-20 rounded-lg group-hover:scale-110 transition-transform">
-                        <ListTodo size={28} />
+                    <div className="flex items-center justify-center mb-2 sm:mb-3">
+                      <div className="p-2 sm:p-3 bg-white bg-opacity-20 rounded-lg group-hover:scale-110 transition-transform">
+                        <ListTodo size={24} className="sm:w-7 sm:h-7" />
                       </div>
                     </div>
                     <div className="text-center">
-                      <h3 className="text-base font-bold mb-1">
+                      <h3 className="text-sm sm:text-base font-bold mb-1">
                         {t("createNewTask")}
                       </h3>
-                      <p className="text-xs text-green-100">
+                      <p className="text-xs text-green-100 hidden sm:block">
                         {t("planYourWork")}
                       </p>
                     </div>
@@ -2229,18 +2229,18 @@ export default function LaporanPekerjaan() {
                       setShowForm(false);
                       setShowTaskForm(false);
                     }}
-                    className="bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white p-5 rounded-xl shadow-lg transition-all hover:shadow-xl group hover-lift"
+                    className="bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white p-4 sm:p-5 rounded-xl shadow-lg transition-all hover:shadow-xl group hover-lift"
                   >
-                    <div className="flex items-center justify-center mb-3">
-                      <div className="p-3 bg-white bg-opacity-20 rounded-lg group-hover:scale-110 transition-transform">
-                        <Wrench size={28} />
+                    <div className="flex items-center justify-center mb-2 sm:mb-3">
+                      <div className="p-2 sm:p-3 bg-white bg-opacity-20 rounded-lg group-hover:scale-110 transition-transform">
+                        <Wrench size={24} className="sm:w-7 sm:h-7" />
                       </div>
                     </div>
                     <div className="text-center">
-                      <h3 className="text-base font-bold mb-1">
+                      <h3 className="text-sm sm:text-base font-bold mb-1">
                         {t("orderSparepart")}
                       </h3>
-                      <p className="text-xs text-purple-100">
+                      <p className="text-xs text-purple-100 hidden sm:block">
                         {t("addSparepartRequest")}
                       </p>
                     </div>
@@ -2254,18 +2254,18 @@ export default function LaporanPekerjaan() {
                       setShowTaskForm(false);
                       setShowSparepartForm(false);
                     }}
-                    className="bg-gradient-to-br from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white p-5 rounded-xl shadow-lg transition-all hover:shadow-xl group hover-lift"
+                    className="bg-gradient-to-br from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white p-4 sm:p-5 rounded-xl shadow-lg transition-all hover:shadow-xl group hover-lift"
                   >
-                    <div className="flex items-center justify-center mb-3">
-                      <div className="p-3 bg-white bg-opacity-20 rounded-lg group-hover:scale-110 transition-transform">
-                        <ClipboardList size={28} />
+                    <div className="flex items-center justify-center mb-2 sm:mb-3">
+                      <div className="p-2 sm:p-3 bg-white bg-opacity-20 rounded-lg group-hover:scale-110 transition-transform">
+                        <ClipboardList size={24} className="sm:w-7 sm:h-7" />
                       </div>
                     </div>
                     <div className="text-center">
-                      <h3 className="text-base font-bold mb-1">
+                      <h3 className="text-sm sm:text-base font-bold mb-1">
                         {t("newRepair")}
                       </h3>
-                      <p className="text-xs text-orange-100">
+                      <p className="text-xs text-orange-100 hidden sm:block">
                         Input repair request
                       </p>
                     </div>
@@ -2275,9 +2275,9 @@ export default function LaporanPekerjaan() {
 
               {/* Statistics Overview */}
               <div>
-                <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-                  <TrendingUp className="text-green-600 dark:text-green-400" size={24} />
-                  Statistik Overview
+                <h2 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-white mb-3 sm:mb-4 flex items-center gap-2">
+                  <TrendingUp className="text-green-600 dark:text-green-400" size={20} />
+                  <span className="text-base sm:text-xl">Statistik Overview</span>
                 </h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
                 <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 hover-lift card-transition stagger-item">
@@ -2374,8 +2374,8 @@ export default function LaporanPekerjaan() {
               {/* Recent Reports & Top Locations */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Recent Reports */}
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 fade-in">
-                  <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 fade-in">
+                  <h2 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-white mb-3 sm:mb-4">
                     {t("recentReports")}
                   </h2>
                   {recentReports.length === 0 ? (
@@ -2408,8 +2408,8 @@ export default function LaporanPekerjaan() {
                 </div>
 
                 {/* Top Locations with Unit Names */}
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 fade-in">
-                  <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 fade-in">
+                  <h2 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-white mb-3 sm:mb-4">
                     {t("topLocations")}
                   </h2>
                   {topLokasi.length === 0 ? (
@@ -2464,8 +2464,8 @@ export default function LaporanPekerjaan() {
               {/* Tasks Overview */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Ongoing Tasks by Priority */}
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 fade-in">
-                  <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 fade-in">
+                  <h2 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-white mb-3 sm:mb-4">
                     {t("ongoingTasksByPriority")}
                   </h2>
                   {tasks.filter((t) => t.progress < 100).length === 0 ? (
@@ -2552,8 +2552,8 @@ export default function LaporanPekerjaan() {
                 </div>
 
                 {/* Ongoing Tasks by Deadline */}
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 fade-in">
-                  <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 fade-in">
+                  <h2 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-white mb-3 sm:mb-4">
                     {t("ongoingTasksByDeadline")}
                   </h2>
                   {tasks.filter((t) => t.progress < 100 && t.deadline)
@@ -2635,8 +2635,8 @@ export default function LaporanPekerjaan() {
                 </div>
 
                 {/* Completed Tasks */}
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 fade-in">
-                  <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 fade-in">
+                  <h2 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-white mb-3 sm:mb-4">
                     {t("completedTasks")}
                   </h2>
                   {tasks.filter((t) => t.progress >= 100).length === 0 ? (
@@ -2872,8 +2872,8 @@ export default function LaporanPekerjaan() {
           {/* Laporan Tab */}
           {activeTab === "laporan" && (
             <div className="space-y-6 tab-content">
-              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 fade-in">
-                <div className="flex flex-col md:flex-row gap-4">
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 fade-in">
+                <div className="flex flex-col gap-3 sm:gap-4">
                   <div className="flex-1 relative">
                     <Search
                       className="absolute left-3 top-3 text-gray-400 dark:text-gray-500"
@@ -2887,10 +2887,10 @@ export default function LaporanPekerjaan() {
                       className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                     />
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     <button
                       onClick={handleDownloadReportsExcel}
-                      className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap"
+                      className="bg-green-600 hover:bg-green-700 text-white px-3 sm:px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap text-sm"
                       title={t("downloadExcel")}
                     >
                       <FileText size={18} />
@@ -2898,7 +2898,7 @@ export default function LaporanPekerjaan() {
                     </button>
                     <button
                       onClick={handleDownloadReportsPDF}
-                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap"
+                      className="bg-red-600 hover:bg-red-700 text-white px-3 sm:px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap text-sm"
                       title={t("downloadPDF")}
                     >
                       <FileText size={18} />
@@ -2921,47 +2921,48 @@ export default function LaporanPekerjaan() {
                         });
                         window.history.pushState({ tab: "laporan", modal: "form" }, "", "#laporan");
                       }}
-                      className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors hover-lift whitespace-nowrap"
+                      className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 sm:px-6 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors hover-lift whitespace-nowrap text-sm"
                     >
                       <Plus size={20} />
-                      {t("newReport")}
+                      <span className="hidden sm:inline">{t("newReport")}</span>
+                      <span className="sm:hidden">Baru</span>
                     </button>
-                  </div>
                   
                   {/* Sort Dropdown */}
                   <div className="flex items-center gap-2">
-                    <label className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
+                    <label className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap hidden sm:inline">
                       Urutkan:
                     </label>
                     <select
                       value={reportSortBy}
                       onChange={(e) => setReportSortBy(e.target.value)}
-                      className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm focus:ring-2 focus:ring-indigo-500"
+                      className="px-2 sm:px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm focus:ring-2 focus:ring-indigo-500"
                     >
                       <option value="date-newest">Tanggal Terbaru</option>
                       <option value="date-oldest">Tanggal Terlama</option>
                       <option value="location">Lokasi (A-Z)</option>
                     </select>
                   </div>
+                  </div>
                 </div>
               </div>
 
               {showForm && (
-                <div className="fixed inset-0 bg-black bg-opacity-60 z-[100] flex items-center justify-center p-4 modal-backdrop" onClick={handleCancel}>
+                <div className="fixed inset-0 bg-black bg-opacity-60 z-[100] flex items-center justify-center p-2 sm:p-4 modal-backdrop" onClick={handleCancel}>
                   <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto modal-content" onClick={(e) => e.stopPropagation()}>
-                    <div className="sticky top-0 bg-white dark:bg-gray-800 border-b dark:border-gray-700 px-6 py-4 flex justify-between items-center z-10">
-                      <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+                    <div className="sticky top-0 bg-white dark:bg-gray-800 border-b dark:border-gray-700 px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center z-10">
+                      <h2 className="text-lg sm:text-2xl font-bold text-gray-800 dark:text-white">
                         {editingId ? t("editReport") : t("createReport")}
                       </h2>
                       <button
                         onClick={handleCancel}
                         disabled={saving}
-                        className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
+                        className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors p-1"
                       >
                         <X size={24} />
                       </button>
                     </div>
-                    <div className="p-6">
+                    <div className="p-4 sm:p-6">
                       <div className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
@@ -3237,8 +3238,8 @@ export default function LaporanPekerjaan() {
           {/* Tasks Tab */}
           {activeTab === "tasks" && (
             <div className="space-y-6 tab-content">
-              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 fade-in">
-                <div className="flex flex-col md:flex-row gap-4">
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 fade-in">
+                <div className="flex flex-col gap-3 sm:gap-4">
                   <div className="flex-1 relative">
                     <Search
                       className="absolute left-3 top-3 text-gray-400 dark:text-gray-500"
@@ -3252,21 +3253,19 @@ export default function LaporanPekerjaan() {
                       className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                     />
                   </div>
-                  <div className="md:w-56">
+                  <div className="flex flex-wrap gap-2">
                     <select
                       value={taskSortBy}
                       onChange={(e) => setTaskSortBy(e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm flex-1 min-w-[150px]"
                     >
                       <option value="deadline">{t("sortByDeadline")}</option>
                       <option value="priority">{t("sortByPriority")}</option>
                       <option value="name">{t("sortByName")}</option>
                     </select>
-                  </div>
-                  <div className="flex gap-2">
                     <button
                       onClick={handleDownloadTasksExcel}
-                      className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap"
+                      className="bg-green-600 hover:bg-green-700 text-white px-3 sm:px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap text-sm"
                       title={t("downloadExcel")}
                     >
                       <FileText size={18} />
@@ -3274,7 +3273,7 @@ export default function LaporanPekerjaan() {
                     </button>
                     <button
                       onClick={handleDownloadTasksPDF}
-                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap"
+                      className="bg-red-600 hover:bg-red-700 text-white px-3 sm:px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap text-sm"
                       title={t("downloadPDF")}
                     >
                       <FileText size={18} />
@@ -3294,10 +3293,11 @@ export default function LaporanPekerjaan() {
                         });
                         window.history.pushState({ tab: "tasks", modal: "taskForm" }, "", "#tasks");
                       }}
-                      className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors hover-lift whitespace-nowrap"
+                      className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 sm:px-6 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors hover-lift whitespace-nowrap text-sm"
                     >
                       <Plus size={20} />
-                      {t("newTask")}
+                      <span className="hidden sm:inline">{t("newTask")}</span>
+                      <span className="sm:hidden">Baru</span>
                     </button>
                   </div>
                 </div>
@@ -3980,25 +3980,27 @@ export default function LaporanPekerjaan() {
         {/* Sparepart Tab */}
         {activeTab === "spareparts" && (
           <div className="space-y-6 tab-content">
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 fade-in max-w-6xl mx-auto">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 fade-in max-w-6xl mx-auto">
+              <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">
+                <h2 className="text-lg sm:text-2xl font-bold text-gray-800 dark:text-white">
                   {t("spareparts")}
                 </h2>
-                <div className="flex gap-3">
+                <div className="flex flex-wrap gap-2">
                   <button
                     onClick={handleDownloadSparepartsExcel}
-                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
+                    className="bg-green-600 hover:bg-green-700 text-white px-3 sm:px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors text-sm"
                   >
                     <FileText size={18} />
-                    {t("downloadExcel")}
+                    <span className="hidden sm:inline">{t("downloadExcel")}</span>
+                    <span className="sm:hidden">Excel</span>
                   </button>
                   <button
                     onClick={handleDownloadSparepartsPDF}
-                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
+                    className="bg-red-600 hover:bg-red-700 text-white px-3 sm:px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors text-sm"
                   >
                     <FileText size={18} />
-                    {t("downloadPDF")}
+                    <span className="hidden sm:inline">{t("downloadPDF")}</span>
+                    <span className="sm:hidden">PDF</span>
                   </button>
                   <button
                     onClick={() => {
@@ -4016,27 +4018,28 @@ export default function LaporanPekerjaan() {
                       });
                       window.history.pushState({ tab: "spareparts", modal: "sparepartForm" }, "", "#spareparts");
                     }}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors hover-lift"
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 sm:px-6 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors hover-lift text-sm"
                   >
                     <Plus size={20} />
-                    {t("newSparepart")}
+                    <span className="hidden sm:inline">{t("newSparepart")}</span>
+                    <span className="sm:hidden">Baru</span>
                   </button>
-                </div>
                 
                 {/* Sort Dropdown */}
                 <div className="flex items-center gap-2">
-                  <label className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
+                  <label className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap hidden sm:inline">
                     Urutkan:
                   </label>
                   <select
                     value={sparepartSortBy}
                     onChange={(e) => setSparepartSortBy(e.target.value)}
-                    className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm focus:ring-2 focus:ring-indigo-500"
+                    className="px-2 sm:px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm focus:ring-2 focus:ring-indigo-500"
                   >
                     <option value="name">Nama (A-Z)</option>
                     <option value="order-date">Tanggal Dipesan</option>
                     <option value="arrival-date">Tanggal Datang</option>
                   </select>
+                </div>
                 </div>
               </div>
 
@@ -4474,25 +4477,27 @@ export default function LaporanPekerjaan() {
         {/* Repairs Tab */}
         {activeTab === "repairs" && (
           <div className="space-y-6 tab-content">
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 fade-in max-w-6xl mx-auto">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 fade-in max-w-6xl mx-auto">
+              <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">
+                <h2 className="text-lg sm:text-2xl font-bold text-gray-800 dark:text-white">
                   {t("repairs")}
                 </h2>
-                <div className="flex gap-3">
+                <div className="flex flex-wrap gap-2">
                   <button
                     onClick={handleDownloadRepairsExcel}
-                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
+                    className="bg-green-600 hover:bg-green-700 text-white px-3 sm:px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors text-sm"
                   >
                     <FileText size={18} />
-                    {t("downloadExcel")}
+                    <span className="hidden sm:inline">{t("downloadExcel")}</span>
+                    <span className="sm:hidden">Excel</span>
                   </button>
                   <button
                     onClick={handleDownloadRepairsPDF}
-                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
+                    className="bg-red-600 hover:bg-red-700 text-white px-3 sm:px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors text-sm"
                   >
                     <FileText size={18} />
-                    {t("downloadPDF")}
+                    <span className="hidden sm:inline">{t("downloadPDF")}</span>
+                    <span className="sm:hidden">PDF</span>
                   </button>
                   <button
                     onClick={() => {
@@ -4509,27 +4514,28 @@ export default function LaporanPekerjaan() {
                         status: "received",
                       });
                     }}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors hover-lift"
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 sm:px-6 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors hover-lift text-sm"
                   >
                     <Plus size={20} />
-                    {t("newRepair")}
+                    <span className="hidden sm:inline">{t("newRepair")}</span>
+                    <span className="sm:hidden">Baru</span>
                   </button>
-                </div>
                 
                 {/* Sort Dropdown */}
                 <div className="flex items-center gap-2">
-                  <label className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
+                  <label className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap hidden sm:inline">
                     Urutkan:
                   </label>
                   <select
                     value={repairSortBy}
                     onChange={(e) => setRepairSortBy(e.target.value)}
-                    className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm focus:ring-2 focus:ring-indigo-500"
+                    className="px-2 sm:px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm focus:ring-2 focus:ring-indigo-500"
                   >
                     <option value="date-newest">Tanggal Masuk Terbaru</option>
                     <option value="date-oldest">Tanggal Masuk Terlama</option>
                     <option value="location">Lokasi (A-Z)</option>
                   </select>
+                </div>
                 </div>
               </div>
 
