@@ -2788,6 +2788,11 @@ export default function LaporanPekerjaan() {
                               <p className="text-xs text-gray-600 dark:text-gray-400">
                                 {repair.unitAlat} - {repair.lokasiOperasi}
                               </p>
+                              {repair.status === "in-progress" && repair.tanggalMulai && (
+                                <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                                  Mulai: {new Date(repair.tanggalMulai).toLocaleDateString("id-ID")}
+                                </p>
+                              )}
                             </div>
                             <div className="flex items-center gap-2">
                               <span
@@ -2844,7 +2849,15 @@ export default function LaporanPekerjaan() {
                       className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                     />
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 flex-wrap">
+                    <button
+                      onClick={() => setSearchTerm("")}
+                      className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap"
+                      title="Reset Filter"
+                    >
+                      <X size={18} />
+                      <span className="hidden sm:inline">Reset</span>
+                    </button>
                     <button
                       onClick={handleDownloadReportsExcel}
                       className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap"
@@ -3457,7 +3470,8 @@ export default function LaporanPekerjaan() {
                       </div>
                     </div>
 
-                    {/* Riwayat Progress Logs */}
+                    {/* Riwayat Progress Logs - Only show when creating new task */}
+                    {!editingTaskId && (
                     <div className="mt-6">
                       <div className="flex items-center gap-2 mb-4">
                         <ClipboardList
@@ -3534,6 +3548,7 @@ export default function LaporanPekerjaan() {
                         </p>
                       )}
                     </div>
+                    )}
                     </>
                     )}
 
@@ -3922,46 +3937,72 @@ export default function LaporanPekerjaan() {
         {activeTab === "spareparts" && (
           <div className="space-y-6 tab-content">
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 fade-in max-w-6xl mx-auto">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-                  {t("spareparts")}
-                </h2>
-                <div className="flex gap-3">
-                  <button
-                    onClick={handleDownloadSparepartsExcel}
-                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
-                  >
-                    <FileText size={18} />
-                    {t("downloadExcel")}
-                  </button>
-                  <button
-                    onClick={handleDownloadSparepartsPDF}
-                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
-                  >
-                    <FileText size={18} />
-                    {t("downloadPDF")}
-                  </button>
-                  <button
-                    onClick={() => {
-                      setShowSparepartForm(true);
-                      setEditingSparepartId(null);
-                      setSparepartFormData({
-                        namaPart: "",
-                        deskripsi: "",
-                        jumlah: 0,
-                        unit: "",
-                        status: "pending",
-                        tanggalDipesan: "",
-                        tanggalDatang: "",
-                        createdBy: "",
-                      });
-                      window.history.pushState({ tab: "spareparts", modal: "sparepartForm" }, "", "#spareparts");
-                    }}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors hover-lift"
-                  >
-                    <Plus size={20} />
-                    {t("newSparepart")}
-                  </button>
+              <div className="flex flex-col gap-4 mb-6">
+                <div className="flex justify-between items-center">
+                  <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+                    {t("spareparts")}
+                  </h2>
+                </div>
+                
+                <div className="flex flex-col md:flex-row gap-4">
+                  <div className="flex-1 relative">
+                    <Search
+                      className="absolute left-3 top-3 text-gray-400 dark:text-gray-500"
+                      size={20}
+                    />
+                    <input
+                      type="text"
+                      placeholder="Cari sparepart..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                    />
+                  </div>
+                  <div className="flex gap-2 flex-wrap">
+                    <button
+                      onClick={() => setSearchTerm("")}
+                      className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap"
+                      title="Reset Filter"
+                    >
+                      <X size={18} />
+                      <span className="hidden sm:inline">Reset</span>
+                    </button>
+                    <button
+                      onClick={handleDownloadSparepartsExcel}
+                      className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap"
+                    >
+                      <FileText size={18} />
+                      <span className="hidden sm:inline">Excel</span>
+                    </button>
+                    <button
+                      onClick={handleDownloadSparepartsPDF}
+                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap"
+                    >
+                      <FileText size={18} />
+                      <span className="hidden sm:inline">PDF</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowSparepartForm(true);
+                        setEditingSparepartId(null);
+                        setSparepartFormData({
+                          namaPart: "",
+                          deskripsi: "",
+                          jumlah: 0,
+                          unit: "",
+                          status: "pending",
+                          tanggalDipesan: "",
+                          tanggalDatang: "",
+                          createdBy: "",
+                        });
+                        window.history.pushState({ tab: "spareparts", modal: "sparepartForm" }, "", "#spareparts");
+                      }}
+                      className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors hover-lift whitespace-nowrap"
+                    >
+                      <Plus size={20} />
+                      {t("newSparepart")}
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -4400,45 +4441,71 @@ export default function LaporanPekerjaan() {
         {activeTab === "repairs" && (
           <div className="space-y-6 tab-content">
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 fade-in max-w-6xl mx-auto">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-                  {t("repairs")}
-                </h2>
-                <div className="flex gap-3">
-                  <button
-                    onClick={handleDownloadRepairsExcel}
-                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
-                  >
-                    <FileText size={18} />
-                    {t("downloadExcel")}
-                  </button>
-                  <button
-                    onClick={handleDownloadRepairsPDF}
-                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
-                  >
-                    <FileText size={18} />
-                    {t("downloadPDF")}
-                  </button>
-                  <button
-                    onClick={() => {
-                      setShowRepairForm(true);
-                      setEditingRepairId(null);
-                      setRepairFormData({
-                        itemRepair: "",
-                        tanggalMasuk: "",
-                        tanggalMulai: "",
-                        tanggalSelesai: "",
-                        unitAlat: "",
-                        lokasiOperasi: "",
-                        deskripsiKerusakan: "",
-                        status: "received",
-                      });
-                    }}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors hover-lift"
-                  >
-                    <Plus size={20} />
-                    {t("newRepair")}
-                  </button>
+              <div className="flex flex-col gap-4 mb-6">
+                <div className="flex justify-between items-center">
+                  <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+                    {t("repairs")}
+                  </h2>
+                </div>
+                
+                <div className="flex flex-col md:flex-row gap-4">
+                  <div className="flex-1 relative">
+                    <Search
+                      className="absolute left-3 top-3 text-gray-400 dark:text-gray-500"
+                      size={20}
+                    />
+                    <input
+                      type="text"
+                      placeholder="Cari repair..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                    />
+                  </div>
+                  <div className="flex gap-2 flex-wrap">
+                    <button
+                      onClick={() => setSearchTerm("")}
+                      className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap"
+                      title="Reset Filter"
+                    >
+                      <X size={18} />
+                      <span className="hidden sm:inline">Reset</span>
+                    </button>
+                    <button
+                      onClick={handleDownloadRepairsExcel}
+                      className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap"
+                    >
+                      <FileText size={18} />
+                      <span className="hidden sm:inline">Excel</span>
+                    </button>
+                    <button
+                      onClick={handleDownloadRepairsPDF}
+                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors whitespace-nowrap"
+                    >
+                      <FileText size={18} />
+                      <span className="hidden sm:inline">PDF</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowRepairForm(true);
+                        setEditingRepairId(null);
+                        setRepairFormData({
+                          itemRepair: "",
+                          tanggalMasuk: "",
+                          tanggalMulai: "",
+                          tanggalSelesai: "",
+                          unitAlat: "",
+                          lokasiOperasi: "",
+                          deskripsiKerusakan: "",
+                          status: "received",
+                        });
+                      }}
+                      className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors hover-lift whitespace-nowrap"
+                    >
+                      <Plus size={20} />
+                      {t("newRepair")}
+                    </button>
+                  </div>
                 </div>
               </div>
 
