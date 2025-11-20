@@ -1300,18 +1300,27 @@ export default function LaporanPekerjaan() {
   const handleSubmitRepair = async (e) => {
     e.preventDefault();
 
-    if (!repairFormData.itemRepair || !repairFormData.tanggalMasuk) {
+    if (!repairFormData.itemRepair || !repairFormData.unitAlat || !repairFormData.lokasiOperasi || !repairFormData.deskripsiKerusakan) {
       alert(t("fillRequired"));
       return;
     }
 
     setSaving(true);
     try {
-      const repairData = repairFormDataToRepair(repairFormData);
+      const repairData = {
+        item_repair: repairFormData.itemRepair,
+        unit_alat: repairFormData.unitAlat,
+        lokasi_operasi: repairFormData.lokasiOperasi,
+        deskripsi_kerusakan: repairFormData.deskripsiKerusakan,
+      };
 
       if (editingRepairId) {
+        // When editing, only update these 4 fields
         await repairsAPI.update(editingRepairId, repairData);
       } else {
+        // When creating, add tanggal_masuk (today) and status (received)
+        repairData.tanggal_masuk = new Date().toISOString().split('T')[0];
+        repairData.status = "received";
         await repairsAPI.create(repairData);
       }
 
@@ -4740,8 +4749,8 @@ export default function LaporanPekerjaan() {
               </div>
 
               <form onSubmit={handleSubmitRepair} className="p-6 space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="md:col-span-2">
+                <div className="space-y-4">
+                  <div>
                     <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
                       {t("repairItem")} <span className="text-red-500">*</span>
                     </label>
@@ -4756,6 +4765,7 @@ export default function LaporanPekerjaan() {
                       }
                       className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                       required
+                      placeholder="Contoh: Motor Servo"
                     />
                   </div>
 
@@ -4774,6 +4784,7 @@ export default function LaporanPekerjaan() {
                       }
                       className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                       required
+                      placeholder="Contoh: Robot KUKA"
                     />
                   </div>
 
@@ -4792,10 +4803,11 @@ export default function LaporanPekerjaan() {
                       }
                       className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                       required
+                      placeholder="Contoh: Area Produksi 1"
                     />
                   </div>
 
-                  <div className="md:col-span-2">
+                  <div>
                     <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
                       {t("damageDescription")} <span className="text-red-500">*</span>
                     </label>
@@ -4810,6 +4822,7 @@ export default function LaporanPekerjaan() {
                       rows={4}
                       className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                       required
+                      placeholder="Jelaskan kerusakan yang terjadi..."
                     />
                   </div>
                 </div>
