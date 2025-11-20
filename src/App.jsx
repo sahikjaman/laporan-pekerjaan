@@ -593,17 +593,34 @@ export default function LaporanPekerjaan() {
     loadRepairs();
   }, []);
 
-  // Auto-refresh every 5 seconds
+  // Auto-refresh every 30 minutes and when user returns to tab
   useEffect(() => {
+    // Refresh every 30 minutes
     const intervalId = setInterval(() => {
       loadReports();
       loadTasks();
       loadSpareparts();
       loadRepairs();
-    }, 5000); // 5000ms = 5 seconds
+    }, 1800000); // 1800000ms = 30 minutes
 
-    // Cleanup interval on component unmount
-    return () => clearInterval(intervalId);
+    // Refresh when user returns to tab (visibility change)
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        // User returned to tab, refresh data
+        loadReports();
+        loadTasks();
+        loadSpareparts();
+        loadRepairs();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Cleanup on component unmount
+    return () => {
+      clearInterval(intervalId);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
 
   const loadReports = async () => {
@@ -1968,125 +1985,130 @@ export default function LaporanPekerjaan() {
 
           {/* Dashboard Tab */}
           {activeTab === "dashboard" && (
-            <div className="space-y-6 tab-content">
+            <div className="space-y-8 tab-content">
+              {/* Welcome Header */}
+              <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-2xl shadow-2xl p-6 sm:p-8 text-white fade-in">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2">
+                  Dashboard Laporan Pekerjaan
+                </h1>
+                <p className="text-sm sm:text-base text-indigo-100">
+                  Kelola laporan lapangan, tugas, sparepart, dan repair dengan mudah
+                </p>
+              </div>
+
               {/* Quick Action Buttons */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <button
-                  onClick={() => {
-                    setActiveTab("laporan");
-                    setShowForm(true);
-                    setShowTaskForm(false);
-                    setShowSparepartForm(false);
-                  }}
-                  className="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white p-4 sm:p-6 rounded-xl shadow-lg flex items-center justify-between transition-all hover:shadow-xl group hover-lift"
-                >
-                  <div className="flex items-center gap-3 sm:gap-4">
-                    <div className="p-2 sm:p-3 bg-white bg-opacity-20 rounded-lg group-hover:scale-110 transition-transform">
-                      <FileText size={24} className="sm:w-8 sm:h-8" />
+              <div>
+                <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                  <Plus className="text-indigo-600 dark:text-indigo-400" size={24} />
+                  Aksi Cepat
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <button
+                    onClick={() => {
+                      setActiveTab("laporan");
+                      setShowForm(true);
+                      setShowTaskForm(false);
+                      setShowSparepartForm(false);
+                    }}
+                    className="bg-gradient-to-br from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white p-5 rounded-xl shadow-lg transition-all hover:shadow-xl group hover-lift"
+                  >
+                    <div className="flex items-center justify-center mb-3">
+                      <div className="p-3 bg-white bg-opacity-20 rounded-lg group-hover:scale-110 transition-transform">
+                        <FileText size={28} />
+                      </div>
                     </div>
-                    <div className="text-left">
-                      <h3 className="text-base sm:text-xl font-bold">
+                    <div className="text-center">
+                      <h3 className="text-base font-bold mb-1">
                         {t("createNewReport")}
                       </h3>
-                      <p className="text-xs sm:text-sm text-blue-100">
+                      <p className="text-xs text-blue-100">
                         {t("recordFieldWork")}
                       </p>
                     </div>
-                  </div>
-                  <Plus
-                    size={24}
-                    className="sm:w-8 sm:h-8 group-hover:rotate-90 transition-transform flex-shrink-0"
-                  />
-                </button>
+                  </button>
 
-                <button
-                  onClick={() => {
-                    setActiveTab("tasks");
-                    setShowTaskForm(true);
-                    setShowForm(false);
-                    setShowSparepartForm(false);
-                  }}
-                  className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white p-4 sm:p-6 rounded-xl shadow-lg flex items-center justify-between transition-all hover:shadow-xl group hover-lift"
-                >
-                  <div className="flex items-center gap-3 sm:gap-4">
-                    <div className="p-2 sm:p-3 bg-white bg-opacity-20 rounded-lg group-hover:scale-110 transition-transform">
-                      <ListTodo size={24} className="sm:w-8 sm:h-8" />
+                  <button
+                    onClick={() => {
+                      setActiveTab("tasks");
+                      setShowTaskForm(true);
+                      setShowForm(false);
+                      setShowSparepartForm(false);
+                    }}
+                    className="bg-gradient-to-br from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white p-5 rounded-xl shadow-lg transition-all hover:shadow-xl group hover-lift"
+                  >
+                    <div className="flex items-center justify-center mb-3">
+                      <div className="p-3 bg-white bg-opacity-20 rounded-lg group-hover:scale-110 transition-transform">
+                        <ListTodo size={28} />
+                      </div>
                     </div>
-                    <div className="text-left">
-                      <h3 className="text-base sm:text-xl font-bold">
+                    <div className="text-center">
+                      <h3 className="text-base font-bold mb-1">
                         {t("createNewTask")}
                       </h3>
-                      <p className="text-xs sm:text-sm text-green-100">
+                      <p className="text-xs text-green-100">
                         {t("planYourWork")}
                       </p>
                     </div>
-                  </div>
-                  <Plus
-                    size={24}
-                    className="sm:w-8 sm:h-8 group-hover:rotate-90 transition-transform flex-shrink-0"
-                  />
-                </button>
+                  </button>
 
-                <button
-                  onClick={() => {
-                    setActiveTab("spareparts");
-                    setShowSparepartForm(true);
-                    setShowForm(false);
-                    setShowTaskForm(false);
-                  }}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white p-4 sm:p-6 rounded-xl shadow-lg flex items-center justify-between transition-all hover:shadow-xl group hover-lift"
-                >
-                  <div className="flex items-center gap-3 sm:gap-4">
-                    <div className="p-2 sm:p-3 bg-white bg-opacity-20 rounded-lg group-hover:scale-110 transition-transform">
-                      <Wrench size={24} className="sm:w-8 sm:h-8" />
+                  <button
+                    onClick={() => {
+                      setActiveTab("spareparts");
+                      setShowSparepartForm(true);
+                      setShowForm(false);
+                      setShowTaskForm(false);
+                    }}
+                    className="bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white p-5 rounded-xl shadow-lg transition-all hover:shadow-xl group hover-lift"
+                  >
+                    <div className="flex items-center justify-center mb-3">
+                      <div className="p-3 bg-white bg-opacity-20 rounded-lg group-hover:scale-110 transition-transform">
+                        <Wrench size={28} />
+                      </div>
                     </div>
-                    <div className="text-left">
-                      <h3 className="text-base sm:text-xl font-bold">
+                    <div className="text-center">
+                      <h3 className="text-base font-bold mb-1">
                         {t("orderSparepart")}
                       </h3>
-                      <p className="text-xs sm:text-sm text-purple-100">
+                      <p className="text-xs text-purple-100">
                         {t("addSparepartRequest")}
                       </p>
                     </div>
-                  </div>
-                  <Plus
-                    size={24}
-                    className="sm:w-8 sm:h-8 group-hover:rotate-90 transition-transform flex-shrink-0"
-                  />
-                </button>
+                  </button>
 
-                <button
-                  onClick={() => {
-                    setActiveTab("repairs");
-                    setShowRepairForm(true);
-                    setShowForm(false);
-                    setShowTaskForm(false);
-                    setShowSparepartForm(false);
-                  }}
-                  className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white p-4 sm:p-6 rounded-xl shadow-lg flex items-center justify-between transition-all hover:shadow-xl group hover-lift"
-                >
-                  <div className="flex items-center gap-3 sm:gap-4">
-                    <div className="p-2 sm:p-3 bg-white bg-opacity-20 rounded-lg group-hover:scale-110 transition-transform">
-                      <ClipboardList size={24} className="sm:w-8 sm:h-8" />
+                  <button
+                    onClick={() => {
+                      setActiveTab("repairs");
+                      setShowRepairForm(true);
+                      setShowForm(false);
+                      setShowTaskForm(false);
+                      setShowSparepartForm(false);
+                    }}
+                    className="bg-gradient-to-br from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white p-5 rounded-xl shadow-lg transition-all hover:shadow-xl group hover-lift"
+                  >
+                    <div className="flex items-center justify-center mb-3">
+                      <div className="p-3 bg-white bg-opacity-20 rounded-lg group-hover:scale-110 transition-transform">
+                        <ClipboardList size={28} />
+                      </div>
                     </div>
-                    <div className="text-left">
-                      <h3 className="text-base sm:text-xl font-bold">
+                    <div className="text-center">
+                      <h3 className="text-base font-bold mb-1">
                         {t("newRepair")}
                       </h3>
-                      <p className="text-xs sm:text-sm text-orange-100">
+                      <p className="text-xs text-orange-100">
                         Input repair request
                       </p>
                     </div>
-                  </div>
-                  <Plus
-                    size={24}
-                    className="sm:w-8 sm:h-8 group-hover:rotate-90 transition-transform flex-shrink-0"
-                  />
-                </button>
+                  </button>
+                </div>
               </div>
 
-              {/* Statistics Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Statistics Overview */}
+              <div>
+                <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                  <TrendingUp className="text-green-600 dark:text-green-400" size={24} />
+                  Statistik Overview
+                </h2>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
                 <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 hover-lift card-transition stagger-item">
                   <div className="flex items-center justify-between mb-2">
                     <div className="p-2 sm:p-3 bg-indigo-100 dark:bg-indigo-900/50 rounded-lg">
@@ -2175,6 +2197,7 @@ export default function LaporanPekerjaan() {
                     {repairs.length}
                   </p>
                 </div>
+              </div>
               </div>
 
               {/* Recent Reports & Top Locations */}
