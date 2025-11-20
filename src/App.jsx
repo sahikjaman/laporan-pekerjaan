@@ -4604,15 +4604,15 @@ export default function LaporanPekerjaan() {
                           setSelectedRepair({
                             ...selectedRepair,
                             status: newStatus,
-                            // Clear dates based on status
+                            // Clear dates based on status - only clear if changing away from that status
                             tanggalMulai:
                               newStatus === "received"
                                 ? ""
                                 : selectedRepair.tanggalMulai,
                             tanggalSelesai:
-                              newStatus === "received" || newStatus === "in-progress"
-                                ? ""
-                                : selectedRepair.tanggalSelesai,
+                              newStatus === "completed"
+                                ? selectedRepair.tanggalSelesai
+                                : "",
                           });
                         }}
                         className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
@@ -4648,48 +4648,26 @@ export default function LaporanPekerjaan() {
                     )}
 
                     {selectedRepair.status === "completed" && (
-                      <>
-                        <div>
-                          <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                            Tanggal Mulai Diperbaiki
-                          </label>
-                          <input
-                            type="date"
-                            value={selectedRepair.tanggalMulai || ""}
-                            onChange={(e) =>
-                              setSelectedRepair({
-                                ...selectedRepair,
-                                tanggalMulai: e.target.value,
-                              })
-                            }
-                            className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                          />
-                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                            Opsional: Tanggal saat mulai diperbaiki
-                          </p>
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                            Tanggal Selesai <span className="text-red-500">*</span>
-                          </label>
-                          <input
-                            type="date"
-                            value={selectedRepair.tanggalSelesai || ""}
-                            onChange={(e) =>
-                              setSelectedRepair({
-                                ...selectedRepair,
-                                tanggalSelesai: e.target.value,
-                              })
-                            }
-                            className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                            required
-                          />
-                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                            Masukkan tanggal saat repair selesai
-                          </p>
-                        </div>
-                      </>
+                      <div>
+                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                          Tanggal Selesai <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="date"
+                          value={selectedRepair.tanggalSelesai || ""}
+                          onChange={(e) =>
+                            setSelectedRepair({
+                              ...selectedRepair,
+                              tanggalSelesai: e.target.value,
+                            })
+                          }
+                          className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                          required
+                        />
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                          Masukkan tanggal saat repair selesai
+                        </p>
+                      </div>
                     )}
 
                     {selectedRepair.status === "received" && (
