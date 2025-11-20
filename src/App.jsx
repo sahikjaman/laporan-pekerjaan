@@ -976,13 +976,12 @@ export default function LaporanPekerjaan() {
   const updateTaskProgress = async (taskId, progressLogs, progress) => {
     setSaving(true);
     try {
-      const taskToUpdate = tasks.find((t) => t.id === taskId);
-      
-      // Update task progress
+      // Update task progress in database
       await tasksAPI.update(taskId, { progress });
       
       // Add new progress log to database
-      if (progressLogs.length > (taskToUpdate.progressLogs || []).length) {
+      const taskToUpdate = tasks.find((t) => t.id === taskId);
+      if (progressLogs.length > (taskToUpdate?.progressLogs || []).length) {
         const newLog = progressLogs[progressLogs.length - 1];
         await progressLogsAPI.create({
           task_id: taskId,
@@ -992,9 +991,23 @@ export default function LaporanPekerjaan() {
         });
       }
       
-      await loadTasks();
-      const updatedTask = tasks.find((t) => t.id === taskId);
+      // Reload all tasks with fresh data from database
+      const allTasks = await tasksAPI.getAll();
+      const freshTasksData = await Promise.all(
+        allTasks.map(async (task) => {
+          const logs = await progressLogsAPI.getByTaskId(task.id);
+          const displayTask = taskToDisplay(task);
+          displayTask.progressLogs = logs.map(progressLogToDisplay);
+          return displayTask;
+        })
+      );
+      setTasks(freshTasksData);
+      
+      // Update selected task with fresh data
+      const updatedTask = freshTasksData.find((t) => t.id === taskId);
       setSelectedTask(updatedTask);
+      
+      // Reset form
       setNewProgressLog({
         tanggal: new Date().toISOString().split("T")[0],
         deskripsi: "",
@@ -1046,8 +1059,21 @@ export default function LaporanPekerjaan() {
         // Update task progress
         await tasksAPI.update(selectedTask.id, { progress: newProgress });
         
-        // Reload tasks to get fresh data
-        await loadTasks();
+        // Reload tasks to get fresh data from database
+        const allTasks = await tasksAPI.getAll();
+        const freshTasksData = await Promise.all(
+          allTasks.map(async (task) => {
+            const logs = await progressLogsAPI.getByTaskId(task.id);
+            const displayTask = taskToDisplay(task);
+            displayTask.progressLogs = logs.map(progressLogToDisplay);
+            return displayTask;
+          })
+        );
+        setTasks(freshTasksData);
+        
+        // Update selected task dengan data fresh
+        const updatedSelectedTask = freshTasksData.find(t => t.id === selectedTask.id);
+        setSelectedTask(updatedSelectedTask);
         
         // Close edit mode and reset form
         setEditingLogId(null);
@@ -1056,10 +1082,6 @@ export default function LaporanPekerjaan() {
           deskripsi: "",
           progressIncrement: 0,
         });
-        
-        // Close modal
-        setShowProgressModal(false);
-        setSelectedTask(null);
         
         alert('Riwayat progress berhasil diupdate!');
         return;
@@ -1114,26 +1136,35 @@ export default function LaporanPekerjaan() {
         const logToDelete = (selectedTask.progressLogs || []).find(
           (log) => log.id === logId
         );
+        
+        // Calculate new total progress after deletion
         const updatedLogs = (selectedTask.progressLogs || []).filter(
           (log) => log.id !== logId
         );
-        const newProgress = Math.max(
-          0,
-          selectedTask.progress - (logToDelete?.progressIncrement || 0)
+        const newProgress = updatedLogs.reduce(
+          (sum, log) => sum + (log.progressIncrement || 0),
+          0
         );
 
         // Update task progress in database
         await tasksAPI.update(selectedTask.id, { progress: newProgress });
         
-        // Update local state
-        setSelectedTask({
-          ...selectedTask,
-          progressLogs: updatedLogs,
-          progress: newProgress,
-        });
+        // Reload all tasks with fresh data from database
+        const allTasks = await tasksAPI.getAll();
+        const freshTasksData = await Promise.all(
+          allTasks.map(async (task) => {
+            const logs = await progressLogsAPI.getByTaskId(task.id);
+            const displayTask = taskToDisplay(task);
+            displayTask.progressLogs = logs.map(progressLogToDisplay);
+            return displayTask;
+          })
+        );
+        setTasks(freshTasksData);
         
-        // Reload tasks to refresh the list
-        loadTasks();
+        // Update selected task with fresh data
+        const updatedSelectedTask = freshTasksData.find(t => t.id === selectedTask.id);
+        setSelectedTask(updatedSelectedTask);
+        
         return;
       }
 
