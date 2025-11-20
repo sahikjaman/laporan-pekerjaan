@@ -199,6 +199,7 @@ function capitalizeStatus(status) {
   const statusMap = {
     'received': 'Pending',
     'pending': 'Pending',
+    'in-progress': 'In Progress',
     'in_progress': 'In Progress',
     'progress': 'In Progress',
     'completed': 'Completed',
