@@ -30,29 +30,11 @@ import {
   ChevronDown,
   Gauge,
 } from "lucide-react";
-import { 
-  reportsAPI, 
-  tasksAPI, 
-  sparepartsAPI, 
-  repairsAPI,
-  progressLogsAPI 
-} from "./supabaseClient";
-import {
-  formDataToReport,
-  reportToFormData,
-  reportToDisplay,
-  taskFormDataToTask,
-  taskToFormData,
-  taskToDisplay,
-  progressLogFormToData,
-  progressLogToDisplay,
-  sparepartFormDataToSparepart,
-  sparepartToFormData,
-  sparepartToDisplay,
-  repairFormDataToRepair,
-  repairToFormData,
-  repairToDisplay,
-} from "./dataMappers";
+
+const API_URL = "/api/reports";
+const TASK_API_URL = "/api/tasks";
+const SPAREPART_API_URL = "/api/spareparts";
+const REPAIR_API_URL = "/api/repairs";
 
 // Translations
 const translations = {
@@ -647,9 +629,12 @@ export default function LaporanPekerjaan() {
   const loadReports = async () => {
     try {
       setLoading(true);
-      const data = await reportsAPI.getAll();
-      const displayData = data.map(reportToDisplay);
-      setReports(displayData);
+      const response = await fetch(API_URL);
+      const result = await response.json();
+
+      if (result.success) {
+        setReports(result.data);
+      }
     } catch (error) {
       console.error("Error memuat data:", error);
     } finally {
@@ -659,16 +644,12 @@ export default function LaporanPekerjaan() {
 
   const loadTasks = async () => {
     try {
-      const data = await tasksAPI.getAll();
-      const displayData = await Promise.all(
-        data.map(async (task) => {
-          const logs = await progressLogsAPI.getByTaskId(task.id);
-          const displayTask = taskToDisplay(task);
-          displayTask.progressLogs = logs.map(progressLogToDisplay);
-          return displayTask;
-        })
-      );
-      setTasks(displayData);
+      const response = await fetch(TASK_API_URL);
+      const result = await response.json();
+
+      if (result.success) {
+        setTasks(result.data);
+      }
     } catch (error) {
       console.error("Error memuat task:", error);
     }
@@ -676,9 +657,12 @@ export default function LaporanPekerjaan() {
 
   const loadSpareparts = async () => {
     try {
-      const data = await sparepartsAPI.getAll();
-      const displayData = data.map(sparepartToDisplay);
-      setSpareparts(displayData);
+      const response = await fetch(SPAREPART_API_URL);
+      const result = await response.json();
+
+      if (result.success) {
+        setSpareparts(result.data);
+      }
     } catch (error) {
       console.error("Error memuat spareparts:", error);
     }
@@ -686,9 +670,12 @@ export default function LaporanPekerjaan() {
 
   const loadRepairs = async () => {
     try {
-      const data = await repairsAPI.getAll();
-      const displayData = data.map(repairToDisplay);
-      setRepairs(displayData);
+      const response = await fetch(REPAIR_API_URL);
+      const result = await response.json();
+
+      if (result.success) {
+        setRepairs(result.data);
+      }
     } catch (error) {
       console.error("Error memuat repairs:", error);
     }
@@ -729,15 +716,43 @@ export default function LaporanPekerjaan() {
     setSaving(true);
 
     try {
-      const reportData = formDataToReport(formData);
-
       if (editingId) {
-        await reportsAPI.update(editingId, reportData);
-        await loadReports();
-        setEditingId(null);
+        const response = await fetch(API_URL, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...formData,
+            id: editingId,
+            updatedAt: new Date().toISOString(),
+          }),
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          await loadReports();
+          setEditingId(null);
+        } else {
+          alert(t("updateFailed") + ": " + result.message);
+        }
       } else {
-        await reportsAPI.create(reportData);
-        await loadReports();
+        const newReport = {
+          ...formData,
+          id: Date.now().toString(),
+          createdAt: new Date().toISOString(),
+        };
+
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newReport),
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          await loadReports();
+        } else {
+          alert(t("saveFailed") + ": " + result.message);
+        }
       }
 
       setFormData({
@@ -754,7 +769,7 @@ export default function LaporanPekerjaan() {
       setShowForm(false);
     } catch (error) {
       console.error("Error menyimpan data:", error);
-      alert(t("errorSaving") + ": " + error.message);
+      alert(t("errorSaving"));
     } finally {
       setSaving(false);
     }
@@ -769,24 +784,40 @@ export default function LaporanPekerjaan() {
     setSaving(true);
 
     try {
-      const taskData = taskFormDataToTask(taskFormData);
-      
-      // Determine status based on progress
-      if (taskFormData.progress >= 100) {
-        taskData.status = 'Completed';
-      } else if (taskFormData.progress > 0) {
-        taskData.status = 'In Progress';
-      } else {
-        taskData.status = 'To Do';
-      }
-
       if (editingTaskId) {
-        await tasksAPI.update(editingTaskId, taskData);
-        await loadTasks();
-        setEditingTaskId(null);
+        const response = await fetch(TASK_API_URL, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...taskFormData,
+            id: editingTaskId,
+            updatedAt: new Date().toISOString(),
+          }),
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          await loadTasks();
+          setEditingTaskId(null);
+        }
       } else {
-        await tasksAPI.create(taskData);
-        await loadTasks();
+        const newTask = {
+          ...taskFormData,
+          id: Date.now().toString(),
+          createdAt: new Date().toISOString(),
+          status: taskFormData.progress >= 100 ? "selesai" : "berlangsung",
+        };
+
+        const response = await fetch(TASK_API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newTask),
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          await loadTasks();
+        }
       }
 
       setTaskFormData({
@@ -805,7 +836,7 @@ export default function LaporanPekerjaan() {
       });
     } catch (error) {
       console.error("Error menyimpan task:", error);
-      alert(t("errorSaving") + ": " + error.message);
+      alert(t("errorSaving"));
     } finally {
       setSaving(false);
     }
@@ -860,11 +891,11 @@ export default function LaporanPekerjaan() {
 
     setSaving(true);
     try {
-      await reportsAPI.delete(id);
-      await loadReports();
+      const response = await fetch(`${API_URL}?id=${id}`, { method: "DELETE" });
+      const result = await response.json();
+      if (result.success) await loadReports();
     } catch (error) {
       console.error("Error menghapus data:", error);
-      alert("Error menghapus: " + error.message);
     } finally {
       setSaving(false);
     }
@@ -875,11 +906,13 @@ export default function LaporanPekerjaan() {
 
     setSaving(true);
     try {
-      await tasksAPI.delete(id);
-      await loadTasks();
+      const response = await fetch(`${TASK_API_URL}?id=${id}`, {
+        method: "DELETE",
+      });
+      const result = await response.json();
+      if (result.success) await loadTasks();
     } catch (error) {
       console.error("Error menghapus task:", error);
-      alert("Error menghapus: " + error.message);
     } finally {
       setSaving(false);
     }
@@ -977,31 +1010,34 @@ export default function LaporanPekerjaan() {
     setSaving(true);
     try {
       const taskToUpdate = tasks.find((t) => t.id === taskId);
-      
-      // Update task progress
-      await tasksAPI.update(taskId, { progress });
-      
-      // Add new progress log to database
-      if (progressLogs.length > (taskToUpdate.progressLogs || []).length) {
-        const newLog = progressLogs[progressLogs.length - 1];
-        await progressLogsAPI.create({
-          task_id: taskId,
-          progress: progress,
-          note: newLog.deskripsi,
+      const response = await fetch(TASK_API_URL, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...taskToUpdate,
+          progressLogs,
+          progress,
+          updatedAt: new Date().toISOString(),
+        }),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        await loadTasks();
+        setSelectedTask({
+          ...taskToUpdate,
+          progressLogs,
+          progress,
+        });
+        setNewProgressLog({
+          tanggal: new Date().toISOString().split("T")[0],
+          deskripsi: "",
+          progressIncrement: 0,
         });
       }
-      
-      await loadTasks();
-      const updatedTask = tasks.find((t) => t.id === taskId);
-      setSelectedTask(updatedTask);
-      setNewProgressLog({
-        tanggal: new Date().toISOString().split("T")[0],
-        deskripsi: "",
-        progressIncrement: 0,
-      });
     } catch (error) {
       console.error("Error updating task progress:", error);
-      alert(t("saveFailed") + ": " + error.message);
+      alert(t("saveFailed"));
     } finally {
       setSaving(false);
     }
@@ -1141,30 +1177,37 @@ export default function LaporanPekerjaan() {
 
     setSaving(true);
     try {
-      const sparepartData = sparepartFormDataToSparepart(sparepartFormData);
+      const url = editingSparepartId ? SPAREPART_API_URL : SPAREPART_API_URL;
+      const method = editingSparepartId ? "PUT" : "POST";
 
-      if (editingSparepartId) {
-        await sparepartsAPI.update(editingSparepartId, sparepartData);
-      } else {
-        await sparepartsAPI.create(sparepartData);
-      }
-
-      await loadSpareparts();
-      setShowSparepartForm(false);
-      setEditingSparepartId(null);
-      setSparepartFormData({
-        namaPart: "",
-        deskripsi: "",
-        jumlah: 0,
-        unit: "",
-        status: "pending",
-        tanggalDipesan: "",
-        tanggalDatang: "",
-        createdBy: "",
+      const response = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...sparepartFormData,
+          id: editingSparepartId,
+        }),
       });
+
+      const result = await response.json();
+      if (result.success) {
+        await loadSpareparts();
+        setShowSparepartForm(false);
+        setEditingSparepartId(null);
+        setSparepartFormData({
+          namaPart: "",
+          deskripsi: "",
+          jumlah: 0,
+          unit: "",
+          status: "pending",
+          tanggalDipesan: "",
+          tanggalDatang: "",
+          createdBy: "",
+        });
+      }
     } catch (error) {
       console.error("Error menyimpan sparepart:", error);
-      alert(t("saveFailed") + ": " + error.message);
+      alert(t("saveFailed"));
     } finally {
       setSaving(false);
     }
@@ -1210,19 +1253,21 @@ export default function LaporanPekerjaan() {
 
     setSaving(true);
     try {
-      const updates = {
-        status: selectedSparepart.status.charAt(0).toUpperCase() + selectedSparepart.status.slice(1),
-        order_date: selectedSparepart.tanggalDipesan || null,
-        arrival_date: selectedSparepart.tanggalDatang || null,
-      };
+      const response = await fetch(SPAREPART_API_URL, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(selectedSparepart),
+      });
 
-      await sparepartsAPI.update(selectedSparepart.id, updates);
-      await loadSpareparts();
-      setShowSparepartDateModal(false);
-      setSelectedSparepart(null);
+      const result = await response.json();
+      if (result.success) {
+        await loadSpareparts();
+        setShowSparepartDateModal(false);
+        setSelectedSparepart(null);
+      }
     } catch (error) {
       console.error("Error update tanggal sparepart:", error);
-      alert(t("updateFailed") + ": " + error.message);
+      alert(t("updateFailed"));
     } finally {
       setSaving(false);
     }
@@ -1233,11 +1278,19 @@ export default function LaporanPekerjaan() {
 
     setSaving(true);
     try {
-      await sparepartsAPI.delete(id);
-      await loadSpareparts();
+      const response = await fetch(SPAREPART_API_URL, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        await loadSpareparts();
+      }
     } catch (error) {
       console.error("Error menghapus sparepart:", error);
-      alert(t("deleteFailed") + ": " + error.message);
+      alert(t("deleteFailed"));
     } finally {
       setSaving(false);
     }
@@ -1246,23 +1299,32 @@ export default function LaporanPekerjaan() {
   const handleUpdateSparepartStatus = async (sparepart, newStatus) => {
     setSaving(true);
     try {
-      const updates = {
-        status: newStatus.charAt(0).toUpperCase() + newStatus.slice(1),
-        order_date:
+      const updatedSparepart = {
+        ...sparepart,
+        status: newStatus,
+        tanggalDipesan:
           newStatus === "ordered"
             ? new Date().toISOString().split("T")[0]
             : sparepart.tanggalDipesan,
-        arrival_date:
+        tanggalDatang:
           newStatus === "arrived"
             ? new Date().toISOString().split("T")[0]
             : sparepart.tanggalDatang,
       };
 
-      await sparepartsAPI.update(sparepart.id, updates);
-      await loadSpareparts();
+      const response = await fetch(SPAREPART_API_URL, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedSparepart),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        await loadSpareparts();
+      }
     } catch (error) {
       console.error("Error update status sparepart:", error);
-      alert(t("updateFailed") + ": " + error.message);
+      alert(t("updateFailed"));
     } finally {
       setSaving(false);
     }
@@ -1279,30 +1341,36 @@ export default function LaporanPekerjaan() {
 
     setSaving(true);
     try {
-      const repairData = repairFormDataToRepair(repairFormData);
+      const method = editingRepairId ? "PUT" : "POST";
+      const payload = editingRepairId
+        ? { id: editingRepairId, ...repairFormData }
+        : repairFormData;
 
-      if (editingRepairId) {
-        await repairsAPI.update(editingRepairId, repairData);
-      } else {
-        await repairsAPI.create(repairData);
-      }
-
-      await loadRepairs();
-      setShowRepairForm(false);
-      setEditingRepairId(null);
-      setRepairFormData({
-        itemRepair: "",
-        tanggalMasuk: "",
-        tanggalMulai: "",
-        tanggalSelesai: "",
-        unitAlat: "",
-        lokasiOperasi: "",
-        deskripsiKerusakan: "",
-        status: "received",
+      const response = await fetch(REPAIR_API_URL, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
+
+      const result = await response.json();
+      if (result.success) {
+        await loadRepairs();
+        setShowRepairForm(false);
+        setEditingRepairId(null);
+        setRepairFormData({
+          itemRepair: "",
+          tanggalMasuk: "",
+          tanggalMulai: "",
+          tanggalSelesai: "",
+          unitAlat: "",
+          lokasiOperasi: "",
+          deskripsiKerusakan: "",
+          status: "received",
+        });
+      }
     } catch (error) {
       console.error("Error menyimpan repair:", error);
-      alert(t("saveFailed") + ": " + error.message);
+      alert(t("saveFailed"));
     } finally {
       setSaving(false);
     }
@@ -1319,11 +1387,19 @@ export default function LaporanPekerjaan() {
 
     setSaving(true);
     try {
-      await repairsAPI.delete(id);
-      await loadRepairs();
+      const response = await fetch(REPAIR_API_URL, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        await loadRepairs();
+      }
     } catch (error) {
       console.error("Error menghapus repair:", error);
-      alert(t("deleteFailed") + ": " + error.message);
+      alert(t("deleteFailed"));
     } finally {
       setSaving(false);
     }

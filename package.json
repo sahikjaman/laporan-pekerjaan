@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.83.0",
     "googleapis": "^128.0.0",
     "jspdf": "^3.0.4",
     "jspdf-autotable": "^5.0.2",
