@@ -593,6 +593,19 @@ export default function LaporanPekerjaan() {
     loadRepairs();
   }, []);
 
+  // Auto-refresh every 5 seconds
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      loadReports();
+      loadTasks();
+      loadSpareparts();
+      loadRepairs();
+    }, 5000); // 5000ms = 5 seconds
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(intervalId);
+  }, []);
+
   const loadReports = async () => {
     try {
       setLoading(true);
