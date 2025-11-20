@@ -2892,6 +2892,17 @@ export default function LaporanPekerjaan() {
                       className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                     />
                   </div>
+                  <div className="md:w-56">
+                    <select
+                      value={reportSortBy}
+                      onChange={(e) => setReportSortBy(e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    >
+                      <option value="date">Urutkan: Tanggal (Terbaru)</option>
+                      <option value="project">Urutkan: Proyek (A-Z)</option>
+                      <option value="location">Urutkan: Lokasi (A-Z)</option>
+                    </select>
+                  </div>
                   <div className="flex gap-2">
                     <button
                       onClick={handleDownloadReportsExcel}
@@ -3101,7 +3112,7 @@ export default function LaporanPekerjaan() {
               )}
 
               <div className="space-y-4">
-                {filteredReports.length === 0 ? (
+                {sortedReports.length === 0 ? (
                   <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-12 text-center">
                     <FileText
                       size={64}
@@ -3117,7 +3128,7 @@ export default function LaporanPekerjaan() {
                     </p>
                   </div>
                 ) : (
-                  filteredReports.map((report) => (
+                  sortedReports.map((report) => (
                     <div
                       key={report.id}
                       onClick={() => handleEdit(report)}
@@ -3607,11 +3618,12 @@ export default function LaporanPekerjaan() {
                         Batal
                       </button>
                     </div>
-                      </div>
-                    </div>
                   </div>
                 </div>
-              )}
+              </div>
+            )}
+          )}
+        </div>
 
               <div className="space-y-4">
                 {sortedTasks.length === 0 ? (
