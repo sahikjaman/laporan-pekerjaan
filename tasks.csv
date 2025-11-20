@@ -1,0 +1,21 @@
+id   ,namaTask,deskripsi,prioritas,deadline,progress,status,createdAt,progressLogs
+1762935816409,Accuracy BBM perliter dan per IBC,Ambil perliter dan ambil 1 ibc error nya berapa persen,medium,2025-11-22,0,berlangsung,2025-11-14T00:30:21.401Z,[]
+1762935937135,Kontrol Kalmar DRD,Baca status error pada bts pin 4 dan implementasi di ecu tambah program,high,2025-11-22,0,berlangsung,2025-11-19T08:30:39.074Z,[]
+1762936203356,Monitoring Pembacaan Sensor via IOT,"Monitoring kondisi unit via online
+1. Baca unloading brake
+2. Temprature mesin ( Counter Record over head
+temporary 96 up )
+3. Tekanan oli mesin
+4. Tekanan oli transmisi
+5. Temprature transmisi
+6. Counter lock unlock
+7. Tegangan accu
+
+buat software iot dan memakai signal input potensio. sistem online bisa mengikuti dahulu.
+klo sudah bisa baru ke elektrik",low,2025-12-15,40,berlangsung,2025-11-19T08:41:27.912Z,"[{""id"":""1763017487154"",""tanggal"":""2025-11-13"",""deskripsi"":""desain awal website"",""progressIncrement"":10,""createdAt"":""2025-11-13T07:04:47.154Z""},{""id"":""1763541687912"",""tanggal"":""2025-11-19"",""deskripsi"":""sudah ada website, tinggal bikin hardware simulasi dan coba program"",""progressIncrement"":30,""createdAt"":""2025-11-19T08:41:27.912Z""}]"
+1762936332947,Kontrol DRF versi Master SPIL dan Slave SPIL,Mencoba membaca Can Bus Mesin dan Can Bus Transmisi,high,2025-11-22,0,berlangsung,2025-11-19T08:35:16.074Z,[]
+1763005495174,Program Database BBM,Revisi program data base rfid BBM. Pindah datasheet di Spreadsheet,medium,2025-11-15,100,selesai,2025-11-15T04:03:03.640Z,"[{""id"":""1763080195346"",""tanggal"":""2025-11-13"",""deskripsi"":""sudah bisa akses data dari cloud"",""progressIncrement"":50,""createdAt"":""2025-11-14T00:29:55.346Z""},{""id"":""1763179383640"",""tanggal"":""2025-11-15"",""deskripsi"":""Sudah bisa akses spreadsheet melalui mega, sisa integrasi dengan full sistem"",""progressIncrement"":80,""createdAt"":""2025-11-15T04:03:03.640Z""}]"
+1763360447879,timbangan RS,baca semua adc lewat ads113 dan buat kalkulasi ulang untuk kone dan k-18,high,2025-11-30,20,berlangsung,2025-11-19T08:34:42.636Z,"[{""id"":""1763541282635"",""tanggal"":""2025-11-19"",""deskripsi"":""program baca angle length dengan ads1115, kurang trial"",""progressIncrement"":20,""createdAt"":""2025-11-19T08:34:42.635Z""}]"
+1763539493784,Integrasi Program BBM IoT,"Integrasi Program BBM
+- Database Spreadsheet
+- Report di Website",medium,2025-11-30,60,berlangsung,2025-11-19T08:09:25.744Z,"[{""id"":""1763539765744"",""tanggal"":""2025-11-19"",""deskripsi"":""Program sudah bisa jalan terintegrasi, tetapi masih ada beberapa kendala seperti pembacaan tag RFID yang terlalu lama (Timeout), logika pengiriman data volume yang masih belum tepat (seharusnya tekan B dulu baru dikirim), dan LCD yang blank saat tag RFID sedang terdeteksi."",""progressIncrement"":60,""createdAt"":""2025-11-19T08:09:25.744Z""}]"

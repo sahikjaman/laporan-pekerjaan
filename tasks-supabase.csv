@@ -1,0 +1,21 @@
+﻿"title","description","priority","status","progress","deadline"
+"Accuracy BBM perliter dan per IBC","Ambil perliter dan ambil 1 ibc error nya berapa persen","Medium","In Progress","0","2025-11-22"
+"Kontrol Kalmar DRD","Baca status error pada bts pin 4 dan implementasi di ecu tambah program","High","In Progress","0","2025-11-22"
+"Monitoring Pembacaan Sensor via IOT","Monitoring kondisi unit via online
+1. Baca unloading brake
+2. Temprature mesin ( Counter Record over head
+temporary 96 up )
+3. Tekanan oli mesin
+4. Tekanan oli transmisi
+5. Temprature transmisi
+6. Counter lock unlock
+7. Tegangan accu
+
+buat software iot dan memakai signal input potensio. sistem online bisa mengikuti dahulu.
+klo sudah bisa baru ke elektrik","Low","In Progress","40","2025-12-15"
+"Kontrol DRF versi Master SPIL dan Slave SPIL","Mencoba membaca Can Bus Mesin dan Can Bus Transmisi","High","In Progress","0","2025-11-22"
+"Program Database BBM","Revisi program data base rfid BBM. Pindah datasheet di Spreadsheet","Medium","Completed","100","2025-11-15"
+"timbangan RS","baca semua adc lewat ads113 dan buat kalkulasi ulang untuk kone dan k-18","High","In Progress","20","2025-11-30"
+"Integrasi Program BBM IoT","Integrasi Program BBM
+- Database Spreadsheet
+- Report di Website","Medium","In Progress","60","2025-11-30"

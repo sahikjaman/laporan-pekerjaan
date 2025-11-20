@@ -986,8 +986,9 @@ export default function LaporanPekerjaan() {
         const newLog = progressLogs[progressLogs.length - 1];
         await progressLogsAPI.create({
           task_id: taskId,
-          progress: progress,
+          progress: newLog.progressIncrement, // Store increment, not total
           note: newLog.deskripsi,
+          created_at: newLog.tanggal ? `${newLog.tanggal}T00:00:00Z` : new Date().toISOString()
         });
       }
       
@@ -1007,22 +1008,65 @@ export default function LaporanPekerjaan() {
     }
   };
 
-  const handleUpdateProgressLog = () => {
+  const handleUpdateProgressLog = async () => {
     if (!newProgressLog.deskripsi.trim()) {
       alert(t("fillProgressRequired"));
       return;
     }
 
-    // For modal mode
-    if (showProgressModal && selectedTask) {
-      const updatedLogs = (selectedTask.progressLogs || []).map((log) =>
+    try {
+      // For modal mode
+      if (showProgressModal && selectedTask) {
+        // Update progress log in database
+        await progressLogsAPI.update(editingLogId, {
+          progress: parseInt(newProgressLog.progressIncrement) || 0,
+          note: newProgressLog.deskripsi,
+          created_at: newProgressLog.tanggal ? `${newProgressLog.tanggal}T00:00:00Z` : new Date().toISOString()
+        });
+
+        const updatedLogs = (selectedTask.progressLogs || []).map((log) =>
+          log.id === editingLogId
+            ? {
+                ...log,
+                tanggal: newProgressLog.tanggal,
+                deskripsi: newProgressLog.deskripsi,
+                progressIncrement:
+                  parseInt(newProgressLog.progressIncrement) || 0,
+              }
+            : log
+        );
+
+        const totalProgress = updatedLogs.reduce(
+          (sum, log) => sum + (log.progressIncrement || 0),
+          0
+        );
+        const newProgress = Math.min(100, totalProgress);
+
+        // Update task progress
+        await tasksAPI.update(selectedTask.id, { progress: newProgress });
+        
+        // Reload tasks
+        await loadTasks();
+        const refreshedTask = tasks.find((t) => t.id === selectedTask.id);
+        setSelectedTask(refreshedTask);
+        
+        setEditingLogId(null);
+        setNewProgressLog({
+          tanggal: new Date().toISOString().split("T")[0],
+          deskripsi: "",
+          progressIncrement: 0,
+        });
+        return;
+      }
+
+      // For form mode
+      const updatedLogs = (taskFormData.progressLogs || []).map((log) =>
         log.id === editingLogId
           ? {
               ...log,
               tanggal: newProgressLog.tanggal,
               deskripsi: newProgressLog.deskripsi,
-              progressIncrement:
-                parseInt(newProgressLog.progressIncrement) || 0,
+              progressIncrement: parseInt(newProgressLog.progressIncrement) || 0,
             }
           : log
       );
@@ -1033,80 +1077,81 @@ export default function LaporanPekerjaan() {
       );
       const newProgress = Math.min(100, totalProgress);
 
-      updateTaskProgress(selectedTask.id, updatedLogs, newProgress);
+      setTaskFormData({
+        ...taskFormData,
+        progressLogs: updatedLogs,
+        progress: newProgress,
+      });
+
+      setNewProgressLog({
+        tanggal: new Date().toISOString().split("T")[0],
+        deskripsi: "",
+        progressIncrement: 0,
+      });
       setEditingLogId(null);
-      return;
+    } catch (error) {
+      console.error('Error updating progress log:', error);
+      alert('Gagal mengupdate riwayat progress. Silakan coba lagi.');
     }
-
-    // For form mode
-    const updatedLogs = (taskFormData.progressLogs || []).map((log) =>
-      log.id === editingLogId
-        ? {
-            ...log,
-            tanggal: newProgressLog.tanggal,
-            deskripsi: newProgressLog.deskripsi,
-            progressIncrement: parseInt(newProgressLog.progressIncrement) || 0,
-          }
-        : log
-    );
-
-    const totalProgress = updatedLogs.reduce(
-      (sum, log) => sum + (log.progressIncrement || 0),
-      0
-    );
-    const newProgress = Math.min(100, totalProgress);
-
-    setTaskFormData({
-      ...taskFormData,
-      progressLogs: updatedLogs,
-      progress: newProgress,
-    });
-
-    setNewProgressLog({
-      tanggal: new Date().toISOString().split("T")[0],
-      deskripsi: "",
-      progressIncrement: 0,
-    });
     setEditingLogId(null);
   };
 
-  const handleDeleteProgressLog = (logId) => {
+  const handleDeleteProgressLog = async (logId) => {
     if (!confirm("Yakin ingin menghapus log progress ini?")) return;
 
-    // For modal mode
-    if (showProgressModal && selectedTask) {
-      const logToDelete = (selectedTask.progressLogs || []).find(
+    try {
+      // Delete from database
+      await progressLogsAPI.delete(logId);
+
+      // For modal mode
+      if (showProgressModal && selectedTask) {
+        const logToDelete = (selectedTask.progressLogs || []).find(
+          (log) => log.id === logId
+        );
+        const updatedLogs = (selectedTask.progressLogs || []).filter(
+          (log) => log.id !== logId
+        );
+        const newProgress = Math.max(
+          0,
+          selectedTask.progress - (logToDelete?.progressIncrement || 0)
+        );
+
+        // Update task progress in database
+        await tasksAPI.update(selectedTask.id, { progress: newProgress });
+        
+        // Update local state
+        setSelectedTask({
+          ...selectedTask,
+          progressLogs: updatedLogs,
+          progress: newProgress,
+        });
+        
+        // Reload tasks to refresh the list
+        loadTasks();
+        return;
+      }
+
+      // For form mode
+      const logToDelete = taskFormData.progressLogs.find(
         (log) => log.id === logId
       );
-      const updatedLogs = (selectedTask.progressLogs || []).filter(
+      const updatedLogs = taskFormData.progressLogs.filter(
         (log) => log.id !== logId
       );
       const newProgress = Math.max(
         0,
-        selectedTask.progress - (logToDelete?.progressIncrement || 0)
+        taskFormData.progress - (logToDelete?.progressIncrement || 0)
       );
 
-      updateTaskProgress(selectedTask.id, updatedLogs, newProgress);
-      return;
+      setTaskFormData({
+        ...taskFormData,
+        progressLogs: updatedLogs,
+        progress: newProgress,
+      });
+    } catch (error) {
+      console.error('Error deleting progress log:', error);
+      alert('Gagal menghapus riwayat progress. Silakan coba lagi.');
     }
-
-    // For form mode
-    const logToDelete = taskFormData.progressLogs.find(
-      (log) => log.id === logId
-    );
-    const updatedLogs = taskFormData.progressLogs.filter(
-      (log) => log.id !== logId
-    );
-    const newProgress = Math.max(
-      0,
-      taskFormData.progress - (logToDelete?.progressIncrement || 0)
-    );
-
-    setTaskFormData({
-      ...taskFormData,
-      progressLogs: updatedLogs,
-      progress: newProgress,
-    });
   };
 
   const handleEditProgressLog = (log) => {

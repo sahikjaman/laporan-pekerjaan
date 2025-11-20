@@ -97,7 +97,7 @@ export const progressLogToDisplay = (log) => ({
   id: log.id,
   tanggal: log.created_at.split('T')[0],
   deskripsi: log.note,
-  progress: log.progress,
+  progressIncrement: log.progress,
   createdAt: log.created_at,
 });
 
