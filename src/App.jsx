@@ -3979,11 +3979,38 @@ export default function LaporanPekerjaan() {
         {activeTab === "spareparts" && (
           <div className="space-y-6 tab-content">
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 fade-in max-w-6xl mx-auto">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-                  {t("spareparts")}
-                </h2>
-                <div className="flex gap-3">
+              <div className="flex flex-col gap-4 mb-6">
+                <div className="flex justify-between items-center">
+                  <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+                    {t("spareparts")}
+                  </h2>
+                </div>
+                <div className="flex flex-col md:flex-row gap-4">
+                  <div className="flex-1 relative">
+                    <Search
+                      className="absolute left-3 top-3 text-gray-400 dark:text-gray-500"
+                      size={20}
+                    />
+                    <input
+                      type="text"
+                      placeholder="Cari suku cadang..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                    />
+                  </div>
+                  <div className="md:w-56">
+                    <select
+                      value={sparepartSortBy}
+                      onChange={(e) => setSparepartSortBy(e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    >
+                      <option value="date">Urutkan: Terbaru</option>
+                      <option value="name">Urutkan: Nama (A-Z)</option>
+                      <option value="status">Urutkan: Status</option>
+                    </select>
+                  </div>
+                  <div className="flex gap-3">
                   <button
                     onClick={handleDownloadSparepartsExcel}
                     className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
