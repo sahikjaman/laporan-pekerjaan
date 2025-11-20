@@ -420,9 +420,9 @@ export default function LaporanPekerjaan() {
   });
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [taskSortBy, setTaskSortBy] = useState("deadline"); // 'deadline', 'priority', 'name'
-  const [reportSortBy, setReportSortBy] = useState("date"); // 'date', 'project', 'location'
-  const [sparepartSortBy, setSparepartSortBy] = useState("date"); // 'date', 'name', 'status'
-  const [repairSortBy, setRepairSortBy] = useState("date"); // 'date', 'status', 'equipment'
+  const [reportSortBy, setReportSortBy] = useState("date-newest"); // 'date-newest', 'date-oldest', 'location'
+  const [sparepartSortBy, setSparepartSortBy] = useState("name"); // 'name', 'order-date', 'arrival-date'
+  const [repairSortBy, setRepairSortBy] = useState("date-newest"); // 'date-newest', 'date-oldest', 'location'
 
   // Language: 'id' | 'en'
   const LANGUAGE_KEY = "language";
@@ -1437,7 +1437,7 @@ export default function LaporanPekerjaan() {
   };
 
   const handleDownloadReportsExcel = () => {
-    const data = filteredReports.map(report => ({
+    const data = sortedReports.map(report => ({
       "Tanggal": new Date(report.tanggal).toLocaleDateString("id-ID"),
       "Nama Proyek": report.namaProyek,
       "Lokasi": report.lokasi,
@@ -1459,7 +1459,7 @@ export default function LaporanPekerjaan() {
       { header: "Jam Kerja", field: "jamKerja" },
       { header: "Catatan", render: (r) => r.catatan || "-" }
     ];
-    downloadPDF(filteredReports, "Laporan_Lapangan", columns, "LAPORAN LAPANGAN");
+    downloadPDF(sortedReports, "Laporan_Lapangan", columns, "LAPORAN LAPANGAN");
   };
 
   const handleDownloadTasksExcel = () => {
@@ -1485,11 +1485,7 @@ export default function LaporanPekerjaan() {
   };
 
   const handleDownloadSparepartsExcel = () => {
-    const data = spareparts.filter(part =>
-      part.namaPart?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      part.deskripsi?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      part.unit?.toLowerCase().includes(searchTerm.toLowerCase())
-    ).map(part => ({
+    const data = sortedSpareparts.map(part => ({
       "Nama Sparepart": part.namaPart,
       "Jumlah": part.jumlah,
       "Unit": part.unit,
@@ -1502,11 +1498,7 @@ export default function LaporanPekerjaan() {
   };
 
   const handleDownloadSparepartsPDF = () => {
-    const filteredData = spareparts.filter(part =>
-      part.namaPart?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      part.deskripsi?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      part.unit?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredData = sortedSpareparts;
     const columns = [
       { header: "Nama Sparepart", field: "namaPart" },
       { header: "Jumlah", field: "jumlah" },
@@ -1518,7 +1510,7 @@ export default function LaporanPekerjaan() {
   };
 
   const handleDownloadRepairsExcel = () => {
-    const data = filteredRepairs.map(repair => ({
+    const data = sortedRepairs.map(repair => ({
       "Item Repair": repair.itemRepair,
       "Unit Alat": repair.unitAlat,
       "Lokasi Operasi": repair.lokasiOperasi,
@@ -1540,18 +1532,8 @@ export default function LaporanPekerjaan() {
       { header: "Deskripsi", render: (r) => r.deskripsiKerusakan || "-" },
       { header: "Status", render: (r) => r.status === "completed" ? "Selesai" : r.status === "in-progress" ? "Proses" : "Diterima" }
     ];
-    downloadPDF(filteredRepairs, "Repair", columns, "DAFTAR REPAIR");
+    downloadPDF(sortedRepairs, "Repair", columns, "DAFTAR REPAIR");
   };
-
-  const filteredReports = reports.filter((report) => {
-    const matchesSearch =
-      report.namaProyek?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      report.lokasi?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      report.jenisKegiatan?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      report.unitAlat?.toLowerCase().includes(searchTerm.toLowerCase());
-
-    return matchesSearch;
-  });
 
   const filteredTasks = tasks.filter((task) => {
     return (
@@ -1560,10 +1542,19 @@ export default function LaporanPekerjaan() {
     );
   });
 
+  const filteredReports = reports.filter((report) => {
+    return (
+      report.lokasi?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      report.proyek?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      report.deskripsi?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
+
   const filteredSpareparts = spareparts.filter((part) => {
     return (
       part.namaPart?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      part.deskripsi?.toLowerCase().includes(searchTerm.toLowerCase())
+      part.deskripsi?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      part.unit?.toLowerCase().includes(searchTerm.toLowerCase())
     );
   });
 
@@ -1574,18 +1565,6 @@ export default function LaporanPekerjaan() {
       repair.lokasiOperasi?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       repair.deskripsiKerusakan?.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  });
-
-  // Sort reports based on selected option
-  const sortedReports = [...filteredReports].sort((a, b) => {
-    if (reportSortBy === "date") {
-      return new Date(b.tanggal) - new Date(a.tanggal);
-    } else if (reportSortBy === "project") {
-      return (a.namaProyek || "").localeCompare(b.namaProyek || "");
-    } else if (reportSortBy === "location") {
-      return (a.lokasi || "").localeCompare(b.lokasi || "");
-    }
-    return 0;
   });
 
   // Sort tasks based on selected option
@@ -1609,28 +1588,44 @@ export default function LaporanPekerjaan() {
     return 0;
   });
 
+  // Sort reports based on selected option
+  const sortedReports = [...filteredReports].sort((a, b) => {
+    if (reportSortBy === "date-newest") {
+      return new Date(b.tanggal || b.createdAt) - new Date(a.tanggal || a.createdAt);
+    } else if (reportSortBy === "date-oldest") {
+      return new Date(a.tanggal || a.createdAt) - new Date(b.tanggal || b.createdAt);
+    } else if (reportSortBy === "location") {
+      return (a.lokasi || "").localeCompare(b.lokasi || "");
+    }
+    return 0;
+  });
+
   // Sort spareparts based on selected option
   const sortedSpareparts = [...filteredSpareparts].sort((a, b) => {
-    if (sparepartSortBy === "date") {
-      return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
-    } else if (sparepartSortBy === "name") {
+    if (sparepartSortBy === "name") {
       return (a.namaPart || "").localeCompare(b.namaPart || "");
-    } else if (sparepartSortBy === "status") {
-      const statusOrder = { arrived: 3, ordered: 2, pending: 1 };
-      return (statusOrder[b.status] || 0) - (statusOrder[a.status] || 0);
+    } else if (sparepartSortBy === "order-date") {
+      if (!a.tanggalDipesan && !b.tanggalDipesan) return 0;
+      if (!a.tanggalDipesan) return 1;
+      if (!b.tanggalDipesan) return -1;
+      return new Date(b.tanggalDipesan) - new Date(a.tanggalDipesan);
+    } else if (sparepartSortBy === "arrival-date") {
+      if (!a.tanggalDatang && !b.tanggalDatang) return 0;
+      if (!a.tanggalDatang) return 1;
+      if (!b.tanggalDatang) return -1;
+      return new Date(b.tanggalDatang) - new Date(a.tanggalDatang);
     }
     return 0;
   });
 
   // Sort repairs based on selected option
   const sortedRepairs = [...filteredRepairs].sort((a, b) => {
-    if (repairSortBy === "date") {
-      return new Date(b.tanggalMasuk || 0) - new Date(a.tanggalMasuk || 0);
-    } else if (repairSortBy === "status") {
-      const statusOrder = { completed: 3, "in-progress": 2, received: 1 };
-      return (statusOrder[b.status] || 0) - (statusOrder[a.status] || 0);
-    } else if (repairSortBy === "equipment") {
-      return (a.itemRepair || "").localeCompare(b.itemRepair || "");
+    if (repairSortBy === "date-newest") {
+      return new Date(b.tanggalMasuk || b.createdAt) - new Date(a.tanggalMasuk || a.createdAt);
+    } else if (repairSortBy === "date-oldest") {
+      return new Date(a.tanggalMasuk || a.createdAt) - new Date(b.tanggalMasuk || b.createdAt);
+    } else if (repairSortBy === "location") {
+      return (a.lokasiOperasi || "").localeCompare(b.lokasiOperasi || "");
     }
     return 0;
   });
@@ -2892,17 +2887,6 @@ export default function LaporanPekerjaan() {
                       className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                     />
                   </div>
-                  <div className="md:w-56">
-                    <select
-                      value={reportSortBy}
-                      onChange={(e) => setReportSortBy(e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    >
-                      <option value="date">Urutkan: Tanggal (Terbaru)</option>
-                      <option value="project">Urutkan: Proyek (A-Z)</option>
-                      <option value="location">Urutkan: Lokasi (A-Z)</option>
-                    </select>
-                  </div>
                   <div className="flex gap-2">
                     <button
                       onClick={handleDownloadReportsExcel}
@@ -2942,6 +2926,22 @@ export default function LaporanPekerjaan() {
                       <Plus size={20} />
                       {t("newReport")}
                     </button>
+                  </div>
+                  
+                  {/* Sort Dropdown */}
+                  <div className="flex items-center gap-2">
+                    <label className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
+                      Urutkan:
+                    </label>
+                    <select
+                      value={reportSortBy}
+                      onChange={(e) => setReportSortBy(e.target.value)}
+                      className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm focus:ring-2 focus:ring-indigo-500"
+                    >
+                      <option value="date-newest">Tanggal Terbaru</option>
+                      <option value="date-oldest">Tanggal Terlama</option>
+                      <option value="location">Lokasi (A-Z)</option>
+                    </select>
                   </div>
                 </div>
               </div>
@@ -3417,8 +3417,8 @@ export default function LaporanPekerjaan() {
                       />
                     </div>
 
-                    {/* Progress Logs Section - Hidden when editing existing task */}
-                    {!editingTaskId && (
+                    {/* Progress Logs Section - Hidden during edit, only accessible via card click */}
+                    {false && editingTaskId && (
                     <>
                     <div
                       className={`p-4 rounded-lg ${
@@ -3516,8 +3516,7 @@ export default function LaporanPekerjaan() {
                       </div>
                     </div>
 
-                    {/* Riwayat Progress Logs - Hidden when editing */}
-                    {!editingTaskId && (
+                    {/* Riwayat Progress Logs */}
                     <div className="mt-6">
                       <div className="flex items-center gap-2 mb-4">
                         <ClipboardList
@@ -3594,6 +3593,7 @@ export default function LaporanPekerjaan() {
                         </p>
                       )}
                     </div>
+                    </>
                     )}
 
                     <div className="flex gap-3 mt-6">
@@ -3618,12 +3618,13 @@ export default function LaporanPekerjaan() {
                         Batal
                       </button>
                     </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            <div className="space-y-4">
+              <div className="space-y-4">
                 {sortedTasks.length === 0 ? (
                   <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-12 text-center">
                     <ListTodo
@@ -3769,6 +3770,7 @@ export default function LaporanPekerjaan() {
               </div>
             </div>
           )}
+        </div>
 
         {/* Progress Modal */}
         {showProgressModal && selectedTask && (
@@ -3979,38 +3981,11 @@ export default function LaporanPekerjaan() {
         {activeTab === "spareparts" && (
           <div className="space-y-6 tab-content">
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 fade-in max-w-6xl mx-auto">
-              <div className="flex flex-col gap-4 mb-6">
-                <div className="flex justify-between items-center">
-                  <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-                    {t("spareparts")}
-                  </h2>
-                </div>
-                <div className="flex flex-col md:flex-row gap-4">
-                  <div className="flex-1 relative">
-                    <Search
-                      className="absolute left-3 top-3 text-gray-400 dark:text-gray-500"
-                      size={20}
-                    />
-                    <input
-                      type="text"
-                      placeholder="Cari suku cadang..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
-                    />
-                  </div>
-                  <div className="md:w-56">
-                    <select
-                      value={sparepartSortBy}
-                      onChange={(e) => setSparepartSortBy(e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    >
-                      <option value="date">Urutkan: Terbaru</option>
-                      <option value="name">Urutkan: Nama (A-Z)</option>
-                      <option value="status">Urutkan: Status</option>
-                    </select>
-                  </div>
-                  <div className="flex gap-3">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+                  {t("spareparts")}
+                </h2>
+                <div className="flex gap-3">
                   <button
                     onClick={handleDownloadSparepartsExcel}
                     className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors"
@@ -4047,16 +4022,32 @@ export default function LaporanPekerjaan() {
                     {t("newSparepart")}
                   </button>
                 </div>
+                
+                {/* Sort Dropdown */}
+                <div className="flex items-center gap-2">
+                  <label className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
+                    Urutkan:
+                  </label>
+                  <select
+                    value={sparepartSortBy}
+                    onChange={(e) => setSparepartSortBy(e.target.value)}
+                    className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm focus:ring-2 focus:ring-indigo-500"
+                  >
+                    <option value="name">Nama (A-Z)</option>
+                    <option value="order-date">Tanggal Dipesan</option>
+                    <option value="arrival-date">Tanggal Datang</option>
+                  </select>
+                </div>
               </div>
 
               {/* Sparepart List */}
               <div className="space-y-4">
-                {spareparts.length === 0 ? (
+                {sortedSpareparts.length === 0 ? (
                   <p className="text-center text-gray-500 dark:text-gray-400 py-8">
                     Belum ada sparepart yang diorder
                   </p>
                 ) : (
-                  spareparts.map((part) => (
+                  sortedSpareparts.map((part) => (
                     <div
                       key={part.id}
                       onClick={() => handleSparepartCardClick(part)}
@@ -4524,16 +4515,32 @@ export default function LaporanPekerjaan() {
                     {t("newRepair")}
                   </button>
                 </div>
+                
+                {/* Sort Dropdown */}
+                <div className="flex items-center gap-2">
+                  <label className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
+                    Urutkan:
+                  </label>
+                  <select
+                    value={repairSortBy}
+                    onChange={(e) => setRepairSortBy(e.target.value)}
+                    className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm focus:ring-2 focus:ring-indigo-500"
+                  >
+                    <option value="date-newest">Tanggal Masuk Terbaru</option>
+                    <option value="date-oldest">Tanggal Masuk Terlama</option>
+                    <option value="location">Lokasi (A-Z)</option>
+                  </select>
+                </div>
               </div>
 
               {/* Repair List */}
               <div className="space-y-4">
-                {filteredRepairs.length === 0 ? (
+                {sortedRepairs.length === 0 ? (
                   <p className="text-center text-gray-500 dark:text-gray-400 py-8">
                     {t("noRepairs")}
                   </p>
                 ) : (
-                  filteredRepairs.map((repair) => (
+                  sortedRepairs.map((repair) => (
                     <div
                       key={repair.id}
                       className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow card-transition hover-lift"
@@ -4909,8 +4916,6 @@ export default function LaporanPekerjaan() {
         )}
 
         {/* Footer Copyright */}
-        </div>
-
         <footer className="mt-12 py-6 border-t border-gray-200 dark:border-gray-700">
           <div className="text-center text-sm text-gray-600 dark:text-gray-400">
             © 2025 PT SALAM PACIFIC INDONESIA LINES. All rights reserved
