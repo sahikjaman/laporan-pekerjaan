@@ -3622,8 +3622,6 @@ export default function LaporanPekerjaan() {
                 </div>
               </div>
             )}
-          )}
-        </div>
 
               <div className="space-y-4">
                 {sortedTasks.length === 0 ? (
@@ -3771,7 +3769,6 @@ export default function LaporanPekerjaan() {
               </div>
             </div>
           )}
-        </div>
 
         {/* Progress Modal */}
         {showProgressModal && selectedTask && (
@@ -4885,6 +4882,8 @@ export default function LaporanPekerjaan() {
         )}
 
         {/* Footer Copyright */}
+        </div>
+
         <footer className="mt-12 py-6 border-t border-gray-200 dark:border-gray-700">
           <div className="text-center text-sm text-gray-600 dark:text-gray-400">
             © 2025 PT SALAM PACIFIC INDONESIA LINES. All rights reserved
