@@ -3467,7 +3467,7 @@ export default function LaporanPekerjaan() {
                                       {log.deskripsi}
                                     </p>
                                   </div>
-                                  <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <div className="flex gap-2">
                                     <button
                                       onClick={() => handleEditProgressLog(log)}
                                       className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded"
@@ -3851,7 +3851,7 @@ export default function LaporanPekerjaan() {
                                   {log.deskripsi}
                                 </p>
                               </div>
-                              <div className="flex sm:opacity-0 sm:group-hover:opacity-100 transition-opacity gap-1 sm:gap-2 flex-shrink-0">
+                              <div className="flex gap-1 sm:gap-2 flex-shrink-0">
                                 <button
                                   onClick={() => handleEditProgressLog(log)}
                                   className="p-1.5 sm:p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded"
