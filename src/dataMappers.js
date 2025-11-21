@@ -182,6 +182,7 @@ export const repairToDisplay = (repair) => {
   return {
     id: repair.id,
     ...formData,
+    status: formData.status, // Explicitly include status
     createdAt: repair.created_at,
     updatedAt: repair.updated_at,
   };
@@ -211,7 +212,7 @@ function capitalizeStatus(status) {
 function mapRepairStatus(status) {
   const statusMap = {
     'Pending': 'received',
-    'In Progress': 'in_progress',
+    'In Progress': 'in-progress',
     'Completed': 'completed',
   };
   return statusMap[status] || 'received';
