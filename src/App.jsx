@@ -2078,66 +2078,66 @@ export default function LaporanPekerjaan() {
                         onClick={() => setShowThemeDropdown(false)}
                       ></div>
                       <div className="absolute right-0 mt-1 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 py-2 z-50">
-                      <button
-                        onClick={() => {
-                          setTheme("light");
-                          setShowThemeDropdown(false);
-                        }}
-                        className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
-                          theme === "light"
-                            ? "bg-gray-50 dark:bg-gray-700/50"
-                            : ""
-                        }`}
-                      >
-                        <Sun size={18} className="text-yellow-500" />
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                          {language === "id" ? "Terang" : "Light"}
-                        </span>
-                        {theme === "light" && (
-                          <Check size={16} className="ml-auto text-green-600" />
-                        )}
-                      </button>
-                      <button
-                        onClick={() => {
-                          setTheme("dark");
-                          setShowThemeDropdown(false);
-                        }}
-                        className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
-                          theme === "dark"
-                            ? "bg-gray-50 dark:bg-gray-700/50"
-                            : ""
-                        }`}
-                      >
-                        <Moon size={18} className="text-indigo-500" />
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                          {language === "id" ? "Gelap" : "Dark"}
-                        </span>
-                        {theme === "dark" && (
-                          <Check size={16} className="ml-auto text-green-600" />
-                        )}
-                      </button>
-                      <button
-                        onClick={() => {
-                          setTheme("system");
-                          setShowThemeDropdown(false);
-                        }}
-                        className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
-                          theme === "system"
-                            ? "bg-gray-50 dark:bg-gray-700/50"
-                            : ""
-                        }`}
-                      >
-                        <Monitor size={18} className="text-gray-500" />
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                          {language === "id" ? "Sistem" : "System"}
-                        </span>
-                        {theme === "system" && (
-                          <Check size={16} className="ml-auto text-green-600" />
-                        )}
-                      </button>
-                    </div>
+                        <button
+                          onClick={() => {
+                            setTheme("light");
+                            setShowThemeDropdown(false);
+                          }}
+                          className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
+                            theme === "light"
+                              ? "bg-gray-50 dark:bg-gray-700/50"
+                              : ""
+                          }`}
+                        >
+                          <Sun size={18} className="text-yellow-500" />
+                          <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                            {language === "id" ? "Terang" : "Light"}
+                          </span>
+                          {theme === "light" && (
+                            <Check size={16} className="ml-auto text-green-600" />
+                          )}
+                        </button>
+                        <button
+                          onClick={() => {
+                            setTheme("dark");
+                            setShowThemeDropdown(false);
+                          }}
+                          className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
+                            theme === "dark"
+                              ? "bg-gray-50 dark:bg-gray-700/50"
+                              : ""
+                          }`}
+                        >
+                          <Moon size={18} className="text-indigo-500" />
+                          <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                            {language === "id" ? "Gelap" : "Dark"}
+                          </span>
+                          {theme === "dark" && (
+                            <Check size={16} className="ml-auto text-green-600" />
+                          )}
+                        </button>
+                        <button
+                          onClick={() => {
+                            setTheme("system");
+                            setShowThemeDropdown(false);
+                          }}
+                          className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
+                            theme === "system"
+                              ? "bg-gray-50 dark:bg-gray-700/50"
+                              : ""
+                          }`}
+                        >
+                          <Monitor size={18} className="text-gray-500" />
+                          <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                            {language === "id" ? "Sistem" : "System"}
+                          </span>
+                          {theme === "system" && (
+                            <Check size={16} className="ml-auto text-green-600" />
+                          )}
+                        </button>
+                      </div>
                     </>
-                  )}\n                </div>
+                  )}
 
                 {/* Language Selector - SPIL Style */}
                 <div className="hidden sm:flex items-center gap-1 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
