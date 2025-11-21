@@ -2881,10 +2881,10 @@ export default function LaporanPekerjaan() {
                                 }`}
                               >
                                 {repair.status === "completed"
-                                  ? t("statusCompleted").slice(0, 7)
+                                  ? t("statusCompleted")
                                   : repair.status === "in-progress"
-                                  ? "Progress"
-                                  : t("statusReceived").slice(0, 7)}
+                                  ? t("statusInProgress")
+                                  : t("statusReceived")}
                               </span>
                               <button
                                 onClick={(e) => {
@@ -4761,74 +4761,122 @@ export default function LaporanPekerjaan() {
                       </select>
                     </div>
 
-                    {/* Tanggal Masuk - Always editable */}
-                    <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                        Tanggal Masuk <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="date"
-                        value={selectedRepair.tanggalMasuk || ""}
-                        onChange={(e) =>
-                          setSelectedRepair({
-                            ...selectedRepair,
-                            tanggalMasuk: e.target.value,
-                          })
-                        }
-                        className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                        required
-                      />
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        Tanggal saat barang diterima untuk diperbaiki
-                      </p>
-                    </div>
-
-                    {/* Tanggal Mulai Dikerjakan - Show for in-progress and completed */}
-                    {(selectedRepair.status === "in-progress" || selectedRepair.status === "completed") && (
+                    {/* RECEIVED: Only Tanggal Masuk (editable) */}
+                    {selectedRepair.status === "received" && (
                       <div>
                         <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                          Tanggal Mulai Dikerjakan <span className="text-red-500">*</span>
+                          Tanggal Masuk <span className="text-red-500">*</span>
                         </label>
                         <input
                           type="date"
-                          value={selectedRepair.tanggalMulai || ""}
+                          value={selectedRepair.tanggalMasuk || ""}
                           onChange={(e) =>
                             setSelectedRepair({
                               ...selectedRepair,
-                              tanggalMulai: e.target.value,
+                              tanggalMasuk: e.target.value,
                             })
                           }
                           className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                           required
                         />
                         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                          Tanggal saat mulai diperbaiki
+                          Tanggal saat barang diterima untuk diperbaiki
                         </p>
                       </div>
                     )}
 
-                    {/* Tanggal Selesai - Show only for completed */}
+                    {/* IN PROGRESS: Show Tanggal Masuk (read-only), Edit Tanggal Mulai */}
+                    {selectedRepair.status === "in-progress" && (
+                      <>
+                        <div>
+                          <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                            Tanggal Masuk
+                          </label>
+                          <input
+                            type="date"
+                            value={selectedRepair.tanggalMasuk || ""}
+                            className="w-full px-4 py-2 border rounded-lg bg-gray-100 dark:bg-gray-600 dark:border-gray-500 dark:text-gray-300 cursor-not-allowed"
+                            disabled
+                          />
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            Tanggal masuk tidak dapat diubah
+                          </p>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                            Tanggal Mulai Dikerjakan <span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            type="date"
+                            value={selectedRepair.tanggalMulai || ""}
+                            onChange={(e) =>
+                              setSelectedRepair({
+                                ...selectedRepair,
+                                tanggalMulai: e.target.value,
+                              })
+                            }
+                            className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            required
+                          />
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            Tanggal saat mulai diperbaiki
+                          </p>
+                        </div>
+                      </>
+                    )}
+
+                    {/* COMPLETED: Show Tanggal Masuk & Mulai (read-only), Edit Tanggal Selesai */}
                     {selectedRepair.status === "completed" && (
-                      <div>
-                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                          Tanggal Selesai <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          type="date"
-                          value={selectedRepair.tanggalSelesai || ""}
-                          onChange={(e) =>
-                            setSelectedRepair({
-                              ...selectedRepair,
-                              tanggalSelesai: e.target.value,
-                            })
-                          }
-                          className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                          required
-                        />
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                          Tanggal saat repair selesai dikerjakan
-                        </p>
-                      </div>
+                      <>
+                        <div>
+                          <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                            Tanggal Masuk
+                          </label>
+                          <input
+                            type="date"
+                            value={selectedRepair.tanggalMasuk || ""}
+                            className="w-full px-4 py-2 border rounded-lg bg-gray-100 dark:bg-gray-600 dark:border-gray-500 dark:text-gray-300 cursor-not-allowed"
+                            disabled
+                          />
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            Tanggal masuk tidak dapat diubah
+                          </p>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                            Tanggal Mulai Dikerjakan
+                          </label>
+                          <input
+                            type="date"
+                            value={selectedRepair.tanggalMulai || ""}
+                            className="w-full px-4 py-2 border rounded-lg bg-gray-100 dark:bg-gray-600 dark:border-gray-500 dark:text-gray-300 cursor-not-allowed"
+                            disabled
+                          />
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            Tanggal mulai tidak dapat diubah
+                          </p>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                            Tanggal Selesai <span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            type="date"
+                            value={selectedRepair.tanggalSelesai || ""}
+                            onChange={(e) =>
+                              setSelectedRepair({
+                                ...selectedRepair,
+                                tanggalSelesai: e.target.value,
+                              })
+                            }
+                            className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            required
+                          />
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            Tanggal saat repair selesai dikerjakan
+                          </p>
+                        </div>
+                      </>
                     )}
                   </div>
                 </div>
