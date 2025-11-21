@@ -4765,7 +4765,7 @@ export default function LaporanPekerjaan() {
                     {selectedRepair.status === "received" && (
                       <div>
                         <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                          Tanggal Masuk <span className="text-red-500">*</span>
+                          {t("dateReceived")} <span className="text-red-500">*</span>
                         </label>
                         <input
                           type="date"
@@ -4780,7 +4780,7 @@ export default function LaporanPekerjaan() {
                           required
                         />
                         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                          Tanggal saat barang diterima untuk diperbaiki
+                          {language === "id" ? "Masukkan tanggal ketika barang diterima" : "Enter the date when item was received"}
                         </p>
                       </div>
                     )}
@@ -4790,7 +4790,7 @@ export default function LaporanPekerjaan() {
                       <>
                         <div>
                           <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                            Tanggal Masuk
+                            {t("dateReceived")}
                           </label>
                           <input
                             type="date"
@@ -4799,12 +4799,12 @@ export default function LaporanPekerjaan() {
                             disabled
                           />
                           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                            Tanggal masuk tidak dapat diubah
+                            {language === "id" ? "Tanggal masuk tidak dapat diubah" : "Received date cannot be changed"}
                           </p>
                         </div>
                         <div>
                           <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                            Tanggal Mulai Dikerjakan <span className="text-red-500">*</span>
+                            {language === "id" ? "Tanggal Mulai Dikerjakan" : "Start Date"} <span className="text-red-500">*</span>
                           </label>
                           <input
                             type="date"
@@ -4819,7 +4819,7 @@ export default function LaporanPekerjaan() {
                             required
                           />
                           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                            Tanggal saat mulai diperbaiki
+                            {language === "id" ? "Masukkan tanggal ketika perbaikan dimulai" : "Enter the date when repair work started"}
                           </p>
                         </div>
                       </>
@@ -4830,7 +4830,7 @@ export default function LaporanPekerjaan() {
                       <>
                         <div>
                           <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                            Tanggal Masuk
+                            {t("dateReceived")}
                           </label>
                           <input
                             type="date"
@@ -4839,12 +4839,12 @@ export default function LaporanPekerjaan() {
                             disabled
                           />
                           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                            Tanggal masuk tidak dapat diubah
+                            {language === "id" ? "Tanggal masuk tidak dapat diubah" : "Received date cannot be changed"}
                           </p>
                         </div>
                         <div>
                           <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                            Tanggal Mulai Dikerjakan
+                            {language === "id" ? "Tanggal Mulai Dikerjakan" : "Start Date"}
                           </label>
                           <input
                             type="date"
@@ -4853,12 +4853,12 @@ export default function LaporanPekerjaan() {
                             disabled
                           />
                           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                            Tanggal mulai tidak dapat diubah
+                            {language === "id" ? "Tanggal mulai tidak dapat diubah" : "Start date cannot be changed"}
                           </p>
                         </div>
                         <div>
                           <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                            Tanggal Selesai <span className="text-red-500">*</span>
+                            {language === "id" ? "Tanggal Selesai" : "Completion Date"} <span className="text-red-500">*</span>
                           </label>
                           <input
                             type="date"
@@ -4873,7 +4873,7 @@ export default function LaporanPekerjaan() {
                             required
                           />
                           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                            Tanggal saat repair selesai dikerjakan
+                            {language === "id" ? "Masukkan tanggal ketika perbaikan selesai" : "Enter the date when repair was completed"}
                           </p>
                         </div>
                       </>
@@ -4888,7 +4888,7 @@ export default function LaporanPekerjaan() {
                     disabled={saving}
                     className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold disabled:opacity-50"
                   >
-                    {saving ? "Menyimpan..." : "Update Status"}
+                    {saving ? t("saving") : (language === "id" ? "Perbarui Status" : "Update Status")}
                   </button>
                   <button
                     onClick={() => {
@@ -4897,7 +4897,7 @@ export default function LaporanPekerjaan() {
                     }}
                     className="px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-white"
                   >
-                    Batal
+                    {t("cancel")}
                   </button>
                 </div>
               </div>
@@ -5006,13 +5006,13 @@ export default function LaporanPekerjaan() {
                   <div className="border-t dark:border-gray-700 pt-4">
                     <h3 className="text-sm font-semibold mb-3 text-gray-700 dark:text-gray-300 flex items-center gap-2">
                       <Calendar size={16} className="text-indigo-600" />
-                      Status & Tanggal
+                      {language === "id" ? "Status & Tanggal" : "Status & Dates"}
                     </h3>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                          Status Repair
+                          {language === "id" ? "Status Perbaikan" : "Repair Status"}
                         </label>
                         <select
                           value={repairFormData.status || "received"}
@@ -5032,11 +5032,11 @@ export default function LaporanPekerjaan() {
 
                       <div>
                         <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                          Tanggal Masuk <span className="text-red-500">*</span>
+                          {t("dateReceived")} <span className="text-red-500">*</span>
                         </label>
                         <input
                           type="date"
-                          value={repairFormData.tanggalMasuk || new Date().toISOString().split('T')[0]}
+                          value={repairFormData.tanggalMasuk || ""}
                           onChange={(e) =>
                             setRepairFormData({
                               ...repairFormData,
@@ -5046,12 +5046,15 @@ export default function LaporanPekerjaan() {
                           className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                           required
                         />
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                          {language === "id" ? "Masukkan tanggal ketika barang diterima" : "Enter the date when item was received"}
+                        </p>
                       </div>
 
                       {(repairFormData.status === "in-progress" || repairFormData.status === "completed") && (
                         <div>
                           <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                            Tanggal Mulai Dikerjakan
+                            {language === "id" ? "Tanggal Mulai Dikerjakan" : "Start Date"}
                             {repairFormData.status === "in-progress" && <span className="text-red-500"> *</span>}
                           </label>
                           <input
@@ -5066,13 +5069,16 @@ export default function LaporanPekerjaan() {
                             className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                             required={repairFormData.status === "in-progress"}
                           />
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            {language === "id" ? "Masukkan tanggal ketika perbaikan dimulai" : "Enter the date when repair work started"}
+                          </p>
                         </div>
                       )}
 
                       {repairFormData.status === "completed" && (
                         <div>
                           <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                            Tanggal Selesai <span className="text-red-500">*</span>
+                            {language === "id" ? "Tanggal Selesai" : "Completion Date"} <span className="text-red-500">*</span>
                           </label>
                           <input
                             type="date"
@@ -5086,6 +5092,9 @@ export default function LaporanPekerjaan() {
                             className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                             required
                           />
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            {language === "id" ? "Masukkan tanggal ketika perbaikan selesai" : "Enter the date when repair was completed"}
+                          </p>
                         </div>
                       )}
                     </div>
