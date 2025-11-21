@@ -70,7 +70,7 @@ const translations = {
     reports: "Laporan Lapangan",
     tasks: "Tugas",
     spareparts: "Suku Cadang",
-    repairs: "Repair",
+    repairs: "Perbaikan",
     monitoring: "Monitoring",
     reachStacker: "Reach Stacker",
     fuelMonitoring: "Monitoring BBM",
@@ -79,7 +79,7 @@ const translations = {
     newReport: "Laporan Baru",
     newTask: "Tugas Baru",
     newSparepart: "Tambah",
-    newRepair: "Repair Baru",
+    newRepair: "Perbaikan Baru",
     downloadExcel: "Download Excel",
     downloadPDF: "Download PDF",
     save: "Simpan",
@@ -91,8 +91,10 @@ const translations = {
     close: "Tutup",
     search: "Cari",
     sort: "Urutkan",
+    sortBy: "Urutkan:",
 
     // Dashboard
+    quickActions: "Aksi Cepat",
     createNewReport: "Buat Laporan Lapangan Baru",
     recordFieldWork: "Catat pekerjaan lapangan Anda",
     createNewTask: "Buat Tugas Baru",
@@ -100,8 +102,11 @@ const translations = {
     orderSparepart: "Pesan Suku Cadang",
     addSparepartRequest: "Tambahkan permintaan suku cadang",
     manageInventory: "Kelola inventori suku cadang",
-    totalReports: "Total Laporan",
-    totalSpareparts: "Total Suku Cadang",
+    createNewRepair: "Buat Perbaikan Baru",
+    inputRepairRequest: "Input permintaan perbaikan",
+    totalReports: "Jumlah Laporan",
+    totalSpareparts: "Jumlah Suku Cadang",
+    totalRepairs: "Jumlah Perbaikan",
     completedTasks: "Tugas Selesai",
     noCompletedTasks: "Belum ada tugas selesai",
     ongoingTasks: "Tugas Berlangsung",
@@ -157,6 +162,7 @@ const translations = {
     medium: "Sedang",
     low: "Rendah",
     completed: "Selesai",
+    complete: "Selesai",
     addProgressLog: "Tambah Riwayat Progres",
     progressLogs: "Riwayat Progres",
     noProgressLogs: "Belum ada riwayat progres",
@@ -186,26 +192,26 @@ const translations = {
       'Suku cadang belum dipesan. Ubah status ke "Sudah Dipesan" untuk memasukkan tanggal pemesanan.',
 
     // Repairs
-    noRepairs: "Belum ada repair",
-    noRepairsFound: "Tidak ada repair yang sesuai",
-    createFirstRepair: 'Klik tombol "Repair Baru" untuk mulai membuat repair',
-    editRepair: "Edit Repair",
-    createRepair: "Buat Repair Baru",
-    repairItem: "Item Repair",
+    noRepairs: "Belum ada perbaikan",
+    noRepairsFound: "Tidak ada perbaikan yang sesuai",
+    createFirstRepair: 'Klik tombol "Perbaikan Baru" untuk mulai membuat perbaikan',
+    editRepair: "Edit Perbaikan",
+    createRepair: "Buat Perbaikan Baru",
+    repairItem: "Item Perbaikan",
     dateReceived: "Tanggal Masuk",
     dateStarted: "Tanggal Mulai Dikerjakan",
     dateCompleted: "Tanggal Selesai",
     equipmentUnit: "Unit Alat",
     operatingLocation: "Lokasi Operasi Alat",
     damageDescription: "Deskripsi Kerusakan",
-    repairStatus: "Status Repair",
-    statusReceived: "Sudah Masuk",
+    repairStatus: "Status Perbaikan",
+    statusReceived: "Barang Diterima",
     statusInProgress: "Sedang Dikerjakan",
     statusCompleted: "Selesai",
-    searchRepairs: "Cari item repair, unit alat, atau lokasi...",
-    totalRepairs: "Total Repair",
-    recentRepairs: "Repair Terbaru",
-    repairSummary: "Ringkasan Repair",
+    searchRepairs: "Cari item perbaikan, unit alat, atau lokasi...",
+    totalRepairs: "Total Perbaikan",
+    recentRepairs: "Perbaikan Terbaru",
+    repairSummary: "Ringkasan Perbaikan",
 
     // Messages
     confirmDelete: "Yakin ingin menghapus",
@@ -259,8 +265,10 @@ const translations = {
     close: "Close",
     search: "Search",
     sort: "Sort",
+    sortBy: "Sort by:",
 
     // Dashboard
+    quickActions: "Quick Actions",
     createNewReport: "Create New Field Report",
     recordFieldWork: "Record your field work",
     createNewTask: "Create New Task",
@@ -268,8 +276,11 @@ const translations = {
     orderSparepart: "Order Sparepart",
     addSparepartRequest: "Add sparepart request",
     manageInventory: "Manage sparepart inventory",
+    createNewRepair: "Create New Repair",
+    inputRepairRequest: "Input repair request",
     totalReports: "Total Reports",
     totalSpareparts: "Total Spareparts",
+    totalRepairs: "Total Repairs",
     completedTasks: "Completed Tasks",
     noCompletedTasks: "No completed tasks yet",
     ongoingTasks: "Ongoing Tasks",
@@ -325,6 +336,7 @@ const translations = {
     medium: "Medium",
     low: "Low",
     completed: "Completed",
+    complete: "Complete",
     addProgressLog: "Add Progress Log",
     progressLogs: "Progress Logs",
     noProgressLogs: "No progress logs yet",
@@ -1376,6 +1388,11 @@ export default function LaporanPekerjaan() {
     if (!selectedRepair) return;
     
     // Validate required fields based on status
+    if (!selectedRepair.tanggalMasuk) {
+      alert("Tanggal masuk harus diisi");
+      return;
+    }
+
     if (selectedRepair.status === "in-progress" && !selectedRepair.tanggalMulai) {
       alert("Tanggal mulai dikerjakan harus diisi untuk status 'Sedang Dikerjakan'");
       return;
@@ -2192,7 +2209,7 @@ export default function LaporanPekerjaan() {
               <div>
                 <h2 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-white mb-3 sm:mb-4 flex items-center gap-2">
                   <Plus className="text-indigo-600 dark:text-indigo-400" size={20} />
-                  <span className="text-base sm:text-xl">Aksi Cepat</span>
+                  <span className="text-base sm:text-xl">{t("quickActions")}</span>
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   <button
@@ -2287,7 +2304,7 @@ export default function LaporanPekerjaan() {
                         {t("newRepair")}
                       </h3>
                       <p className="text-xs text-orange-100 hidden sm:block">
-                        Input repair request
+                        {t("inputRepairRequest")}
                       </p>
                     </div>
                   </button>
@@ -2298,7 +2315,7 @@ export default function LaporanPekerjaan() {
               <div>
                 <h2 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-white mb-3 sm:mb-4 flex items-center gap-2">
                   <TrendingUp className="text-green-600 dark:text-green-400" size={20} />
-                  <span className="text-base sm:text-xl">Statistik Overview</span>
+                  <span className="text-base sm:text-xl">{language === "id" ? "Statistik Overview" : "Statistics Overview"}</span>
                 </h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
                 <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 hover-lift card-transition stagger-item">
@@ -2696,11 +2713,11 @@ export default function LaporanPekerjaan() {
               {/* Sparepart Summary */}
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6">
                 <h2 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-white mb-4">
-                  Ringkasan Sparepart
+                  {t("sparepartSummary")}
                 </h2>
                 {spareparts.length === 0 ? (
                   <p className="text-gray-500 dark:text-gray-400 text-center py-8">
-                    Belum ada sparepart
+                    {t("noSpareparts")}
                   </p>
                 ) : (
                   <div className="space-y-4">
@@ -2708,7 +2725,7 @@ export default function LaporanPekerjaan() {
                     <div className="grid grid-cols-3 gap-2 sm:gap-4">
                       <div className="p-3 sm:p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
                         <p className="text-xs text-yellow-700 dark:text-yellow-400 mb-1">
-                          Pending
+                          {t("pending")}
                         </p>
                         <p className="text-xl sm:text-2xl font-bold text-yellow-800 dark:text-yellow-300">
                           {
@@ -2719,7 +2736,7 @@ export default function LaporanPekerjaan() {
                       </div>
                       <div className="p-3 sm:p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
                         <p className="text-xs text-blue-700 dark:text-blue-400 mb-1">
-                          Dipesan
+                          {t("ordered")}
                         </p>
                         <p className="text-xl sm:text-2xl font-bold text-blue-800 dark:text-blue-300">
                           {
@@ -2730,7 +2747,7 @@ export default function LaporanPekerjaan() {
                       </div>
                       <div className="p-3 sm:p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
                         <p className="text-xs text-green-700 dark:text-green-400 mb-1">
-                          Datang
+                          {t("arrived")}
                         </p>
                         <p className="text-xl sm:text-2xl font-bold text-green-800 dark:text-green-300">
                           {
@@ -2779,10 +2796,10 @@ export default function LaporanPekerjaan() {
                               }`}
                             >
                               {part.status === "arrived"
-                                ? "Datang"
+                                ? t("arrived")
                                 : part.status === "ordered"
-                                ? "Dipesan"
-                                : "Pending"}
+                                ? t("ordered")
+                                : t("pending")}
                             </span>
                           </div>
                         ))}
@@ -2952,16 +2969,16 @@ export default function LaporanPekerjaan() {
                   {/* Sort Dropdown */}
                   <div className="flex items-center gap-2">
                     <label className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap hidden sm:inline">
-                      Urutkan:
+                      {t("sortBy")}
                     </label>
                     <select
                       value={reportSortBy}
                       onChange={(e) => setReportSortBy(e.target.value)}
                       className="px-2 sm:px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm focus:ring-2 focus:ring-indigo-500"
                     >
-                      <option value="date-newest">Tanggal Terbaru</option>
-                      <option value="date-oldest">Tanggal Terlama</option>
-                      <option value="location">Lokasi (A-Z)</option>
+                      <option value="date-newest">{language === "id" ? "Tanggal Terbaru" : "Newest Date"}</option>
+                      <option value="date-oldest">{language === "id" ? "Tanggal Terlama" : "Oldest Date"}</option>
+                      <option value="location">{language === "id" ? "Lokasi (A-Z)" : "Location (A-Z)"}</option>
                     </select>
                   </div>
                   </div>
@@ -4049,16 +4066,16 @@ export default function LaporanPekerjaan() {
                 {/* Sort Dropdown */}
                 <div className="flex items-center gap-2">
                   <label className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap hidden sm:inline">
-                    Urutkan:
+                    {t("sortBy")}
                   </label>
                   <select
                     value={sparepartSortBy}
                     onChange={(e) => setSparepartSortBy(e.target.value)}
                     className="px-2 sm:px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm focus:ring-2 focus:ring-indigo-500"
                   >
-                    <option value="name">Nama (A-Z)</option>
-                    <option value="order-date">Tanggal Dipesan</option>
-                    <option value="arrival-date">Tanggal Datang</option>
+                    <option value="name">{language === "id" ? "Nama (A-Z)" : "Name (A-Z)"}</option>
+                    <option value="order-date">{language === "id" ? "Tanggal Dipesan" : "Order Date"}</option>
+                    <option value="arrival-date">{language === "id" ? "Tanggal Datang" : "Arrival Date"}</option>
                   </select>
                 </div>
                 </div>
@@ -4093,10 +4110,10 @@ export default function LaporanPekerjaan() {
                               }`}
                             >
                               {part.status === "arrived"
-                                ? "Sudah Datang"
+                                ? t("arrived")
                                 : part.status === "ordered"
-                                ? "Sudah Dipesan"
-                                : "Belum Dipesan"}
+                                ? t("ordered")
+                                : t("pending")}
                             </span>
                           </div>
                           {part.deskripsi && (
@@ -4384,9 +4401,9 @@ export default function LaporanPekerjaan() {
                         }}
                         className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                       >
-                        <option value="pending">Belum Dipesan</option>
-                        <option value="ordered">Sudah Dipesan</option>
-                        <option value="arrived">Sudah Datang</option>
+                        <option value="pending">{t("pending")}</option>
+                        <option value="ordered">{t("ordered")}</option>
+                        <option value="arrived">{t("arrived")}</option>
                       </select>
                     </div>
 
@@ -4545,16 +4562,16 @@ export default function LaporanPekerjaan() {
                 {/* Sort Dropdown */}
                 <div className="flex items-center gap-2">
                   <label className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap hidden sm:inline">
-                    Urutkan:
+                    {t("sortBy")}
                   </label>
                   <select
                     value={repairSortBy}
                     onChange={(e) => setRepairSortBy(e.target.value)}
                     className="px-2 sm:px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm focus:ring-2 focus:ring-indigo-500"
                   >
-                    <option value="date-newest">Tanggal Masuk Terbaru</option>
-                    <option value="date-oldest">Tanggal Masuk Terlama</option>
-                    <option value="location">Lokasi (A-Z)</option>
+                    <option value="date-newest">{language === "id" ? "Tanggal Masuk Terbaru" : "Newest Entry Date"}</option>
+                    <option value="date-oldest">{language === "id" ? "Tanggal Masuk Terlama" : "Oldest Entry Date"}</option>
+                    <option value="location">{language === "id" ? "Lokasi (A-Z)" : "Location (A-Z)"}</option>
                   </select>
                 </div>
                 </div>
@@ -4731,19 +4748,9 @@ export default function LaporanPekerjaan() {
                       <select
                         value={selectedRepair.status}
                         onChange={(e) => {
-                          const newStatus = e.target.value;
                           setSelectedRepair({
                             ...selectedRepair,
-                            status: newStatus,
-                            // Clear dates based on status - only clear if changing away from that status
-                            tanggalMulai:
-                              newStatus === "received"
-                                ? ""
-                                : selectedRepair.tanggalMulai,
-                            tanggalSelesai:
-                              newStatus === "completed"
-                                ? selectedRepair.tanggalSelesai
-                                : "",
+                            status: e.target.value,
                           });
                         }}
                         className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
@@ -4754,7 +4761,29 @@ export default function LaporanPekerjaan() {
                       </select>
                     </div>
 
-                    {/* Conditional Date Fields based on Status */}
+                    {/* Tanggal Masuk - Always editable */}
+                    <div>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                        Tanggal Masuk <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="date"
+                        value={selectedRepair.tanggalMasuk || ""}
+                        onChange={(e) =>
+                          setSelectedRepair({
+                            ...selectedRepair,
+                            tanggalMasuk: e.target.value,
+                          })
+                        }
+                        className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        required
+                      />
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        Tanggal saat barang diterima untuk diperbaiki
+                      </p>
+                    </div>
+
+                    {/* Tanggal Mulai Dikerjakan - Show for in-progress and completed */}
                     {(selectedRepair.status === "in-progress" || selectedRepair.status === "completed") && (
                       <div>
                         <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
@@ -4773,11 +4802,12 @@ export default function LaporanPekerjaan() {
                           required
                         />
                         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                          Masukkan tanggal saat mulai dikerjakan
+                          Tanggal saat mulai diperbaiki
                         </p>
                       </div>
                     )}
 
+                    {/* Tanggal Selesai - Show only for completed */}
                     {selectedRepair.status === "completed" && (
                       <div>
                         <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
@@ -4796,18 +4826,7 @@ export default function LaporanPekerjaan() {
                           required
                         />
                         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                          Masukkan tanggal saat repair selesai
-                        </p>
-                      </div>
-                    )}
-
-                    {selectedRepair.status === "received" && (
-                      <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
-                        <p className="text-sm text-yellow-800 dark:text-yellow-300">
-                          <strong>Status: Baru Diterima</strong>
-                          <br />
-                          Repair belum dimulai. Ubah status ke "Sedang Diperbaiki"
-                          untuk memasukkan tanggal mulai perbaikan.
+                          Tanggal saat repair selesai dikerjakan
                         </p>
                       </div>
                     )}
@@ -4957,9 +4976,9 @@ export default function LaporanPekerjaan() {
                           }
                           className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                         >
-                          <option value="received">Barang Diterima</option>
-                          <option value="in-progress">Sedang Dikerjakan</option>
-                          <option value="completed">Selesai</option>
+                          <option value="received">{t("statusReceived")}</option>
+                          <option value="in-progress">{t("statusInProgress")}</option>
+                          <option value="completed">{t("statusCompleted")}</option>
                         </select>
                       </div>
 
