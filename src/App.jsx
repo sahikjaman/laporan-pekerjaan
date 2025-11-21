@@ -30,12 +30,12 @@ import {
   ChevronDown,
   Gauge,
 } from "lucide-react";
-import { 
-  reportsAPI, 
-  tasksAPI, 
-  sparepartsAPI, 
+import {
+  reportsAPI,
+  tasksAPI,
+  sparepartsAPI,
   repairsAPI,
-  progressLogsAPI 
+  progressLogsAPI,
 } from "./supabaseClient";
 import {
   formDataToReport,
@@ -125,7 +125,8 @@ const translations = {
     searchReports: "Cari proyek, lokasi, kegiatan, atau unit alat...",
     noReports: "Belum ada laporan lapangan",
     noReportsFound: "Tidak ada laporan lapangan yang sesuai",
-    createFirstReport: 'Klik tombol "Laporan Baru" untuk mulai membuat laporan lapangan',
+    createFirstReport:
+      'Klik tombol "Laporan Baru" untuk mulai membuat laporan lapangan',
     tryDifferentKeyword: "Coba ubah kata kunci pencarian",
     editReport: "Edit Laporan Lapangan",
     createReport: "Buat Laporan Lapangan Baru",
@@ -194,7 +195,8 @@ const translations = {
     // Repairs
     noRepairs: "Belum ada perbaikan",
     noRepairsFound: "Tidak ada perbaikan yang sesuai",
-    createFirstRepair: 'Klik tombol "Perbaikan Baru" untuk mulai membuat perbaikan',
+    createFirstRepair:
+      'Klik tombol "Perbaikan Baru" untuk mulai membuat perbaikan',
     editRepair: "Edit Perbaikan",
     createRepair: "Buat Perbaikan Baru",
     repairItem: "Item Perbaikan",
@@ -299,7 +301,8 @@ const translations = {
     searchReports: "Search project, location, activity, or equipment...",
     noReports: "No field reports yet",
     noReportsFound: "No matching field reports found",
-    createFirstReport: 'Click "New Report" button to start creating field reports',
+    createFirstReport:
+      'Click "New Report" button to start creating field reports',
     tryDifferentKeyword: "Try different search keywords",
     editReport: "Edit Field Report",
     createReport: "Create New Field Report",
@@ -463,14 +466,16 @@ export default function LaporanPekerjaan() {
     const handlePopState = (event) => {
       const hash = window.location.hash.slice(1) || "dashboard";
       setActiveTab(hash);
-      
+
       // Close modals when navigating back
       if (event.state?.modal) {
         // If the state has modal info, we're going back to a modal
         if (event.state.modal === "form") setShowForm(true);
         else if (event.state.modal === "taskForm") setShowTaskForm(true);
-        else if (event.state.modal === "sparepartForm") setShowSparepartForm(true);
-        else if (event.state.modal === "progressModal") setShowProgressModal(true);
+        else if (event.state.modal === "sparepartForm")
+          setShowSparepartForm(true);
+        else if (event.state.modal === "progressModal")
+          setShowProgressModal(true);
       } else {
         // Close all modals when going back to main view
         setShowForm(false);
@@ -482,7 +487,7 @@ export default function LaporanPekerjaan() {
     };
 
     window.addEventListener("popstate", handlePopState);
-    
+
     // Set initial URL
     if (!window.location.hash) {
       window.history.replaceState({ tab: "dashboard" }, "", "#dashboard");
@@ -635,36 +640,6 @@ export default function LaporanPekerjaan() {
     loadRepairs();
   }, []);
 
-  // Auto-refresh every 30 minutes and when user returns to tab
-  useEffect(() => {
-    // Refresh every 30 minutes
-    const intervalId = setInterval(() => {
-      loadReports();
-      loadTasks();
-      loadSpareparts();
-      loadRepairs();
-    }, 1800000); // 1800000ms = 30 minutes
-
-    // Refresh when user returns to tab (visibility change)
-    const handleVisibilityChange = () => {
-      if (!document.hidden) {
-        // User returned to tab, refresh data
-        loadReports();
-        loadTasks();
-        loadSpareparts();
-        loadRepairs();
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    // Cleanup on component unmount
-    return () => {
-      clearInterval(intervalId);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, []);
-
   const loadReports = async () => {
     try {
       setLoading(true);
@@ -791,14 +766,14 @@ export default function LaporanPekerjaan() {
 
     try {
       const taskData = taskFormDataToTask(taskFormData);
-      
+
       // Determine status based on progress
       if (taskFormData.progress >= 100) {
-        taskData.status = 'Completed';
+        taskData.status = "Completed";
       } else if (taskFormData.progress > 0) {
-        taskData.status = 'In Progress';
+        taskData.status = "In Progress";
       } else {
-        taskData.status = 'To Do';
+        taskData.status = "To Do";
       }
 
       if (editingTaskId) {
@@ -856,7 +831,11 @@ export default function LaporanPekerjaan() {
   const handleTaskCardClick = (task) => {
     setSelectedTask(task);
     setShowProgressModal(true);
-    window.history.pushState({ tab: activeTab, modal: "progressModal" }, "", `#${activeTab}`);
+    window.history.pushState(
+      { tab: activeTab, modal: "progressModal" },
+      "",
+      `#${activeTab}`
+    );
     setNewProgressLog({
       tanggal: new Date().toISOString().split("T")[0],
       deskripsi: "",
@@ -968,7 +947,9 @@ export default function LaporanPekerjaan() {
           task_id: selectedTask.id,
           progress: parseInt(newProgressLog.progressIncrement) || 0,
           note: newProgressLog.deskripsi,
-          created_at: newProgressLog.tanggal ? `${newProgressLog.tanggal}T00:00:00Z` : new Date().toISOString()
+          created_at: newProgressLog.tanggal
+            ? `${newProgressLog.tanggal}T00:00:00Z`
+            : new Date().toISOString(),
         });
 
         const updatedLogs = [...(selectedTask.progressLogs || []), logEntry];
@@ -1012,10 +993,10 @@ export default function LaporanPekerjaan() {
     try {
       // Update task progress in database
       await tasksAPI.update(taskId, { progress });
-      
+
       // Reload tasks and progress logs from database
       await loadTasks();
-      
+
       // Update selectedTask with fresh data from loaded tasks
       const freshTask = tasks.find((t) => t.id === taskId);
       if (freshTask && showProgressModal) {
@@ -1024,10 +1005,10 @@ export default function LaporanPekerjaan() {
         const displayLogs = freshLogs.map(progressLogToDisplay);
         setSelectedTask({
           ...freshTask,
-          progressLogs: displayLogs
+          progressLogs: displayLogs,
         });
       }
-      
+
       // Reset form
       setNewProgressLog({
         tanggal: new Date().toISOString().split("T")[0],
@@ -1055,7 +1036,9 @@ export default function LaporanPekerjaan() {
         await progressLogsAPI.update(editingLogId, {
           progress: parseInt(newProgressLog.progressIncrement) || 0,
           note: newProgressLog.deskripsi,
-          created_at: newProgressLog.tanggal ? `${newProgressLog.tanggal}T00:00:00Z` : new Date().toISOString()
+          created_at: newProgressLog.tanggal
+            ? `${newProgressLog.tanggal}T00:00:00Z`
+            : new Date().toISOString(),
         });
 
         // Reload ALL progress logs from database untuk task ini
@@ -1081,7 +1064,8 @@ export default function LaporanPekerjaan() {
               ...log,
               tanggal: newProgressLog.tanggal,
               deskripsi: newProgressLog.deskripsi,
-              progressIncrement: parseInt(newProgressLog.progressIncrement) || 0,
+              progressIncrement:
+                parseInt(newProgressLog.progressIncrement) || 0,
             }
           : log
       );
@@ -1105,8 +1089,8 @@ export default function LaporanPekerjaan() {
       });
       setEditingLogId(null);
     } catch (error) {
-      console.error('Error updating progress log:', error);
-      alert('Gagal mengupdate riwayat progress. Silakan coba lagi.');
+      console.error("Error updating progress log:", error);
+      alert("Gagal mengupdate riwayat progress. Silakan coba lagi.");
     }
   };
 
@@ -1122,7 +1106,7 @@ export default function LaporanPekerjaan() {
         // Reload ALL progress logs from database untuk task ini
         const freshLogs = await progressLogsAPI.getByTaskId(selectedTask.id);
         const displayLogs = freshLogs.map(progressLogToDisplay);
-        
+
         // Recalculate total progress dari database
         const newProgress = displayLogs.reduce(
           (sum, log) => sum + (log.progressIncrement || 0),
@@ -1151,8 +1135,8 @@ export default function LaporanPekerjaan() {
         progress: newProgress,
       });
     } catch (error) {
-      console.error('Error deleting progress log:', error);
-      alert('Gagal menghapus riwayat progress. Silakan coba lagi.');
+      console.error("Error deleting progress log:", error);
+      alert("Gagal menghapus riwayat progress. Silakan coba lagi.");
     }
   };
 
@@ -1232,7 +1216,11 @@ export default function LaporanPekerjaan() {
     // Open date modal instead of form modal when clicking card
     setSelectedSparepart(sparepart);
     setShowSparepartDateModal(true);
-    window.history.pushState({ tab: "spareparts", modal: "sparepartDateModal" }, "", "#spareparts");
+    window.history.pushState(
+      { tab: "spareparts", modal: "sparepartDateModal" },
+      "",
+      "#spareparts"
+    );
   };
 
   const handleUpdateSparepartDates = async () => {
@@ -1258,7 +1246,9 @@ export default function LaporanPekerjaan() {
     setSaving(true);
     try {
       const updates = {
-        status: selectedSparepart.status.charAt(0).toUpperCase() + selectedSparepart.status.slice(1),
+        status:
+          selectedSparepart.status.charAt(0).toUpperCase() +
+          selectedSparepart.status.slice(1),
         order_date: selectedSparepart.tanggalDipesan || null,
         arrival_date: selectedSparepart.tanggalDatang || null,
       };
@@ -1319,7 +1309,12 @@ export default function LaporanPekerjaan() {
   const handleSubmitRepair = async (e) => {
     e.preventDefault();
 
-    if (!repairFormData.itemRepair || !repairFormData.unitAlat || !repairFormData.lokasiOperasi || !repairFormData.deskripsiKerusakan) {
+    if (
+      !repairFormData.itemRepair ||
+      !repairFormData.unitAlat ||
+      !repairFormData.lokasiOperasi ||
+      !repairFormData.deskripsiKerusakan
+    ) {
       alert(t("fillRequired"));
       return;
     }
@@ -1330,8 +1325,13 @@ export default function LaporanPekerjaan() {
       return;
     }
 
-    if (repairFormData.status === "in-progress" && !repairFormData.tanggalMulai) {
-      alert("Tanggal mulai dikerjakan harus diisi untuk status 'Sedang Dikerjakan'");
+    if (
+      repairFormData.status === "in-progress" &&
+      !repairFormData.tanggalMulai
+    ) {
+      alert(
+        "Tanggal mulai dikerjakan harus diisi untuk status 'Sedang Dikerjakan'"
+      );
       return;
     }
 
@@ -1390,15 +1390,20 @@ export default function LaporanPekerjaan() {
 
   const handleUpdateRepairStatus = async () => {
     if (!selectedRepair) return;
-    
+
     // Validate required fields based on status
     if (!selectedRepair.tanggalMasuk) {
       alert("Tanggal masuk harus diisi");
       return;
     }
 
-    if (selectedRepair.status === "in-progress" && !selectedRepair.tanggalMulai) {
-      alert("Tanggal mulai dikerjakan harus diisi untuk status 'Sedang Dikerjakan'");
+    if (
+      selectedRepair.status === "in-progress" &&
+      !selectedRepair.tanggalMulai
+    ) {
+      alert(
+        "Tanggal mulai dikerjakan harus diisi untuk status 'Sedang Dikerjakan'"
+      );
       return;
     }
 
@@ -1412,12 +1417,12 @@ export default function LaporanPekerjaan() {
         return;
       }
     }
-    
+
     setSaving(true);
     try {
       // Update entire repair using mapper to maintain data structure
       const repairData = repairFormDataToRepair(selectedRepair);
-      
+
       await repairsAPI.update(selectedRepair.id, repairData);
       await loadRepairs();
       setShowRepairStatusModal(false);
@@ -1455,62 +1460,74 @@ export default function LaporanPekerjaan() {
 
   const downloadPDF = (data, filename, columns, title) => {
     const doc = new jsPDF();
-    
+
     // Add title
     doc.setFontSize(16);
     doc.text(title, 14, 15);
-    
+
     // Add date
     doc.setFontSize(10);
     doc.text(`Tanggal: ${new Date().toLocaleDateString("id-ID")}`, 14, 22);
-    
+
     // Add table using autoTable
     autoTable(doc, {
       startY: 30,
-      head: [columns.map(col => col.header)],
-      body: data.map(row => columns.map(col => col.field ? row[col.field] : col.render(row))),
+      head: [columns.map((col) => col.header)],
+      body: data.map((row) =>
+        columns.map((col) => (col.field ? row[col.field] : col.render(row)))
+      ),
       styles: { fontSize: 8, cellPadding: 2 },
       headStyles: { fillColor: [79, 70, 229], textColor: 255 },
       alternateRowStyles: { fillColor: [245, 245, 245] },
       margin: { top: 30 },
     });
-    
+
     doc.save(`${filename}.pdf`);
   };
 
   const handleDownloadReportsExcel = () => {
-    const data = sortedReports.map(report => ({
-      "Tanggal": new Date(report.tanggal).toLocaleDateString("id-ID"),
+    const data = sortedReports.map((report) => ({
+      Tanggal: new Date(report.tanggal).toLocaleDateString("id-ID"),
       "Nama Proyek": report.namaProyek,
-      "Lokasi": report.lokasi,
+      Lokasi: report.lokasi,
       "Jenis Kegiatan": report.jenisKegiatan,
       "Unit Alat": report.unitAlat,
       "Jam Kerja": report.jamKerja,
-      "Catatan": report.catatan || "-"
+      Catatan: report.catatan || "-",
     }));
     downloadExcel(data, "Laporan_Lapangan", Object.keys(data[0] || {}));
   };
 
   const handleDownloadReportsPDF = () => {
     const columns = [
-      { header: "Tanggal", render: (r) => new Date(r.tanggal).toLocaleDateString("id-ID") },
+      {
+        header: "Tanggal",
+        render: (r) => new Date(r.tanggal).toLocaleDateString("id-ID"),
+      },
       { header: "Nama Proyek", field: "namaProyek" },
       { header: "Lokasi", field: "lokasi" },
       { header: "Jenis Kegiatan", field: "jenisKegiatan" },
       { header: "Unit Alat", field: "unitAlat" },
       { header: "Jam Kerja", field: "jamKerja" },
-      { header: "Catatan", render: (r) => r.catatan || "-" }
+      { header: "Catatan", render: (r) => r.catatan || "-" },
     ];
     downloadPDF(sortedReports, "Laporan_Lapangan", columns, "LAPORAN LAPANGAN");
   };
 
   const handleDownloadTasksExcel = () => {
-    const data = filteredTasks.map(task => ({
+    const data = filteredTasks.map((task) => ({
       "Nama Tugas": task.namaTask,
-      "Deskripsi": task.deskripsi,
-      "Prioritas": task.prioritas === "high" ? "Tinggi" : task.prioritas === "medium" ? "Sedang" : "Rendah",
-      "Progress": `${task.progress}%`,
-      "Deadline": task.deadline ? new Date(task.deadline).toLocaleDateString("id-ID") : "-"
+      Deskripsi: task.deskripsi,
+      Prioritas:
+        task.prioritas === "high"
+          ? "Tinggi"
+          : task.prioritas === "medium"
+          ? "Sedang"
+          : "Rendah",
+      Progress: `${task.progress}%`,
+      Deadline: task.deadline
+        ? new Date(task.deadline).toLocaleDateString("id-ID")
+        : "-",
     }));
     downloadExcel(data, "Daftar_Tugas", Object.keys(data[0] || {}));
   };
@@ -1519,22 +1536,43 @@ export default function LaporanPekerjaan() {
     const columns = [
       { header: "Nama Tugas", field: "namaTask" },
       { header: "Deskripsi", field: "deskripsi" },
-      { header: "Prioritas", render: (t) => t.prioritas === "high" ? "Tinggi" : t.prioritas === "medium" ? "Sedang" : "Rendah" },
+      {
+        header: "Prioritas",
+        render: (t) =>
+          t.prioritas === "high"
+            ? "Tinggi"
+            : t.prioritas === "medium"
+            ? "Sedang"
+            : "Rendah",
+      },
       { header: "Progress", render: (t) => `${t.progress}%` },
-      { header: "Deadline", render: (t) => t.deadline ? new Date(t.deadline).toLocaleDateString("id-ID") : "-" }
+      {
+        header: "Deadline",
+        render: (t) =>
+          t.deadline ? new Date(t.deadline).toLocaleDateString("id-ID") : "-",
+      },
     ];
     downloadPDF(filteredTasks, "Daftar_Tugas", columns, "DAFTAR TUGAS");
   };
 
   const handleDownloadSparepartsExcel = () => {
-    const data = sortedSpareparts.map(part => ({
+    const data = sortedSpareparts.map((part) => ({
       "Nama Sparepart": part.namaPart,
-      "Jumlah": part.jumlah,
-      "Unit": part.unit,
-      "Deskripsi": part.deskripsi || "-",
-      "Status": part.status === "arrived" ? "Datang" : part.status === "ordered" ? "Dipesan" : "Pending",
-      "Tanggal Order": part.tanggalOrder ? new Date(part.tanggalOrder).toLocaleDateString("id-ID") : "-",
-      "Tanggal Datang": part.tanggalDatang ? new Date(part.tanggalDatang).toLocaleDateString("id-ID") : "-"
+      Jumlah: part.jumlah,
+      Unit: part.unit,
+      Deskripsi: part.deskripsi || "-",
+      Status:
+        part.status === "arrived"
+          ? "Datang"
+          : part.status === "ordered"
+          ? "Dipesan"
+          : "Pending",
+      "Tanggal Order": part.tanggalOrder
+        ? new Date(part.tanggalOrder).toLocaleDateString("id-ID")
+        : "-",
+      "Tanggal Datang": part.tanggalDatang
+        ? new Date(part.tanggalDatang).toLocaleDateString("id-ID")
+        : "-",
     }));
     downloadExcel(data, "Sparepart", Object.keys(data[0] || {}));
   };
@@ -1546,21 +1584,40 @@ export default function LaporanPekerjaan() {
       { header: "Jumlah", field: "jumlah" },
       { header: "Unit", field: "unit" },
       { header: "Deskripsi", render: (p) => p.deskripsi || "-" },
-      { header: "Status", render: (p) => p.status === "arrived" ? "Datang" : p.status === "ordered" ? "Dipesan" : "Pending" }
+      {
+        header: "Status",
+        render: (p) =>
+          p.status === "arrived"
+            ? "Datang"
+            : p.status === "ordered"
+            ? "Dipesan"
+            : "Pending",
+      },
     ];
     downloadPDF(filteredData, "Sparepart", columns, "DAFTAR SPAREPART");
   };
 
   const handleDownloadRepairsExcel = () => {
-    const data = sortedRepairs.map(repair => ({
+    const data = sortedRepairs.map((repair) => ({
       "Item Repair": repair.itemRepair,
       "Unit Alat": repair.unitAlat,
       "Lokasi Operasi": repair.lokasiOperasi,
-      "Tanggal Masuk": new Date(repair.tanggalMasuk).toLocaleDateString("id-ID"),
-      "Tanggal Mulai": repair.tanggalMulai ? new Date(repair.tanggalMulai).toLocaleDateString("id-ID") : "-",
-      "Tanggal Selesai": repair.tanggalSelesai ? new Date(repair.tanggalSelesai).toLocaleDateString("id-ID") : "-",
+      "Tanggal Masuk": new Date(repair.tanggalMasuk).toLocaleDateString(
+        "id-ID"
+      ),
+      "Tanggal Mulai": repair.tanggalMulai
+        ? new Date(repair.tanggalMulai).toLocaleDateString("id-ID")
+        : "-",
+      "Tanggal Selesai": repair.tanggalSelesai
+        ? new Date(repair.tanggalSelesai).toLocaleDateString("id-ID")
+        : "-",
       "Deskripsi Kerusakan": repair.deskripsiKerusakan || "-",
-      "Status": repair.status === "completed" ? "Selesai" : repair.status === "in-progress" ? "Dalam Proses" : "Diterima"
+      Status:
+        repair.status === "completed"
+          ? "Selesai"
+          : repair.status === "in-progress"
+          ? "Dalam Proses"
+          : "Diterima",
     }));
     downloadExcel(data, "Repair", Object.keys(data[0] || {}));
   };
@@ -1570,9 +1627,20 @@ export default function LaporanPekerjaan() {
       { header: "Item Repair", field: "itemRepair" },
       { header: "Unit Alat", field: "unitAlat" },
       { header: "Lokasi", field: "lokasiOperasi" },
-      { header: "Tgl Masuk", render: (r) => new Date(r.tanggalMasuk).toLocaleDateString("id-ID") },
+      {
+        header: "Tgl Masuk",
+        render: (r) => new Date(r.tanggalMasuk).toLocaleDateString("id-ID"),
+      },
       { header: "Deskripsi", render: (r) => r.deskripsiKerusakan || "-" },
-      { header: "Status", render: (r) => r.status === "completed" ? "Selesai" : r.status === "in-progress" ? "Proses" : "Diterima" }
+      {
+        header: "Status",
+        render: (r) =>
+          r.status === "completed"
+            ? "Selesai"
+            : r.status === "in-progress"
+            ? "Proses"
+            : "Diterima",
+      },
     ];
     downloadPDF(sortedRepairs, "Repair", columns, "DAFTAR REPAIR");
   };
@@ -1605,7 +1673,9 @@ export default function LaporanPekerjaan() {
       repair.itemRepair?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       repair.unitAlat?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       repair.lokasiOperasi?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      repair.deskripsiKerusakan?.toLowerCase().includes(searchTerm.toLowerCase())
+      repair.deskripsiKerusakan
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase())
     );
   });
 
@@ -1633,9 +1703,13 @@ export default function LaporanPekerjaan() {
   // Sort reports based on selected option
   const sortedReports = [...filteredReports].sort((a, b) => {
     if (reportSortBy === "date-newest") {
-      return new Date(b.tanggal || b.createdAt) - new Date(a.tanggal || a.createdAt);
+      return (
+        new Date(b.tanggal || b.createdAt) - new Date(a.tanggal || a.createdAt)
+      );
     } else if (reportSortBy === "date-oldest") {
-      return new Date(a.tanggal || a.createdAt) - new Date(b.tanggal || b.createdAt);
+      return (
+        new Date(a.tanggal || a.createdAt) - new Date(b.tanggal || b.createdAt)
+      );
     } else if (reportSortBy === "location") {
       return (a.lokasi || "").localeCompare(b.lokasi || "");
     }
@@ -1663,9 +1737,15 @@ export default function LaporanPekerjaan() {
   // Sort repairs based on selected option
   const sortedRepairs = [...filteredRepairs].sort((a, b) => {
     if (repairSortBy === "date-newest") {
-      return new Date(b.tanggalMasuk || b.createdAt) - new Date(a.tanggalMasuk || a.createdAt);
+      return (
+        new Date(b.tanggalMasuk || b.createdAt) -
+        new Date(a.tanggalMasuk || a.createdAt)
+      );
     } else if (repairSortBy === "date-oldest") {
-      return new Date(a.tanggalMasuk || a.createdAt) - new Date(b.tanggalMasuk || b.createdAt);
+      return (
+        new Date(a.tanggalMasuk || a.createdAt) -
+        new Date(b.tanggalMasuk || b.createdAt)
+      );
     } else if (repairSortBy === "location") {
       return (a.lokasiOperasi || "").localeCompare(b.lokasiOperasi || "");
     }
@@ -1770,11 +1850,15 @@ export default function LaporanPekerjaan() {
           <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-8">
             <div className="flex items-center justify-between gap-4 py-2 sm:py-4">
               {/* Logo and Title */}
-              <div 
-                className="flex items-center gap-2 sm:gap-3 cursor-pointer flex-shrink-0" 
+              <div
+                className="flex items-center gap-2 sm:gap-3 cursor-pointer flex-shrink-0"
                 onClick={() => {
                   setActiveTab("dashboard");
-                  window.history.pushState({ tab: "dashboard" }, "", "#dashboard");
+                  window.history.pushState(
+                    { tab: "dashboard" },
+                    "",
+                    "#dashboard"
+                  );
                 }}
               >
                 <div className="flex-shrink-0">
@@ -1786,24 +1870,28 @@ export default function LaporanPekerjaan() {
                 </div>
                 <div className="hidden md:block">
                   <h1 className="text-xs sm:text-sm md:text-base font-bold text-gray-800 dark:text-white leading-tight flex">
-                    {t("appTitle").split("").map((char, index) => (
-                      <span
-                        key={index}
-                        className="inline-block transition-all duration-300 ease-out hover:scale-150 hover:text-green-600 dark:hover:text-green-400 hover:-translate-y-1"
-                      >
-                        {char === " " ? "\u00A0" : char}
-                      </span>
-                    ))}
+                    {t("appTitle")
+                      .split("")
+                      .map((char, index) => (
+                        <span
+                          key={index}
+                          className="inline-block transition-all duration-300 ease-out hover:scale-150 hover:text-green-600 dark:hover:text-green-400 hover:-translate-y-1"
+                        >
+                          {char === " " ? "\u00A0" : char}
+                        </span>
+                      ))}
                   </h1>
                   <p className="text-[8px] sm:text-[10px] text-gray-600 dark:text-gray-400 flex">
-                    {t("appSubtitle").split("").map((char, index) => (
-                      <span
-                        key={index}
-                        className="inline-block transition-all duration-300 ease-out hover:scale-125 hover:text-green-500 dark:hover:text-green-300"
-                      >
-                        {char === " " ? "\u00A0" : char}
-                      </span>
-                    ))}
+                    {t("appSubtitle")
+                      .split("")
+                      .map((char, index) => (
+                        <span
+                          key={index}
+                          className="inline-block transition-all duration-300 ease-out hover:scale-125 hover:text-green-500 dark:hover:text-green-300"
+                        >
+                          {char === " " ? "\u00A0" : char}
+                        </span>
+                      ))}
                   </p>
                 </div>
               </div>
@@ -1815,7 +1903,11 @@ export default function LaporanPekerjaan() {
                     setActiveTab("dashboard");
                     setShowForm(false);
                     setShowTaskForm(false);
-                    window.history.pushState({ tab: "dashboard" }, "", "#dashboard");
+                    window.history.pushState(
+                      { tab: "dashboard" },
+                      "",
+                      "#dashboard"
+                    );
                   }}
                   className={`px-3 py-2 font-semibold transition-all duration-200 whitespace-nowrap text-sm flex items-center gap-2 rounded-lg ${
                     activeTab === "dashboard"
@@ -1826,12 +1918,16 @@ export default function LaporanPekerjaan() {
                   <BarChart3 size={16} />
                   <span>{t("dashboard")}</span>
                 </button>
-                
+
                 <button
                   onClick={() => {
                     setActiveTab("laporan");
                     setShowTaskForm(false);
-                    window.history.pushState({ tab: "laporan" }, "", "#laporan");
+                    window.history.pushState(
+                      { tab: "laporan" },
+                      "",
+                      "#laporan"
+                    );
                   }}
                   className={`px-3 py-2 font-semibold transition-all duration-200 whitespace-nowrap text-sm flex items-center gap-2 rounded-lg ${
                     activeTab === "laporan"
@@ -1842,7 +1938,7 @@ export default function LaporanPekerjaan() {
                   <FileText size={16} />
                   <span>{t("reports")}</span>
                 </button>
-                
+
                 <button
                   onClick={() => {
                     setActiveTab("tasks");
@@ -1858,13 +1954,17 @@ export default function LaporanPekerjaan() {
                   <ListTodo size={16} />
                   <span>{t("tasks")}</span>
                 </button>
-                
+
                 <button
                   onClick={() => {
                     setActiveTab("spareparts");
                     setShowForm(false);
                     setShowTaskForm(false);
-                    window.history.pushState({ tab: "spareparts" }, "", "#spareparts");
+                    window.history.pushState(
+                      { tab: "spareparts" },
+                      "",
+                      "#spareparts"
+                    );
                   }}
                   className={`px-3 py-2 font-semibold transition-all duration-200 whitespace-nowrap text-sm flex items-center gap-2 rounded-lg ${
                     activeTab === "spareparts"
@@ -1875,14 +1975,18 @@ export default function LaporanPekerjaan() {
                   <Wrench size={16} />
                   <span>{t("spareparts")}</span>
                 </button>
-                
+
                 <button
                   onClick={() => {
                     setActiveTab("repairs");
                     setShowForm(false);
                     setShowTaskForm(false);
                     setShowSparepartForm(false);
-                    window.history.pushState({ tab: "repairs" }, "", "#repairs");
+                    window.history.pushState(
+                      { tab: "repairs" },
+                      "",
+                      "#repairs"
+                    );
                   }}
                   className={`px-3 py-2 font-semibold transition-all duration-200 whitespace-nowrap text-sm flex items-center gap-2 rounded-lg ${
                     activeTab === "repairs"
@@ -1893,17 +1997,18 @@ export default function LaporanPekerjaan() {
                   <ClipboardList size={16} />
                   <span>{t("repairs")}</span>
                 </button>
-                
+
                 {/* Monitoring Dropdown */}
                 <div className="relative group">
-                  <button
-                    className="px-3 py-2 font-semibold transition-all duration-200 whitespace-nowrap text-sm flex items-center gap-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  >
+                  <button className="px-3 py-2 font-semibold transition-all duration-200 whitespace-nowrap text-sm flex items-center gap-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                     <Monitor size={16} />
                     <span>{t("monitoring")}</span>
-                    <ChevronDown size={14} className="transition-transform group-hover:rotate-180" />
+                    <ChevronDown
+                      size={14}
+                      className="transition-transform group-hover:rotate-180"
+                    />
                   </button>
-                  
+
                   {/* Dropdown Menu */}
                   <div className="absolute top-full left-0 mt-1 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                     <div className="py-2">
@@ -1916,7 +2021,9 @@ export default function LaporanPekerjaan() {
                         <Monitor size={16} />
                         <div>
                           <div className="font-semibold">Reach Stacker</div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400">Monitor alat berat</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
+                            Monitor alat berat
+                          </div>
                         </div>
                       </a>
                       <a
@@ -1928,7 +2035,9 @@ export default function LaporanPekerjaan() {
                         <Gauge size={16} />
                         <div>
                           <div className="font-semibold">Monitoring BBM</div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400">Dashboard konsumsi BBM</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
+                            Dashboard konsumsi BBM
+                          </div>
                         </div>
                       </a>
                     </div>
@@ -1948,15 +2057,12 @@ export default function LaporanPekerjaan() {
                 </button>
 
                 {/* Theme Dropdown */}
-                <div 
-                  className="relative"
-                  onMouseEnter={() => {
-                    setShowThemeDropdown(true);
-                    setShowLanguageDropdown(false);
-                  }}
-                  onMouseLeave={() => setShowThemeDropdown(false)}
-                >
+                <div className="relative">
                   <button
+                    onClick={() => {
+                      setShowThemeDropdown(!showThemeDropdown);
+                      setShowLanguageDropdown(false);
+                    }}
                     className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 p-1.5 sm:p-2 rounded-lg font-semibold flex items-center gap-1 transition-colors"
                     title="Change Theme"
                   >
@@ -1966,14 +2072,21 @@ export default function LaporanPekerjaan() {
 
                   {/* Theme Dropdown Menu */}
                   {showThemeDropdown && (
-                    <div className="absolute right-0 mt-1 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 py-2 z-50">
+                    <>
+                      <div
+                        className="fixed inset-0 z-40"
+                        onClick={() => setShowThemeDropdown(false)}
+                      ></div>
+                      <div className="absolute right-0 mt-1 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 py-2 z-50">
                       <button
                         onClick={() => {
                           setTheme("light");
                           setShowThemeDropdown(false);
                         }}
                         className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
-                          theme === "light" ? "bg-gray-50 dark:bg-gray-700/50" : ""
+                          theme === "light"
+                            ? "bg-gray-50 dark:bg-gray-700/50"
+                            : ""
                         }`}
                       >
                         <Sun size={18} className="text-yellow-500" />
@@ -1990,7 +2103,9 @@ export default function LaporanPekerjaan() {
                           setShowThemeDropdown(false);
                         }}
                         className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
-                          theme === "dark" ? "bg-gray-50 dark:bg-gray-700/50" : ""
+                          theme === "dark"
+                            ? "bg-gray-50 dark:bg-gray-700/50"
+                            : ""
                         }`}
                       >
                         <Moon size={18} className="text-indigo-500" />
@@ -2007,7 +2122,9 @@ export default function LaporanPekerjaan() {
                           setShowThemeDropdown(false);
                         }}
                         className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
-                          theme === "system" ? "bg-gray-50 dark:bg-gray-700/50" : ""
+                          theme === "system"
+                            ? "bg-gray-50 dark:bg-gray-700/50"
+                            : ""
                         }`}
                       >
                         <Monitor size={18} className="text-gray-500" />
@@ -2019,65 +2136,31 @@ export default function LaporanPekerjaan() {
                         )}
                       </button>
                     </div>
-                  )}
-                </div>
+                    </>
+                  )}\n                </div>
 
-                {/* Language Dropdown */}
-                <div 
-                  className="relative hidden sm:block"
-                  onMouseEnter={() => {
-                    setShowLanguageDropdown(true);
-                    setShowThemeDropdown(false);
-                  }}
-                  onMouseLeave={() => setShowLanguageDropdown(false)}
-                >
+                {/* Language Selector - SPIL Style */}
+                <div className="hidden sm:flex items-center gap-1 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
                   <button
-                    className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 p-1.5 sm:p-2 rounded-lg font-semibold flex items-center gap-1 transition-colors"
-                    title="Change Language"
+                    onClick={() => setLanguage("id")}
+                    className={`px-2 py-1 rounded text-xs font-semibold transition-colors ${
+                      language === "id"
+                        ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm"
+                        : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                    }`}
                   >
-                    <Globe size={14} className="sm:w-4 sm:h-4" />
-                    <ChevronDown size={14} />
+                    ID
                   </button>
-
-                  {/* Language Dropdown Menu */}
-                  {showLanguageDropdown && (
-                    <div className="absolute right-0 mt-1 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 py-2 z-50">
-                      <button
-                        onClick={() => {
-                          setLanguage("id");
-                          setShowLanguageDropdown(false);
-                        }}
-                        className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
-                          language === "id" ? "bg-gray-50 dark:bg-gray-700/50" : ""
-                        }`}
-                      >
-                        <span className="text-lg">🇮🇩</span>
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                          Bahasa Indonesia
-                        </span>
-                        {language === "id" && (
-                          <Check size={16} className="ml-auto text-green-600" />
-                        )}
-                      </button>
-                      <button
-                        onClick={() => {
-                          setLanguage("en");
-                          setShowLanguageDropdown(false);
-                        }}
-                        className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
-                          language === "en" ? "bg-gray-50 dark:bg-gray-700/50" : ""
-                        }`}
-                      >
-                        <span className="text-lg">🇬🇧</span>
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                          English
-                        </span>
-                        {language === "en" && (
-                          <Check size={16} className="ml-auto text-green-600" />
-                        )}
-                      </button>
-                    </div>
-                  )}
+                  <button
+                    onClick={() => setLanguage("en")}
+                    className={`px-2 py-1 rounded text-xs font-semibold transition-colors ${
+                      language === "en"
+                        ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm"
+                        : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                    }`}
+                  >
+                    EN
+                  </button>
                 </div>
               </div>
             </div>
@@ -2384,8 +2467,13 @@ export default function LaporanPekerjaan() {
               {/* Quick Action Buttons */}
               <div>
                 <h2 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-white mb-3 sm:mb-4 flex items-center gap-2">
-                  <Plus className="text-indigo-600 dark:text-indigo-400" size={20} />
-                  <span className="text-base sm:text-xl">{t("quickActions")}</span>
+                  <Plus
+                    className="text-indigo-600 dark:text-indigo-400"
+                    size={20}
+                  />
+                  <span className="text-base sm:text-xl">
+                    {t("quickActions")}
+                  </span>
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   <button
@@ -2490,99 +2578,106 @@ export default function LaporanPekerjaan() {
               {/* Statistics Overview */}
               <div>
                 <h2 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-white mb-3 sm:mb-4 flex items-center gap-2">
-                  <TrendingUp className="text-green-600 dark:text-green-400" size={20} />
-                  <span className="text-base sm:text-xl">{language === "id" ? "Statistik Overview" : "Statistics Overview"}</span>
+                  <TrendingUp
+                    className="text-green-600 dark:text-green-400"
+                    size={20}
+                  />
+                  <span className="text-base sm:text-xl">
+                    {language === "id"
+                      ? "Statistik Overview"
+                      : "Statistics Overview"}
+                  </span>
                 </h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 hover-lift card-transition stagger-item">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="p-2 sm:p-3 bg-indigo-100 dark:bg-indigo-900/50 rounded-lg">
-                      <FileText
+                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 hover-lift card-transition stagger-item">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="p-2 sm:p-3 bg-indigo-100 dark:bg-indigo-900/50 rounded-lg">
+                        <FileText
+                          className="text-indigo-600 dark:text-indigo-400"
+                          size={20}
+                        />
+                      </div>
+                      <TrendingUp
                         className="text-indigo-600 dark:text-indigo-400"
-                        size={20}
+                        size={18}
                       />
                     </div>
-                    <TrendingUp
-                      className="text-indigo-600 dark:text-indigo-400"
-                      size={18}
-                    />
+                    <h3 className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm font-medium mb-1">
+                      {t("totalReports")}
+                    </h3>
+                    <p className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
+                      {totalReports}
+                    </p>
                   </div>
-                  <h3 className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm font-medium mb-1">
-                    {t("totalReports")}
-                  </h3>
-                  <p className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
-                    {totalReports}
-                  </p>
-                </div>
 
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 hover-lift card-transition stagger-item">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="p-2 sm:p-3 bg-green-100 dark:bg-green-900/50 rounded-lg">
-                      <CheckCircle
-                        className="text-green-600 dark:text-green-400"
-                        size={20}
-                      />
+                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 hover-lift card-transition stagger-item">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="p-2 sm:p-3 bg-green-100 dark:bg-green-900/50 rounded-lg">
+                        <CheckCircle
+                          className="text-green-600 dark:text-green-400"
+                          size={20}
+                        />
+                      </div>
                     </div>
+                    <h3 className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm font-medium mb-1">
+                      {t("completedTasks")}
+                    </h3>
+                    <p className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
+                      {completedTasks}
+                    </p>
                   </div>
-                  <h3 className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm font-medium mb-1">
-                    {t("completedTasks")}
-                  </h3>
-                  <p className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
-                    {completedTasks}
-                  </p>
-                </div>
 
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 hover-lift card-transition stagger-item">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="p-2 sm:p-3 bg-blue-100 dark:bg-blue-900/50 rounded-lg">
-                      <Target
-                        className="text-blue-600 dark:text-blue-400"
-                        size={20}
-                      />
+                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 hover-lift card-transition stagger-item">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="p-2 sm:p-3 bg-blue-100 dark:bg-blue-900/50 rounded-lg">
+                        <Target
+                          className="text-blue-600 dark:text-blue-400"
+                          size={20}
+                        />
+                      </div>
                     </div>
+                    <h3 className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm font-medium mb-1">
+                      {t("ongoingTasks")}
+                    </h3>
+                    <p className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
+                      {ongoingTasks}
+                    </p>
                   </div>
-                  <h3 className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm font-medium mb-1">
-                    {t("ongoingTasks")}
-                  </h3>
-                  <p className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
-                    {ongoingTasks}
-                  </p>
-                </div>
 
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 hover-lift card-transition stagger-item">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="p-2 sm:p-3 bg-purple-100 dark:bg-purple-900/50 rounded-lg">
-                      <Wrench
-                        className="text-purple-600 dark:text-purple-400"
-                        size={20}
-                      />
+                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 hover-lift card-transition stagger-item">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="p-2 sm:p-3 bg-purple-100 dark:bg-purple-900/50 rounded-lg">
+                        <Wrench
+                          className="text-purple-600 dark:text-purple-400"
+                          size={20}
+                        />
+                      </div>
                     </div>
+                    <h3 className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm font-medium mb-1">
+                      {t("totalSpareparts")}
+                    </h3>
+                    <p className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
+                      {spareparts.length}
+                    </p>
                   </div>
-                  <h3 className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm font-medium mb-1">
-                    {t("totalSpareparts")}
-                  </h3>
-                  <p className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
-                    {spareparts.length}
-                  </p>
-                </div>
 
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 hover-lift card-transition stagger-item">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="p-2 sm:p-3 bg-orange-100 dark:bg-orange-900/50 rounded-lg">
-                      <ClipboardList
-                        className="text-orange-600 dark:text-orange-400"
-                        size={20}
-                      />
+                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 hover-lift card-transition stagger-item">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="p-2 sm:p-3 bg-orange-100 dark:bg-orange-900/50 rounded-lg">
+                        <ClipboardList
+                          className="text-orange-600 dark:text-orange-400"
+                          size={20}
+                        />
+                      </div>
                     </div>
+                    <h3 className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm font-medium mb-1">
+                      {t("totalRepairs")}
+                    </h3>
+                    <p className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
+                      {repairs.length}
+                    </p>
                   </div>
-                  <h3 className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm font-medium mb-1">
-                    {t("totalRepairs")}
-                  </h3>
-                  <p className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
-                    {repairs.length}
-                  </p>
                 </div>
-              </div>
               </div>
 
               {/* Recent Reports & Top Locations */}
@@ -2947,7 +3042,10 @@ export default function LaporanPekerjaan() {
                               setSelectedSparepart(part);
                               setShowSparepartDateModal(true);
                               window.history.pushState(
-                                { tab: "spareparts", modal: "sparepartDateModal" },
+                                {
+                                  tab: "spareparts",
+                                  modal: "sparepartDateModal",
+                                },
                                 "",
                                 "#spareparts"
                               );
@@ -3003,7 +3101,10 @@ export default function LaporanPekerjaan() {
                           {t("statusReceived")}
                         </p>
                         <p className="text-xl sm:text-2xl font-bold text-yellow-800 dark:text-yellow-300">
-                          {repairs.filter((r) => r.status === "received").length}
+                          {
+                            repairs.filter((r) => r.status === "received")
+                              .length
+                          }
                         </p>
                       </div>
                       <div className="p-3 sm:p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
@@ -3011,7 +3112,10 @@ export default function LaporanPekerjaan() {
                           {t("statusInProgress")}
                         </p>
                         <p className="text-xl sm:text-2xl font-bold text-blue-800 dark:text-blue-300">
-                          {repairs.filter((r) => r.status === "in-progress").length}
+                          {
+                            repairs.filter((r) => r.status === "in-progress")
+                              .length
+                          }
                         </p>
                       </div>
                       <div className="p-3 sm:p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
@@ -3019,7 +3123,10 @@ export default function LaporanPekerjaan() {
                           {t("statusCompleted")}
                         </p>
                         <p className="text-xl sm:text-2xl font-bold text-green-800 dark:text-green-300">
-                          {repairs.filter((r) => r.status === "completed").length}
+                          {
+                            repairs.filter((r) => r.status === "completed")
+                              .length
+                          }
                         </p>
                       </div>
                     </div>
@@ -3133,7 +3240,11 @@ export default function LaporanPekerjaan() {
                           deskripsi: "",
                           catatan: "",
                         });
-                        window.history.pushState({ tab: "laporan", modal: "form" }, "", "#laporan");
+                        window.history.pushState(
+                          { tab: "laporan", modal: "form" },
+                          "",
+                          "#laporan"
+                        );
                       }}
                       className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 sm:px-6 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors hover-lift whitespace-nowrap text-sm"
                     >
@@ -3141,29 +3252,47 @@ export default function LaporanPekerjaan() {
                       <span className="hidden sm:inline">{t("newReport")}</span>
                       <span className="sm:hidden">Baru</span>
                     </button>
-                  
-                  {/* Sort Dropdown */}
-                  <div className="flex items-center gap-2">
-                    <label className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap hidden sm:inline">
-                      {t("sortBy")}
-                    </label>
-                    <select
-                      value={reportSortBy}
-                      onChange={(e) => setReportSortBy(e.target.value)}
-                      className="px-2 sm:px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm focus:ring-2 focus:ring-indigo-500"
-                    >
-                      <option value="date-newest">{language === "id" ? "Tanggal Terbaru" : "Newest Date"}</option>
-                      <option value="date-oldest">{language === "id" ? "Tanggal Terlama" : "Oldest Date"}</option>
-                      <option value="location">{language === "id" ? "Lokasi (A-Z)" : "Location (A-Z)"}</option>
-                    </select>
-                  </div>
+
+                    {/* Sort Dropdown */}
+                    <div className="flex items-center gap-2">
+                      <label className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap hidden sm:inline">
+                        {t("sortBy")}
+                      </label>
+                      <select
+                        value={reportSortBy}
+                        onChange={(e) => setReportSortBy(e.target.value)}
+                        className="px-2 sm:px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm focus:ring-2 focus:ring-indigo-500"
+                      >
+                        <option value="date-newest">
+                          {language === "id"
+                            ? "Tanggal Terbaru"
+                            : "Newest Date"}
+                        </option>
+                        <option value="date-oldest">
+                          {language === "id"
+                            ? "Tanggal Terlama"
+                            : "Oldest Date"}
+                        </option>
+                        <option value="location">
+                          {language === "id"
+                            ? "Lokasi (A-Z)"
+                            : "Location (A-Z)"}
+                        </option>
+                      </select>
+                    </div>
                   </div>
                 </div>
               </div>
 
               {showForm && (
-                <div className="fixed inset-0 bg-black bg-opacity-60 z-[100] flex items-center justify-center p-2 sm:p-4 modal-backdrop" onClick={handleCancel}>
-                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto modal-content" onClick={(e) => e.stopPropagation()}>
+                <div
+                  className="fixed inset-0 bg-black bg-opacity-60 z-[100] flex items-center justify-center p-2 sm:p-4 modal-backdrop"
+                  onClick={handleCancel}
+                >
+                  <div
+                    className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto modal-content"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <div className="sticky top-0 bg-white dark:bg-gray-800 border-b dark:border-gray-700 px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center z-10">
                       <h2 className="text-lg sm:text-2xl font-bold text-gray-800 dark:text-white">
                         {editingId ? t("editReport") : t("createReport")}
@@ -3179,147 +3308,147 @@ export default function LaporanPekerjaan() {
                     <div className="p-4 sm:p-6">
                       <div className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                          {t("date")} *
-                        </label>
-                        <input
-                          type="date"
-                          name="tanggal"
-                          value={formData.tanggal}
-                          onChange={handleInputChange}
-                          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                          {t("location")} *
-                        </label>
-                        <input
-                          type="text"
-                          name="lokasi"
-                          value={formData.lokasi}
-                          onChange={handleInputChange}
-                          placeholder="Contoh: Jakarta Pusat"
-                          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                          {t("projectName")} *
-                        </label>
-                        <input
-                          type="text"
-                          name="namaProyek"
-                          value={formData.namaProyek}
-                          onChange={handleInputChange}
-                          placeholder="Contoh: Instalasi Jaringan"
-                          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                          {t("activityType")} *
-                        </label>
-                        <input
-                          type="text"
-                          name="jenisKegiatan"
-                          value={formData.jenisKegiatan}
-                          onChange={handleInputChange}
-                          placeholder="Contoh: Survey, Instalasi, Maintenance"
-                          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                          {t("equipment")} *
-                        </label>
-                        <input
-                          type="text"
-                          name="unitAlat"
-                          value={formData.unitAlat}
-                          onChange={handleInputChange}
-                          placeholder="Contoh: Generator, Trafo, Panel"
-                          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
-                        />
-                      </div>
-                      <div></div>
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                          {t("startTime")}
-                        </label>
-                        <input
-                          type="time"
-                          name="jamMulai"
-                          value={formData.jamMulai}
-                          onChange={handleInputChange}
-                          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                          {t("endTime")}
-                        </label>
-                        <input
-                          type="time"
-                          name="jamSelesai"
-                          value={formData.jamSelesai}
-                          onChange={handleInputChange}
-                          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                        />
-                      </div>
-                    </div>
+                          <div>
+                            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                              {t("date")} *
+                            </label>
+                            <input
+                              type="date"
+                              name="tanggal"
+                              value={formData.tanggal}
+                              onChange={handleInputChange}
+                              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                              {t("location")} *
+                            </label>
+                            <input
+                              type="text"
+                              name="lokasi"
+                              value={formData.lokasi}
+                              onChange={handleInputChange}
+                              placeholder="Contoh: Jakarta Pusat"
+                              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                              {t("projectName")} *
+                            </label>
+                            <input
+                              type="text"
+                              name="namaProyek"
+                              value={formData.namaProyek}
+                              onChange={handleInputChange}
+                              placeholder="Contoh: Instalasi Jaringan"
+                              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                              {t("activityType")} *
+                            </label>
+                            <input
+                              type="text"
+                              name="jenisKegiatan"
+                              value={formData.jenisKegiatan}
+                              onChange={handleInputChange}
+                              placeholder="Contoh: Survey, Instalasi, Maintenance"
+                              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                              {t("equipment")} *
+                            </label>
+                            <input
+                              type="text"
+                              name="unitAlat"
+                              value={formData.unitAlat}
+                              onChange={handleInputChange}
+                              placeholder="Contoh: Generator, Trafo, Panel"
+                              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                            />
+                          </div>
+                          <div></div>
+                          <div>
+                            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                              {t("startTime")}
+                            </label>
+                            <input
+                              type="time"
+                              name="jamMulai"
+                              value={formData.jamMulai}
+                              onChange={handleInputChange}
+                              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                              {t("endTime")}
+                            </label>
+                            <input
+                              type="time"
+                              name="jamSelesai"
+                              value={formData.jamSelesai}
+                              onChange={handleInputChange}
+                              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            />
+                          </div>
+                        </div>
 
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                        {t("description")} *
-                      </label>
-                      <textarea
-                        name="deskripsi"
-                        value={formData.deskripsi}
-                        onChange={handleInputChange}
-                        rows={3}
-                        placeholder="Jelaskan pekerjaan yang dilakukan..."
-                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
-                      />
-                    </div>
+                        <div>
+                          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                            {t("description")} *
+                          </label>
+                          <textarea
+                            name="deskripsi"
+                            value={formData.deskripsi}
+                            onChange={handleInputChange}
+                            rows={3}
+                            placeholder="Jelaskan pekerjaan yang dilakukan..."
+                            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                          />
+                        </div>
 
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                        {t("notes")}
-                      </label>
-                      <textarea
-                        name="catatan"
-                        value={formData.catatan}
-                        onChange={handleInputChange}
-                        rows={2}
-                        placeholder="Kendala, material yang digunakan, dll (opsional)"
-                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
-                      />
-                    </div>
+                        <div>
+                          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                            {t("notes")}
+                          </label>
+                          <textarea
+                            name="catatan"
+                            value={formData.catatan}
+                            onChange={handleInputChange}
+                            rows={2}
+                            placeholder="Kendala, material yang digunakan, dll (opsional)"
+                            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                          />
+                        </div>
 
-                    <div className="flex gap-3 pt-2">
-                      <button
-                        onClick={handleSubmit}
-                        disabled={saving}
-                        className="flex-1 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 text-white px-6 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors btn-pulse"
-                      >
-                        {saving ? (
-                          <RefreshCw className="animate-spin" size={20} />
-                        ) : (
-                          <Check size={20} />
-                        )}
-                        {editingId ? t("update") : t("save")}
-                      </button>
-                      <button
-                        onClick={handleCancel}
-                        disabled={saving}
-                        className="flex-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:bg-gray-100 text-gray-800 dark:text-white px-6 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors"
-                      >
-                        <X size={20} />
-                        {t("cancel")}
-                      </button>
-                    </div>
+                        <div className="flex gap-3 pt-2">
+                          <button
+                            onClick={handleSubmit}
+                            disabled={saving}
+                            className="flex-1 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 text-white px-6 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors btn-pulse"
+                          >
+                            {saving ? (
+                              <RefreshCw className="animate-spin" size={20} />
+                            ) : (
+                              <Check size={20} />
+                            )}
+                            {editingId ? t("update") : t("save")}
+                          </button>
+                          <button
+                            onClick={handleCancel}
+                            disabled={saving}
+                            className="flex-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:bg-gray-100 text-gray-800 dark:text-white px-6 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors"
+                          >
+                            <X size={20} />
+                            {t("cancel")}
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -3505,7 +3634,11 @@ export default function LaporanPekerjaan() {
                           progress: 0,
                           progressLogs: [],
                         });
-                        window.history.pushState({ tab: "tasks", modal: "taskForm" }, "", "#tasks");
+                        window.history.pushState(
+                          { tab: "tasks", modal: "taskForm" },
+                          "",
+                          "#tasks"
+                        );
                       }}
                       className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 sm:px-6 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors hover-lift whitespace-nowrap text-sm"
                     >
@@ -3518,8 +3651,14 @@ export default function LaporanPekerjaan() {
               </div>
 
               {showTaskForm && (
-                <div className="fixed inset-0 bg-black bg-opacity-60 z-[100] flex items-center justify-center p-4 modal-backdrop" onClick={handleTaskCancel}>
-                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto modal-content" onClick={(e) => e.stopPropagation()}>
+                <div
+                  className="fixed inset-0 bg-black bg-opacity-60 z-[100] flex items-center justify-center p-4 modal-backdrop"
+                  onClick={handleTaskCancel}
+                >
+                  <div
+                    className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto modal-content"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <div className="sticky top-0 bg-white dark:bg-gray-800 border-b dark:border-gray-700 px-6 py-4 flex justify-between items-center z-10">
                       <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
                         {editingTaskId ? t("editTask") : t("createTask")}
@@ -3534,65 +3673,65 @@ export default function LaporanPekerjaan() {
                     </div>
                     <div className="p-6">
                       <div className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                          {t("taskName")} *
-                        </label>
-                        <input
-                          type="text"
-                          name="namaTask"
-                          value={taskFormData.namaTask}
-                          onChange={handleTaskInputChange}
-                          placeholder="Contoh: Maintenance Generator A"
-                          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                          {t("priority")}
-                        </label>
-                        <select
-                          name="prioritas"
-                          value={taskFormData.prioritas}
-                          onChange={handleTaskInputChange}
-                          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                        >
-                          <option value="low">{t("low")}</option>
-                          <option value="medium">{t("medium")}</option>
-                          <option value="high">{t("high")}</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                          {t("deadline")}
-                        </label>
-                        <input
-                          type="date"
-                          name="deadline"
-                          value={taskFormData.deadline}
-                          onChange={handleTaskInputChange}
-                          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                        />
-                      </div>
-                      {editingTaskId && (
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                          {t("progress")} ({t("progressUpdate")})
-                        </label>
-                        <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
-                          <div className="flex justify-between items-center mb-2">
-                            <span className="text-sm text-gray-600 dark:text-gray-300">
-                              Total Progres
-                            </span>
-                            <span className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
-                              {taskFormData.progress}%
-                            </span>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                              {t("taskName")} *
+                            </label>
+                            <input
+                              type="text"
+                              name="namaTask"
+                              value={taskFormData.namaTask}
+                              onChange={handleTaskInputChange}
+                              placeholder="Contoh: Maintenance Generator A"
+                              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                            />
                           </div>
-                          <div
-                            className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-3"
-                            style={{
-                              background: `linear-gradient(to right, 
+                          <div>
+                            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                              {t("priority")}
+                            </label>
+                            <select
+                              name="prioritas"
+                              value={taskFormData.prioritas}
+                              onChange={handleTaskInputChange}
+                              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            >
+                              <option value="low">{t("low")}</option>
+                              <option value="medium">{t("medium")}</option>
+                              <option value="high">{t("high")}</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                              {t("deadline")}
+                            </label>
+                            <input
+                              type="date"
+                              name="deadline"
+                              value={taskFormData.deadline}
+                              onChange={handleTaskInputChange}
+                              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            />
+                          </div>
+                          {editingTaskId && (
+                            <div>
+                              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                                {t("progress")} ({t("progressUpdate")})
+                              </label>
+                              <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                                <div className="flex justify-between items-center mb-2">
+                                  <span className="text-sm text-gray-600 dark:text-gray-300">
+                                    Total Progres
+                                  </span>
+                                  <span className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                                    {taskFormData.progress}%
+                                  </span>
+                                </div>
+                                <div
+                                  className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-3"
+                                  style={{
+                                    background: `linear-gradient(to right, 
                               ${
                                 taskFormData.progress >= 100
                                   ? "#10b981"
@@ -3605,233 +3744,236 @@ export default function LaporanPekerjaan() {
                                   : "#9ca3af"
                               } ${taskFormData.progress}%, 
                               #e5e7eb ${taskFormData.progress}%)`,
-                            }}
-                          ></div>
-                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                            Progres dihitung otomatis dari total riwayat progres
-                            yang ditambahkan
-                          </p>
+                                  }}
+                                ></div>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                                  Progres dihitung otomatis dari total riwayat
+                                  progres yang ditambahkan
+                                </p>
+                              </div>
+                            </div>
+                          )}
                         </div>
-                      </div>
-                      )}
-                    </div>
 
-                    {/* Deskripsi Task */}
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                        {t("description")} *
-                      </label>
-                      <textarea
-                        name="deskripsi"
-                        value={taskFormData.deskripsi}
-                        onChange={handleTaskInputChange}
-                        rows={4}
-                        placeholder="Jelaskan detail task, lokasi, peralatan yang digunakan, dll..."
-                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
-                      />
-                    </div>
+                        {/* Deskripsi Task */}
+                        <div>
+                          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                            {t("description")} *
+                          </label>
+                          <textarea
+                            name="deskripsi"
+                            value={taskFormData.deskripsi}
+                            onChange={handleTaskInputChange}
+                            rows={4}
+                            placeholder="Jelaskan detail task, lokasi, peralatan yang digunakan, dll..."
+                            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                          />
+                        </div>
 
-                    {/* Progress Logs Section - Hidden during edit, only accessible via card click */}
-                    {false && editingTaskId && (
-                    <>
-                    <div
-                      className={`p-4 rounded-lg ${
-                        editingLogId
-                          ? "bg-blue-50 dark:bg-blue-900/20"
-                          : "bg-gray-50 dark:bg-gray-700/50"
-                      }`}
-                    >
-                      <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
-                        {editingLogId
-                          ? t("edit") + " " + t("progress")
-                          : t("addProgressLog")}
-                      </h3>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                            {t("date")}
-                          </label>
-                          <input
-                            type="date"
-                            value={newProgressLog.tanggal}
-                            onChange={(e) =>
-                              setNewProgressLog({
-                                ...newProgressLog,
-                                tanggal: e.target.value,
-                              })
-                            }
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                            {t("progressIncrement")} (%)
-                          </label>
-                          <input
-                            type="number"
-                            value={newProgressLog.progressIncrement}
-                            onChange={(e) =>
-                              setNewProgressLog({
-                                ...newProgressLog,
-                                progressIncrement: e.target.value,
-                              })
-                            }
-                            min="0"
-                            max="100"
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                            placeholder="0"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                            {t("description")}
-                          </label>
-                          <input
-                            type="text"
-                            value={newProgressLog.deskripsi}
-                            onChange={(e) =>
-                              setNewProgressLog({
-                                ...newProgressLog,
-                                deskripsi: e.target.value,
-                              })
-                            }
-                            placeholder="Deskripsi progress..."
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                          />
-                        </div>
-                      </div>
-                      <div className="flex gap-2 mt-4">
-                        {editingLogId ? (
+                        {/* Progress Logs Section - Hidden during edit, only accessible via card click */}
+                        {false && editingTaskId && (
                           <>
-                            <button
-                              onClick={handleUpdateProgressLog}
-                              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
+                            <div
+                              className={`p-4 rounded-lg ${
+                                editingLogId
+                                  ? "bg-blue-50 dark:bg-blue-900/20"
+                                  : "bg-gray-50 dark:bg-gray-700/50"
+                              }`}
                             >
-                              <Check className="w-4 h-4" />
-                              Update Progress
-                            </button>
-                            <button
-                              onClick={handleCancelEditLog}
-                              className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 flex items-center gap-2"
-                            >
-                              <X className="w-4 h-4" />
-                              Batal
-                            </button>
-                          </>
-                        ) : (
-                          <button
-                            onClick={handleAddProgressLog}
-                            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 flex items-center gap-2"
-                          >
-                            <Plus className="w-4 h-4" />
-                            Tambah Progress
-                          </button>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Riwayat Progress Logs */}
-                    <div className="mt-6">
-                      <div className="flex items-center gap-2 mb-4">
-                        <ClipboardList
-                          className="text-indigo-600 dark:text-indigo-400"
-                          size={20}
-                        />
-                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                          Riwayat Progress
-                        </h3>
-                      </div>
-                      {taskFormData.progressLogs &&
-                      taskFormData.progressLogs.length > 0 ? (
-                        <div className="space-y-3 max-h-60 overflow-y-auto">
-                          {taskFormData.progressLogs
-                            .sort(
-                              (a, b) =>
-                                new Date(b.tanggal) - new Date(a.tanggal)
-                            )
-                            .map((log) => (
-                              <div
-                                key={log.id}
-                                className={`p-4 rounded-lg border transition-colors group ${
-                                  editingLogId === log.id
-                                    ? "bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-700"
-                                    : "bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
-                                }`}
-                              >
-                                <div className="flex justify-between items-start">
-                                  <div className="flex-1">
-                                    <div className="flex items-center gap-3 mb-2">
-                                      <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                                        {new Date(
-                                          log.tanggal
-                                        ).toLocaleDateString("id-ID", {
-                                          day: "numeric",
-                                          month: "long",
-                                          year: "numeric",
-                                        })}
-                                      </span>
-                                      <span className="px-2 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded text-sm font-semibold">
-                                        +{log.progressIncrement}%
-                                      </span>
-                                    </div>
-                                    <p className="text-gray-700 dark:text-gray-300">
-                                      {log.deskripsi}
-                                    </p>
-                                  </div>
-                                  <div className="flex gap-2">
-                                    <button
-                                      onClick={() => handleEditProgressLog(log)}
-                                      className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded"
-                                      title="Edit"
-                                    >
-                                      <Edit2 className="w-4 h-4" />
-                                    </button>
-                                    <button
-                                      onClick={() =>
-                                        handleDeleteProgressLog(log.id)
-                                      }
-                                      className="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded"
-                                      title="Hapus"
-                                    >
-                                      <Trash2 className="w-4 h-4" />
-                                    </button>
-                                  </div>
+                              <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
+                                {editingLogId
+                                  ? t("edit") + " " + t("progress")
+                                  : t("addProgressLog")}
+                              </h3>
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                                    {t("date")}
+                                  </label>
+                                  <input
+                                    type="date"
+                                    value={newProgressLog.tanggal}
+                                    onChange={(e) =>
+                                      setNewProgressLog({
+                                        ...newProgressLog,
+                                        tanggal: e.target.value,
+                                      })
+                                    }
+                                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                                    {t("progressIncrement")} (%)
+                                  </label>
+                                  <input
+                                    type="number"
+                                    value={newProgressLog.progressIncrement}
+                                    onChange={(e) =>
+                                      setNewProgressLog({
+                                        ...newProgressLog,
+                                        progressIncrement: e.target.value,
+                                      })
+                                    }
+                                    min="0"
+                                    max="100"
+                                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                                    placeholder="0"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                                    {t("description")}
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={newProgressLog.deskripsi}
+                                    onChange={(e) =>
+                                      setNewProgressLog({
+                                        ...newProgressLog,
+                                        deskripsi: e.target.value,
+                                      })
+                                    }
+                                    placeholder="Deskripsi progress..."
+                                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                                  />
                                 </div>
                               </div>
-                            ))}
-                        </div>
-                      ) : (
-                        <p className="text-gray-500 dark:text-gray-400 text-center py-4">
-                          Belum ada riwayat progress. Tambahkan progress pertama
-                          di atas.
-                        </p>
-                      )}
-                    </div>
-                    </>
-                    )}
+                              <div className="flex gap-2 mt-4">
+                                {editingLogId ? (
+                                  <>
+                                    <button
+                                      onClick={handleUpdateProgressLog}
+                                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
+                                    >
+                                      <Check className="w-4 h-4" />
+                                      Update Progress
+                                    </button>
+                                    <button
+                                      onClick={handleCancelEditLog}
+                                      className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 flex items-center gap-2"
+                                    >
+                                      <X className="w-4 h-4" />
+                                      Batal
+                                    </button>
+                                  </>
+                                ) : (
+                                  <button
+                                    onClick={handleAddProgressLog}
+                                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 flex items-center gap-2"
+                                  >
+                                    <Plus className="w-4 h-4" />
+                                    Tambah Progress
+                                  </button>
+                                )}
+                              </div>
+                            </div>
 
-                    <div className="flex gap-3 mt-6">
-                      <button
-                        onClick={handleTaskSubmit}
-                        disabled={saving}
-                        className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white px-6 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors"
-                      >
-                        {saving ? (
-                          <RefreshCw className="animate-spin" size={20} />
-                        ) : (
-                          <Check size={20} />
+                            {/* Riwayat Progress Logs */}
+                            <div className="mt-6">
+                              <div className="flex items-center gap-2 mb-4">
+                                <ClipboardList
+                                  className="text-indigo-600 dark:text-indigo-400"
+                                  size={20}
+                                />
+                                <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                                  Riwayat Progress
+                                </h3>
+                              </div>
+                              {taskFormData.progressLogs &&
+                              taskFormData.progressLogs.length > 0 ? (
+                                <div className="space-y-3 max-h-60 overflow-y-auto">
+                                  {taskFormData.progressLogs
+                                    .sort(
+                                      (a, b) =>
+                                        new Date(b.tanggal) -
+                                        new Date(a.tanggal)
+                                    )
+                                    .map((log) => (
+                                      <div
+                                        key={log.id}
+                                        className={`p-4 rounded-lg border transition-colors group ${
+                                          editingLogId === log.id
+                                            ? "bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-700"
+                                            : "bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
+                                        }`}
+                                      >
+                                        <div className="flex justify-between items-start">
+                                          <div className="flex-1">
+                                            <div className="flex items-center gap-3 mb-2">
+                                              <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                                                {new Date(
+                                                  log.tanggal
+                                                ).toLocaleDateString("id-ID", {
+                                                  day: "numeric",
+                                                  month: "long",
+                                                  year: "numeric",
+                                                })}
+                                              </span>
+                                              <span className="px-2 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded text-sm font-semibold">
+                                                +{log.progressIncrement}%
+                                              </span>
+                                            </div>
+                                            <p className="text-gray-700 dark:text-gray-300">
+                                              {log.deskripsi}
+                                            </p>
+                                          </div>
+                                          <div className="flex gap-2">
+                                            <button
+                                              onClick={() =>
+                                                handleEditProgressLog(log)
+                                              }
+                                              className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded"
+                                              title="Edit"
+                                            >
+                                              <Edit2 className="w-4 h-4" />
+                                            </button>
+                                            <button
+                                              onClick={() =>
+                                                handleDeleteProgressLog(log.id)
+                                              }
+                                              className="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded"
+                                              title="Hapus"
+                                            >
+                                              <Trash2 className="w-4 h-4" />
+                                            </button>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    ))}
+                                </div>
+                              ) : (
+                                <p className="text-gray-500 dark:text-gray-400 text-center py-4">
+                                  Belum ada riwayat progress. Tambahkan progress
+                                  pertama di atas.
+                                </p>
+                              )}
+                            </div>
+                          </>
                         )}
-                        {editingTaskId ? "Update Task" : "Simpan Task"}
-                      </button>
-                      <button
-                        onClick={handleTaskCancel}
-                        disabled={saving}
-                        className="flex-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:bg-gray-100 text-gray-800 dark:text-white px-6 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors"
-                      >
-                        <X size={20} />
-                        Batal
-                      </button>
-                    </div>
+
+                        <div className="flex gap-3 mt-6">
+                          <button
+                            onClick={handleTaskSubmit}
+                            disabled={saving}
+                            className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white px-6 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors"
+                          >
+                            {saving ? (
+                              <RefreshCw className="animate-spin" size={20} />
+                            ) : (
+                              <Check size={20} />
+                            )}
+                            {editingTaskId ? "Update Task" : "Simpan Task"}
+                          </button>
+                          <button
+                            onClick={handleTaskCancel}
+                            disabled={saving}
+                            className="flex-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:bg-gray-100 text-gray-800 dark:text-white px-6 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors"
+                          >
+                            <X size={20} />
+                            Batal
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -4205,7 +4347,9 @@ export default function LaporanPekerjaan() {
                     className="bg-green-600 hover:bg-green-700 text-white px-3 sm:px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors text-sm"
                   >
                     <FileText size={18} />
-                    <span className="hidden sm:inline">{t("downloadExcel")}</span>
+                    <span className="hidden sm:inline">
+                      {t("downloadExcel")}
+                    </span>
                     <span className="sm:hidden">Excel</span>
                   </button>
                   <button
@@ -4230,30 +4374,42 @@ export default function LaporanPekerjaan() {
                         tanggalDatang: "",
                         createdBy: "",
                       });
-                      window.history.pushState({ tab: "spareparts", modal: "sparepartForm" }, "", "#spareparts");
+                      window.history.pushState(
+                        { tab: "spareparts", modal: "sparepartForm" },
+                        "",
+                        "#spareparts"
+                      );
                     }}
                     className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 sm:px-6 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors hover-lift text-sm"
                   >
                     <Plus size={20} />
-                    <span className="hidden sm:inline">{t("newSparepart")}</span>
+                    <span className="hidden sm:inline">
+                      {t("newSparepart")}
+                    </span>
                     <span className="sm:hidden">Baru</span>
                   </button>
-                
-                {/* Sort Dropdown */}
-                <div className="flex items-center gap-2">
-                  <label className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap hidden sm:inline">
-                    {t("sortBy")}
-                  </label>
-                  <select
-                    value={sparepartSortBy}
-                    onChange={(e) => setSparepartSortBy(e.target.value)}
-                    className="px-2 sm:px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm focus:ring-2 focus:ring-indigo-500"
-                  >
-                    <option value="name">{language === "id" ? "Nama (A-Z)" : "Name (A-Z)"}</option>
-                    <option value="order-date">{language === "id" ? "Tanggal Dipesan" : "Order Date"}</option>
-                    <option value="arrival-date">{language === "id" ? "Tanggal Datang" : "Arrival Date"}</option>
-                  </select>
-                </div>
+
+                  {/* Sort Dropdown */}
+                  <div className="flex items-center gap-2">
+                    <label className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap hidden sm:inline">
+                      {t("sortBy")}
+                    </label>
+                    <select
+                      value={sparepartSortBy}
+                      onChange={(e) => setSparepartSortBy(e.target.value)}
+                      className="px-2 sm:px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm focus:ring-2 focus:ring-indigo-500"
+                    >
+                      <option value="name">
+                        {language === "id" ? "Nama (A-Z)" : "Name (A-Z)"}
+                      </option>
+                      <option value="order-date">
+                        {language === "id" ? "Tanggal Dipesan" : "Order Date"}
+                      </option>
+                      <option value="arrival-date">
+                        {language === "id" ? "Tanggal Datang" : "Arrival Date"}
+                      </option>
+                    </select>
+                  </div>
                 </div>
               </div>
 
@@ -4319,7 +4475,10 @@ export default function LaporanPekerjaan() {
                           )}
                           {part.tanggalDatang && (
                             <p className="text-xs text-green-600 dark:text-green-400 mt-1 font-semibold flex items-center gap-1">
-                              <CheckCircle size={12} className="text-green-500" />
+                              <CheckCircle
+                                size={12}
+                                className="text-green-500"
+                              />
                               <span>Datang:</span>{" "}
                               {new Date(part.tanggalDatang).toLocaleDateString(
                                 "id-ID",
@@ -4332,12 +4491,15 @@ export default function LaporanPekerjaan() {
                               )}
                             </p>
                           )}
-                          {!part.tanggalDipesan && part.status === "pending" && (
-                            <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-2 flex items-center gap-1">
-                              <Clock size={12} />
-                              <span className="italic">Belum ada tanggal pemesanan</span>
-                            </p>
-                          )}
+                          {!part.tanggalDipesan &&
+                            part.status === "pending" && (
+                              <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-2 flex items-center gap-1">
+                                <Clock size={12} />
+                                <span className="italic">
+                                  Belum ada tanggal pemesanan
+                                </span>
+                              </p>
+                            )}
                         </div>
                         <div className="flex flex-col gap-2 ml-4">
                           <button
@@ -4374,21 +4536,27 @@ export default function LaporanPekerjaan() {
 
         {/* Sparepart Form Modal */}
         {showSparepartForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-[100] modal-backdrop" onClick={() => {
-            setShowSparepartForm(false);
-            setEditingSparepartId(null);
-            setSparepartFormData({
-              namaPart: "",
-              deskripsi: "",
-              jumlah: 0,
-              unit: "",
-              status: "pending",
-              tanggalDipesan: "",
-              tanggalDatang: "",
-              createdBy: "",
-            });
-          }}>
-            <div className="bg-white dark:bg-gray-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl modal-content" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-[100] modal-backdrop"
+            onClick={() => {
+              setShowSparepartForm(false);
+              setEditingSparepartId(null);
+              setSparepartFormData({
+                namaPart: "",
+                deskripsi: "",
+                jumlah: 0,
+                unit: "",
+                status: "pending",
+                tanggalDipesan: "",
+                tanggalDatang: "",
+                createdBy: "",
+              });
+            }}
+          >
+            <div
+              className="bg-white dark:bg-gray-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl modal-content"
+              onClick={(e) => e.stopPropagation()}
+            >
               <div className="sticky top-0 bg-white dark:bg-gray-800 border-b dark:border-gray-700 px-6 py-4 flex justify-between items-center z-10">
                 <h2 className="text-xl font-bold text-gray-800 dark:text-white">
                   {editingSparepartId
@@ -4535,11 +4703,13 @@ export default function LaporanPekerjaan() {
                   </h3>
                   <div className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
                     <p>
-                      <span className="font-medium">Jumlah:</span> {selectedSparepart.jumlah} {selectedSparepart.unit}
+                      <span className="font-medium">Jumlah:</span>{" "}
+                      {selectedSparepart.jumlah} {selectedSparepart.unit}
                     </p>
                     {selectedSparepart.deskripsi && (
                       <p>
-                        <span className="font-medium">Deskripsi:</span> {selectedSparepart.deskripsi}
+                        <span className="font-medium">Deskripsi:</span>{" "}
+                        {selectedSparepart.deskripsi}
                       </p>
                     )}
                   </div>
@@ -4551,7 +4721,7 @@ export default function LaporanPekerjaan() {
                     <Calendar size={18} className="text-purple-600" />
                     Status & Tanggal
                   </h3>
-                  
+
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
@@ -4587,7 +4757,8 @@ export default function LaporanPekerjaan() {
                     {selectedSparepart.status === "ordered" && (
                       <div>
                         <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                          Tanggal Dipesan <span className="text-red-500">*</span>
+                          Tanggal Dipesan{" "}
+                          <span className="text-red-500">*</span>
                         </label>
                         <input
                           type="date"
@@ -4631,7 +4802,8 @@ export default function LaporanPekerjaan() {
 
                         <div>
                           <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                            Tanggal Datang <span className="text-red-500">*</span>
+                            Tanggal Datang{" "}
+                            <span className="text-red-500">*</span>
                           </label>
                           <input
                             type="date"
@@ -4657,8 +4829,8 @@ export default function LaporanPekerjaan() {
                         <p className="text-sm text-blue-800 dark:text-blue-300">
                           <strong>Status: Belum Dipesan</strong>
                           <br />
-                          Sparepart belum dipesan. Ubah status ke "Sudah Dipesan"
-                          untuk memasukkan tanggal pemesanan.
+                          Sparepart belum dipesan. Ubah status ke "Sudah
+                          Dipesan" untuk memasukkan tanggal pemesanan.
                         </p>
                       </div>
                     )}
@@ -4702,7 +4874,9 @@ export default function LaporanPekerjaan() {
                     className="bg-green-600 hover:bg-green-700 text-white px-3 sm:px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors text-sm"
                   >
                     <FileText size={18} />
-                    <span className="hidden sm:inline">{t("downloadExcel")}</span>
+                    <span className="hidden sm:inline">
+                      {t("downloadExcel")}
+                    </span>
                     <span className="sm:hidden">Excel</span>
                   </button>
                   <button
@@ -4734,22 +4908,32 @@ export default function LaporanPekerjaan() {
                     <span className="hidden sm:inline">{t("newRepair")}</span>
                     <span className="sm:hidden">Baru</span>
                   </button>
-                
-                {/* Sort Dropdown */}
-                <div className="flex items-center gap-2">
-                  <label className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap hidden sm:inline">
-                    {t("sortBy")}
-                  </label>
-                  <select
-                    value={repairSortBy}
-                    onChange={(e) => setRepairSortBy(e.target.value)}
-                    className="px-2 sm:px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm focus:ring-2 focus:ring-indigo-500"
-                  >
-                    <option value="date-newest">{language === "id" ? "Tanggal Masuk Terbaru" : "Newest Entry Date"}</option>
-                    <option value="date-oldest">{language === "id" ? "Tanggal Masuk Terlama" : "Oldest Entry Date"}</option>
-                    <option value="location">{language === "id" ? "Lokasi (A-Z)" : "Location (A-Z)"}</option>
-                  </select>
-                </div>
+
+                  {/* Sort Dropdown */}
+                  <div className="flex items-center gap-2">
+                    <label className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap hidden sm:inline">
+                      {t("sortBy")}
+                    </label>
+                    <select
+                      value={repairSortBy}
+                      onChange={(e) => setRepairSortBy(e.target.value)}
+                      className="px-2 sm:px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm focus:ring-2 focus:ring-indigo-500"
+                    >
+                      <option value="date-newest">
+                        {language === "id"
+                          ? "Tanggal Masuk Terbaru"
+                          : "Newest Entry Date"}
+                      </option>
+                      <option value="date-oldest">
+                        {language === "id"
+                          ? "Tanggal Masuk Terlama"
+                          : "Oldest Entry Date"}
+                      </option>
+                      <option value="location">
+                        {language === "id" ? "Lokasi (A-Z)" : "Location (A-Z)"}
+                      </option>
+                    </select>
+                  </div>
                 </div>
               </div>
 
@@ -4792,31 +4976,45 @@ export default function LaporanPekerjaan() {
                           </div>
                           <div className="grid grid-cols-2 gap-2 text-sm text-gray-600 dark:text-gray-400 mb-2">
                             <p>
-                              <strong>{t("equipmentUnit")}:</strong> {repair.unitAlat}
+                              <strong>{t("equipmentUnit")}:</strong>{" "}
+                              {repair.unitAlat}
                             </p>
                             <p>
-                              <strong>{t("operatingLocation")}:</strong> {repair.lokasiOperasi}
+                              <strong>{t("operatingLocation")}:</strong>{" "}
+                              {repair.lokasiOperasi}
                             </p>
                             <p>
                               <strong>{t("dateReceived")}:</strong>{" "}
-                              {new Date(repair.tanggalMasuk).toLocaleDateString("id-ID")}
+                              {new Date(repair.tanggalMasuk).toLocaleDateString(
+                                "id-ID"
+                              )}
                             </p>
                             {repair.tanggalMulai && (
                               <p>
-                                <strong>{language === "id" ? "Tanggal Mulai Dikerjakan" : "Start Date"}:</strong>{" "}
-                                {new Date(repair.tanggalMulai).toLocaleDateString("id-ID")}
+                                <strong>
+                                  {language === "id"
+                                    ? "Tanggal Mulai Dikerjakan"
+                                    : "Start Date"}
+                                  :
+                                </strong>{" "}
+                                {new Date(
+                                  repair.tanggalMulai
+                                ).toLocaleDateString("id-ID")}
                               </p>
                             )}
                             {repair.tanggalSelesai && (
                               <p>
                                 <strong>{t("dateCompleted")}:</strong>{" "}
-                                {new Date(repair.tanggalSelesai).toLocaleDateString("id-ID")}
+                                {new Date(
+                                  repair.tanggalSelesai
+                                ).toLocaleDateString("id-ID")}
                               </p>
                             )}
                           </div>
                           {repair.deskripsiKerusakan && (
                             <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                              <strong>{t("damageDescription")}:</strong> {repair.deskripsiKerusakan}
+                              <strong>{t("damageDescription")}:</strong>{" "}
+                              {repair.deskripsiKerusakan}
                             </p>
                           )}
                         </div>
@@ -4880,30 +5078,41 @@ export default function LaporanPekerjaan() {
                   </h3>
                   <div className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
                     <p>
-                      <span className="font-medium">Unit Alat:</span> {selectedRepair.unitAlat}
+                      <span className="font-medium">Unit Alat:</span>{" "}
+                      {selectedRepair.unitAlat}
                     </p>
                     <p>
-                      <span className="font-medium">Lokasi Operasi:</span> {selectedRepair.lokasiOperasi}
+                      <span className="font-medium">Lokasi Operasi:</span>{" "}
+                      {selectedRepair.lokasiOperasi}
                     </p>
                     <p>
                       <span className="font-medium">Tanggal Masuk:</span>{" "}
-                      {new Date(selectedRepair.tanggalMasuk).toLocaleDateString("id-ID")}
+                      {new Date(selectedRepair.tanggalMasuk).toLocaleDateString(
+                        "id-ID"
+                      )}
                     </p>
                     {selectedRepair.tanggalMulai && (
                       <p>
-                        <span className="font-medium">Tanggal Mulai Dikerjakan:</span>{" "}
-                        {new Date(selectedRepair.tanggalMulai).toLocaleDateString("id-ID")}
+                        <span className="font-medium">
+                          Tanggal Mulai Dikerjakan:
+                        </span>{" "}
+                        {new Date(
+                          selectedRepair.tanggalMulai
+                        ).toLocaleDateString("id-ID")}
                       </p>
                     )}
                     {selectedRepair.tanggalSelesai && (
                       <p>
                         <span className="font-medium">Tanggal Selesai:</span>{" "}
-                        {new Date(selectedRepair.tanggalSelesai).toLocaleDateString("id-ID")}
+                        {new Date(
+                          selectedRepair.tanggalSelesai
+                        ).toLocaleDateString("id-ID")}
                       </p>
                     )}
                     {selectedRepair.deskripsiKerusakan && (
                       <p>
-                        <span className="font-medium">Deskripsi:</span> {selectedRepair.deskripsiKerusakan}
+                        <span className="font-medium">Deskripsi:</span>{" "}
+                        {selectedRepair.deskripsiKerusakan}
                       </p>
                     )}
                   </div>
@@ -4915,7 +5124,7 @@ export default function LaporanPekerjaan() {
                     <Calendar size={18} className="text-blue-600" />
                     Status & Tanggal
                   </h3>
-                  
+
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
@@ -4932,8 +5141,12 @@ export default function LaporanPekerjaan() {
                         className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                       >
                         <option value="received">{t("statusReceived")}</option>
-                        <option value="in-progress">{t("statusInProgress")}</option>
-                        <option value="completed">{t("statusCompleted")}</option>
+                        <option value="in-progress">
+                          {t("statusInProgress")}
+                        </option>
+                        <option value="completed">
+                          {t("statusCompleted")}
+                        </option>
                       </select>
                     </div>
 
@@ -4941,7 +5154,8 @@ export default function LaporanPekerjaan() {
                     {selectedRepair.status === "received" && (
                       <div>
                         <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                          {t("dateReceived")} <span className="text-red-500">*</span>
+                          {t("dateReceived")}{" "}
+                          <span className="text-red-500">*</span>
                         </label>
                         <input
                           type="date"
@@ -4956,7 +5170,9 @@ export default function LaporanPekerjaan() {
                           required
                         />
                         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                          {language === "id" ? "Masukkan tanggal ketika barang diterima" : "Enter the date when item was received"}
+                          {language === "id"
+                            ? "Masukkan tanggal ketika barang diterima"
+                            : "Enter the date when item was received"}
                         </p>
                       </div>
                     )}
@@ -4975,12 +5191,17 @@ export default function LaporanPekerjaan() {
                             disabled
                           />
                           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                            {language === "id" ? "Tanggal masuk tidak dapat diubah" : "Received date cannot be changed"}
+                            {language === "id"
+                              ? "Tanggal masuk tidak dapat diubah"
+                              : "Received date cannot be changed"}
                           </p>
                         </div>
                         <div>
                           <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                            {language === "id" ? "Tanggal Mulai Dikerjakan" : "Start Date"} <span className="text-red-500">*</span>
+                            {language === "id"
+                              ? "Tanggal Mulai Dikerjakan"
+                              : "Start Date"}{" "}
+                            <span className="text-red-500">*</span>
                           </label>
                           <input
                             type="date"
@@ -4995,7 +5216,9 @@ export default function LaporanPekerjaan() {
                             required
                           />
                           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                            {language === "id" ? "Masukkan tanggal ketika perbaikan dimulai" : "Enter the date when repair work started"}
+                            {language === "id"
+                              ? "Masukkan tanggal ketika perbaikan dimulai"
+                              : "Enter the date when repair work started"}
                           </p>
                         </div>
                       </>
@@ -5015,12 +5238,16 @@ export default function LaporanPekerjaan() {
                             disabled
                           />
                           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                            {language === "id" ? "Tanggal masuk tidak dapat diubah" : "Received date cannot be changed"}
+                            {language === "id"
+                              ? "Tanggal masuk tidak dapat diubah"
+                              : "Received date cannot be changed"}
                           </p>
                         </div>
                         <div>
                           <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                            {language === "id" ? "Tanggal Mulai Dikerjakan" : "Start Date"}
+                            {language === "id"
+                              ? "Tanggal Mulai Dikerjakan"
+                              : "Start Date"}
                           </label>
                           <input
                             type="date"
@@ -5029,12 +5256,17 @@ export default function LaporanPekerjaan() {
                             disabled
                           />
                           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                            {language === "id" ? "Tanggal mulai tidak dapat diubah" : "Start date cannot be changed"}
+                            {language === "id"
+                              ? "Tanggal mulai tidak dapat diubah"
+                              : "Start date cannot be changed"}
                           </p>
                         </div>
                         <div>
                           <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                            {language === "id" ? "Tanggal Selesai" : "Completion Date"} <span className="text-red-500">*</span>
+                            {language === "id"
+                              ? "Tanggal Selesai"
+                              : "Completion Date"}{" "}
+                            <span className="text-red-500">*</span>
                           </label>
                           <input
                             type="date"
@@ -5049,7 +5281,9 @@ export default function LaporanPekerjaan() {
                             required
                           />
                           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                            {language === "id" ? "Masukkan tanggal ketika perbaikan selesai" : "Enter the date when repair was completed"}
+                            {language === "id"
+                              ? "Masukkan tanggal ketika perbaikan selesai"
+                              : "Enter the date when repair was completed"}
                           </p>
                         </div>
                       </>
@@ -5064,7 +5298,11 @@ export default function LaporanPekerjaan() {
                     disabled={saving}
                     className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold disabled:opacity-50"
                   >
-                    {saving ? t("saving") : (language === "id" ? "Perbarui Status" : "Update Status")}
+                    {saving
+                      ? t("saving")
+                      : language === "id"
+                      ? "Perbarui Status"
+                      : "Update Status"}
                   </button>
                   <button
                     onClick={() => {
@@ -5123,7 +5361,8 @@ export default function LaporanPekerjaan() {
 
                   <div>
                     <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                      {t("equipmentUnit")} <span className="text-red-500">*</span>
+                      {t("equipmentUnit")}{" "}
+                      <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -5142,7 +5381,8 @@ export default function LaporanPekerjaan() {
 
                   <div>
                     <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                      {t("operatingLocation")} <span className="text-red-500">*</span>
+                      {t("operatingLocation")}{" "}
+                      <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -5161,7 +5401,8 @@ export default function LaporanPekerjaan() {
 
                   <div>
                     <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                      {t("damageDescription")} <span className="text-red-500">*</span>
+                      {t("damageDescription")}{" "}
+                      <span className="text-red-500">*</span>
                     </label>
                     <textarea
                       value={repairFormData.deskripsiKerusakan}
@@ -5182,13 +5423,17 @@ export default function LaporanPekerjaan() {
                   <div className="border-t dark:border-gray-700 pt-4">
                     <h3 className="text-sm font-semibold mb-3 text-gray-700 dark:text-gray-300 flex items-center gap-2">
                       <Calendar size={16} className="text-indigo-600" />
-                      {language === "id" ? "Status & Tanggal" : "Status & Dates"}
+                      {language === "id"
+                        ? "Status & Tanggal"
+                        : "Status & Dates"}
                     </h3>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                          {language === "id" ? "Status Perbaikan" : "Repair Status"}
+                          {language === "id"
+                            ? "Status Perbaikan"
+                            : "Repair Status"}
                         </label>
                         <select
                           value={repairFormData.status || "received"}
@@ -5200,15 +5445,22 @@ export default function LaporanPekerjaan() {
                           }
                           className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                         >
-                          <option value="received">{t("statusReceived")}</option>
-                          <option value="in-progress">{t("statusInProgress")}</option>
-                          <option value="completed">{t("statusCompleted")}</option>
+                          <option value="received">
+                            {t("statusReceived")}
+                          </option>
+                          <option value="in-progress">
+                            {t("statusInProgress")}
+                          </option>
+                          <option value="completed">
+                            {t("statusCompleted")}
+                          </option>
                         </select>
                       </div>
 
                       <div>
                         <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                          {t("dateReceived")} <span className="text-red-500">*</span>
+                          {t("dateReceived")}{" "}
+                          <span className="text-red-500">*</span>
                         </label>
                         <input
                           type="date"
@@ -5223,15 +5475,22 @@ export default function LaporanPekerjaan() {
                           required
                         />
                         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                          {language === "id" ? "Masukkan tanggal ketika barang diterima" : "Enter the date when item was received"}
+                          {language === "id"
+                            ? "Masukkan tanggal ketika barang diterima"
+                            : "Enter the date when item was received"}
                         </p>
                       </div>
 
-                      {(repairFormData.status === "in-progress" || repairFormData.status === "completed") && (
+                      {(repairFormData.status === "in-progress" ||
+                        repairFormData.status === "completed") && (
                         <div>
                           <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                            {language === "id" ? "Tanggal Mulai Dikerjakan" : "Start Date"}
-                            {repairFormData.status === "in-progress" && <span className="text-red-500"> *</span>}
+                            {language === "id"
+                              ? "Tanggal Mulai Dikerjakan"
+                              : "Start Date"}
+                            {repairFormData.status === "in-progress" && (
+                              <span className="text-red-500"> *</span>
+                            )}
                           </label>
                           <input
                             type="date"
@@ -5246,7 +5505,9 @@ export default function LaporanPekerjaan() {
                             required={repairFormData.status === "in-progress"}
                           />
                           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                            {language === "id" ? "Masukkan tanggal ketika perbaikan dimulai" : "Enter the date when repair work started"}
+                            {language === "id"
+                              ? "Masukkan tanggal ketika perbaikan dimulai"
+                              : "Enter the date when repair work started"}
                           </p>
                         </div>
                       )}
@@ -5254,7 +5515,10 @@ export default function LaporanPekerjaan() {
                       {repairFormData.status === "completed" && (
                         <div>
                           <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                            {language === "id" ? "Tanggal Selesai" : "Completion Date"} <span className="text-red-500">*</span>
+                            {language === "id"
+                              ? "Tanggal Selesai"
+                              : "Completion Date"}{" "}
+                            <span className="text-red-500">*</span>
                           </label>
                           <input
                             type="date"
@@ -5269,7 +5533,9 @@ export default function LaporanPekerjaan() {
                             required
                           />
                           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                            {language === "id" ? "Masukkan tanggal ketika perbaikan selesai" : "Enter the date when repair was completed"}
+                            {language === "id"
+                              ? "Masukkan tanggal ketika perbaikan selesai"
+                              : "Enter the date when repair was completed"}
                           </p>
                         </div>
                       )}
@@ -5283,7 +5549,11 @@ export default function LaporanPekerjaan() {
                     disabled={saving}
                     className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold disabled:opacity-50"
                   >
-                    {saving ? t("saving") : editingRepairId ? t("update") : t("save")}
+                    {saving
+                      ? t("saving")
+                      : editingRepairId
+                      ? t("update")
+                      : t("save")}
                   </button>
                   <button
                     type="button"
