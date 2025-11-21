@@ -199,7 +199,7 @@ const translations = {
     createRepair: "Buat Perbaikan Baru",
     repairItem: "Item Perbaikan",
     dateReceived: "Tanggal Masuk",
-    dateStarted: "Tanggal Mulai Dikerjakan",
+    dateStarted: "Tanggal Mulai",
     dateCompleted: "Tanggal Selesai",
     equipmentUnit: "Unit Alat",
     operatingLocation: "Lokasi Operasi Alat",
@@ -1948,12 +1948,15 @@ export default function LaporanPekerjaan() {
                 </button>
 
                 {/* Theme Dropdown */}
-                <div className="relative">
+                <div 
+                  className="relative"
+                  onMouseEnter={() => {
+                    setShowThemeDropdown(true);
+                    setShowLanguageDropdown(false);
+                  }}
+                  onMouseLeave={() => setShowThemeDropdown(false)}
+                >
                   <button
-                    onClick={() => {
-                      setShowThemeDropdown(!showThemeDropdown);
-                      setShowLanguageDropdown(false);
-                    }}
                     className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 p-1.5 sm:p-2 rounded-lg font-semibold flex items-center gap-1 transition-colors"
                     title="Change Theme"
                   >
@@ -1963,17 +1966,9 @@ export default function LaporanPekerjaan() {
 
                   {/* Theme Dropdown Menu */}
                   {showThemeDropdown && (
-                    <>
-                      <div
-                        className="fixed inset-0 z-40"
-                        onClick={() => setShowThemeDropdown(false)}
-                      ></div>
-                      <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
+                    <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
                         <button
-                          onClick={() => {
-                            setTheme("light");
-                            setShowThemeDropdown(false);
-                          }}
+                          onClick={() => setTheme("light")}
                           className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
                             theme === "light" ? "bg-gray-50 dark:bg-gray-700/50" : ""
                           }`}
@@ -1987,10 +1982,7 @@ export default function LaporanPekerjaan() {
                           )}
                         </button>
                         <button
-                          onClick={() => {
-                            setTheme("dark");
-                            setShowThemeDropdown(false);
-                          }}
+                          onClick={() => setTheme("dark")}
                           className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
                             theme === "dark" ? "bg-gray-50 dark:bg-gray-700/50" : ""
                           }`}
@@ -2004,10 +1996,7 @@ export default function LaporanPekerjaan() {
                           )}
                         </button>
                         <button
-                          onClick={() => {
-                            setTheme("system");
-                            setShowThemeDropdown(false);
-                          }}
+                          onClick={() => setTheme("system")}
                           className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
                             theme === "system" ? "bg-gray-50 dark:bg-gray-700/50" : ""
                           }`}
@@ -2021,17 +2010,19 @@ export default function LaporanPekerjaan() {
                           )}
                         </button>
                       </div>
-                    </>
                   )}
                 </div>
 
                 {/* Language Dropdown */}
-                <div className="relative hidden sm:block">
+                <div 
+                  className="relative hidden sm:block"
+                  onMouseEnter={() => {
+                    setShowLanguageDropdown(true);
+                    setShowThemeDropdown(false);
+                  }}
+                  onMouseLeave={() => setShowLanguageDropdown(false)}
+                >
                   <button
-                    onClick={() => {
-                      setShowLanguageDropdown(!showLanguageDropdown);
-                      setShowThemeDropdown(false);
-                    }}
                     className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 p-1.5 sm:p-2 rounded-lg font-semibold flex items-center gap-1 transition-colors"
                     title="Change Language"
                   >
@@ -2041,17 +2032,9 @@ export default function LaporanPekerjaan() {
 
                   {/* Language Dropdown Menu */}
                   {showLanguageDropdown && (
-                    <>
-                      <div
-                        className="fixed inset-0 z-40"
-                        onClick={() => setShowLanguageDropdown(false)}
-                      ></div>
-                      <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
+                    <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
                         <button
-                          onClick={() => {
-                            setLanguage("id");
-                            setShowLanguageDropdown(false);
-                          }}
+                          onClick={() => setLanguage("id")}
                           className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
                             language === "id" ? "bg-gray-50 dark:bg-gray-700/50" : ""
                           }`}
@@ -2065,10 +2048,7 @@ export default function LaporanPekerjaan() {
                           )}
                         </button>
                         <button
-                          onClick={() => {
-                            setLanguage("en");
-                            setShowLanguageDropdown(false);
-                          }}
+                          onClick={() => setLanguage("en")}
                           className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
                             language === "en" ? "bg-gray-50 dark:bg-gray-700/50" : ""
                           }`}
@@ -2082,7 +2062,6 @@ export default function LaporanPekerjaan() {
                           )}
                         </button>
                       </div>
-                    </>
                   )}
                 </div>
 
