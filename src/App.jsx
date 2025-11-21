@@ -1308,16 +1308,31 @@ export default function LaporanPekerjaan() {
       return;
     }
 
+    // Validate dates based on status
+    if (!repairFormData.tanggalMasuk) {
+      alert("Tanggal masuk harus diisi");
+      return;
+    }
+
+    if (repairFormData.status === "in-progress" && !repairFormData.tanggalMulai) {
+      alert("Tanggal mulai dikerjakan harus diisi untuk status 'Sedang Dikerjakan'");
+      return;
+    }
+
+    if (repairFormData.status === "completed") {
+      if (!repairFormData.tanggalMulai) {
+        alert("Tanggal mulai dikerjakan harus diisi untuk status 'Selesai'");
+        return;
+      }
+      if (!repairFormData.tanggalSelesai) {
+        alert("Tanggal selesai harus diisi untuk status 'Selesai'");
+        return;
+      }
+    }
+
     setSaving(true);
     try {
-      // Prepare form data with current date for new repairs
-      const formDataToSave = {
-        ...repairFormData,
-        tanggalMasuk: editingRepairId ? repairFormData.tanggalMasuk : new Date().toISOString().split('T')[0],
-        status: editingRepairId ? repairFormData.status : "received",
-      };
-
-      const repairData = repairFormDataToRepair(formDataToSave);
+      const repairData = repairFormDataToRepair(repairFormData);
 
       if (editingRepairId) {
         await repairsAPI.update(editingRepairId, repairData);
@@ -1362,13 +1377,19 @@ export default function LaporanPekerjaan() {
     
     // Validate required fields based on status
     if (selectedRepair.status === "in-progress" && !selectedRepair.tanggalMulai) {
-      alert("Tanggal mulai diperbaiki harus diisi untuk status 'Sedang Diperbaiki'");
+      alert("Tanggal mulai dikerjakan harus diisi untuk status 'Sedang Dikerjakan'");
       return;
     }
 
-    if (selectedRepair.status === "completed" && !selectedRepair.tanggalSelesai) {
-      alert("Tanggal selesai harus diisi untuk status 'Selesai'");
-      return;
+    if (selectedRepair.status === "completed") {
+      if (!selectedRepair.tanggalMulai) {
+        alert("Tanggal mulai dikerjakan harus diisi untuk status 'Selesai'");
+        return;
+      }
+      if (!selectedRepair.tanggalSelesai) {
+        alert("Tanggal selesai harus diisi untuk status 'Selesai'");
+        return;
+      }
     }
     
     setSaving(true);
@@ -4587,6 +4608,12 @@ export default function LaporanPekerjaan() {
                               <strong>{t("dateReceived")}:</strong>{" "}
                               {new Date(repair.tanggalMasuk).toLocaleDateString("id-ID")}
                             </p>
+                            {repair.tanggalMulai && (
+                              <p>
+                                <strong>Tgl Mulai Dikerjakan:</strong>{" "}
+                                {new Date(repair.tanggalMulai).toLocaleDateString("id-ID")}
+                              </p>
+                            )}
                             {repair.tanggalSelesai && (
                               <p>
                                 <strong>{t("dateCompleted")}:</strong>{" "}
@@ -4669,6 +4696,18 @@ export default function LaporanPekerjaan() {
                       <span className="font-medium">Tanggal Masuk:</span>{" "}
                       {new Date(selectedRepair.tanggalMasuk).toLocaleDateString("id-ID")}
                     </p>
+                    {selectedRepair.tanggalMulai && (
+                      <p>
+                        <span className="font-medium">Tanggal Mulai Dikerjakan:</span>{" "}
+                        {new Date(selectedRepair.tanggalMulai).toLocaleDateString("id-ID")}
+                      </p>
+                    )}
+                    {selectedRepair.tanggalSelesai && (
+                      <p>
+                        <span className="font-medium">Tanggal Selesai:</span>{" "}
+                        {new Date(selectedRepair.tanggalSelesai).toLocaleDateString("id-ID")}
+                      </p>
+                    )}
                     {selectedRepair.deskripsiKerusakan && (
                       <p>
                         <span className="font-medium">Deskripsi:</span> {selectedRepair.deskripsiKerusakan}
@@ -4716,10 +4755,10 @@ export default function LaporanPekerjaan() {
                     </div>
 
                     {/* Conditional Date Fields based on Status */}
-                    {selectedRepair.status === "in-progress" && (
+                    {(selectedRepair.status === "in-progress" || selectedRepair.status === "completed") && (
                       <div>
                         <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                          Tanggal Mulai Diperbaiki <span className="text-red-500">*</span>
+                          Tanggal Mulai Dikerjakan <span className="text-red-500">*</span>
                         </label>
                         <input
                           type="date"
@@ -4734,7 +4773,7 @@ export default function LaporanPekerjaan() {
                           required
                         />
                         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                          Masukkan tanggal saat mulai diperbaiki
+                          Masukkan tanggal saat mulai dikerjakan
                         </p>
                       </div>
                     )}
@@ -4894,6 +4933,95 @@ export default function LaporanPekerjaan() {
                       required
                       placeholder="Jelaskan kerusakan yang terjadi..."
                     />
+                  </div>
+
+                  {/* Date and Status Section */}
+                  <div className="border-t dark:border-gray-700 pt-4">
+                    <h3 className="text-sm font-semibold mb-3 text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                      <Calendar size={16} className="text-indigo-600" />
+                      Status & Tanggal
+                    </h3>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                          Status Repair
+                        </label>
+                        <select
+                          value={repairFormData.status || "received"}
+                          onChange={(e) =>
+                            setRepairFormData({
+                              ...repairFormData,
+                              status: e.target.value,
+                            })
+                          }
+                          className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        >
+                          <option value="received">Barang Diterima</option>
+                          <option value="in-progress">Sedang Dikerjakan</option>
+                          <option value="completed">Selesai</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                          Tanggal Masuk <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="date"
+                          value={repairFormData.tanggalMasuk || new Date().toISOString().split('T')[0]}
+                          onChange={(e) =>
+                            setRepairFormData({
+                              ...repairFormData,
+                              tanggalMasuk: e.target.value,
+                            })
+                          }
+                          className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                          required
+                        />
+                      </div>
+
+                      {(repairFormData.status === "in-progress" || repairFormData.status === "completed") && (
+                        <div>
+                          <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                            Tanggal Mulai Dikerjakan
+                            {repairFormData.status === "in-progress" && <span className="text-red-500"> *</span>}
+                          </label>
+                          <input
+                            type="date"
+                            value={repairFormData.tanggalMulai || ""}
+                            onChange={(e) =>
+                              setRepairFormData({
+                                ...repairFormData,
+                                tanggalMulai: e.target.value,
+                              })
+                            }
+                            className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            required={repairFormData.status === "in-progress"}
+                          />
+                        </div>
+                      )}
+
+                      {repairFormData.status === "completed" && (
+                        <div>
+                          <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                            Tanggal Selesai <span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            type="date"
+                            value={repairFormData.tanggalSelesai || ""}
+                            onChange={(e) =>
+                              setRepairFormData({
+                                ...repairFormData,
+                                tanggalSelesai: e.target.value,
+                              })
+                            }
+                            className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            required
+                          />
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
 
