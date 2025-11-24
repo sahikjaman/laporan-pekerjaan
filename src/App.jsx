@@ -552,7 +552,7 @@ export default function LaporanPekerjaan() {
 
     try {
       localStorage.setItem(THEME_KEY, theme);
-    } catch (e) {}
+    } catch (e) { }
 
     return () => {
       if (mq) {
@@ -956,7 +956,7 @@ export default function LaporanPekerjaan() {
         const newProgress = Math.min(
           100,
           selectedTask.progress +
-            (parseInt(newProgressLog.progressIncrement) || 0)
+          (parseInt(newProgressLog.progressIncrement) || 0)
         );
 
         // Update via API
@@ -1061,12 +1061,12 @@ export default function LaporanPekerjaan() {
       const updatedLogs = (taskFormData.progressLogs || []).map((log) =>
         log.id === editingLogId
           ? {
-              ...log,
-              tanggal: newProgressLog.tanggal,
-              deskripsi: newProgressLog.deskripsi,
-              progressIncrement:
-                parseInt(newProgressLog.progressIncrement) || 0,
-            }
+            ...log,
+            tanggal: newProgressLog.tanggal,
+            deskripsi: newProgressLog.deskripsi,
+            progressIncrement:
+              parseInt(newProgressLog.progressIncrement) || 0,
+          }
           : log
       );
 
@@ -1522,8 +1522,8 @@ export default function LaporanPekerjaan() {
         task.prioritas === "high"
           ? "Tinggi"
           : task.prioritas === "medium"
-          ? "Sedang"
-          : "Rendah",
+            ? "Sedang"
+            : "Rendah",
       Progress: `${task.progress}%`,
       Deadline: task.deadline
         ? new Date(task.deadline).toLocaleDateString("id-ID")
@@ -1542,8 +1542,8 @@ export default function LaporanPekerjaan() {
           t.prioritas === "high"
             ? "Tinggi"
             : t.prioritas === "medium"
-            ? "Sedang"
-            : "Rendah",
+              ? "Sedang"
+              : "Rendah",
       },
       { header: "Progress", render: (t) => `${t.progress}%` },
       {
@@ -1565,8 +1565,8 @@ export default function LaporanPekerjaan() {
         part.status === "arrived"
           ? "Datang"
           : part.status === "ordered"
-          ? "Dipesan"
-          : "Pending",
+            ? "Dipesan"
+            : "Pending",
       "Tanggal Order": part.tanggalOrder
         ? new Date(part.tanggalOrder).toLocaleDateString("id-ID")
         : "-",
@@ -1590,8 +1590,8 @@ export default function LaporanPekerjaan() {
           p.status === "arrived"
             ? "Datang"
             : p.status === "ordered"
-            ? "Dipesan"
-            : "Pending",
+              ? "Dipesan"
+              : "Pending",
       },
     ];
     downloadPDF(filteredData, "Sparepart", columns, "DAFTAR SPAREPART");
@@ -1616,8 +1616,8 @@ export default function LaporanPekerjaan() {
         repair.status === "completed"
           ? "Selesai"
           : repair.status === "in-progress"
-          ? "Dalam Proses"
-          : "Diterima",
+            ? "Dalam Proses"
+            : "Diterima",
     }));
     downloadExcel(data, "Repair", Object.keys(data[0] || {}));
   };
@@ -1638,8 +1638,8 @@ export default function LaporanPekerjaan() {
           r.status === "completed"
             ? "Selesai"
             : r.status === "in-progress"
-            ? "Proses"
-            : "Diterima",
+              ? "Proses"
+              : "Diterima",
       },
     ];
     downloadPDF(sortedRepairs, "Repair", columns, "DAFTAR REPAIR");
@@ -1909,11 +1909,10 @@ export default function LaporanPekerjaan() {
                       "#dashboard"
                     );
                   }}
-                  className={`px-3 py-2 font-semibold transition-all duration-200 whitespace-nowrap text-sm flex items-center gap-2 rounded-lg ${
-                    activeTab === "dashboard"
+                  className={`px-3 py-2 font-semibold transition-all duration-200 whitespace-nowrap text-sm flex items-center gap-2 rounded-lg ${activeTab === "dashboard"
                       ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
                       : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  }`}
+                    }`}
                 >
                   <BarChart3 size={16} />
                   <span>{t("dashboard")}</span>
@@ -1929,11 +1928,10 @@ export default function LaporanPekerjaan() {
                       "#laporan"
                     );
                   }}
-                  className={`px-3 py-2 font-semibold transition-all duration-200 whitespace-nowrap text-sm flex items-center gap-2 rounded-lg ${
-                    activeTab === "laporan"
+                  className={`px-3 py-2 font-semibold transition-all duration-200 whitespace-nowrap text-sm flex items-center gap-2 rounded-lg ${activeTab === "laporan"
                       ? "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
                       : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  }`}
+                    }`}
                 >
                   <FileText size={16} />
                   <span>{t("reports")}</span>
@@ -1945,11 +1943,10 @@ export default function LaporanPekerjaan() {
                     setShowForm(false);
                     window.history.pushState({ tab: "tasks" }, "", "#tasks");
                   }}
-                  className={`px-3 py-2 font-semibold transition-all duration-200 whitespace-nowrap text-sm flex items-center gap-2 rounded-lg ${
-                    activeTab === "tasks"
+                  className={`px-3 py-2 font-semibold transition-all duration-200 whitespace-nowrap text-sm flex items-center gap-2 rounded-lg ${activeTab === "tasks"
                       ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
                       : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  }`}
+                    }`}
                 >
                   <ListTodo size={16} />
                   <span>{t("tasks")}</span>
@@ -1966,11 +1963,10 @@ export default function LaporanPekerjaan() {
                       "#spareparts"
                     );
                   }}
-                  className={`px-3 py-2 font-semibold transition-all duration-200 whitespace-nowrap text-sm flex items-center gap-2 rounded-lg ${
-                    activeTab === "spareparts"
+                  className={`px-3 py-2 font-semibold transition-all duration-200 whitespace-nowrap text-sm flex items-center gap-2 rounded-lg ${activeTab === "spareparts"
                       ? "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400"
                       : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  }`}
+                    }`}
                 >
                   <Wrench size={16} />
                   <span>{t("spareparts")}</span>
@@ -1988,11 +1984,10 @@ export default function LaporanPekerjaan() {
                       "#repairs"
                     );
                   }}
-                  className={`px-3 py-2 font-semibold transition-all duration-200 whitespace-nowrap text-sm flex items-center gap-2 rounded-lg ${
-                    activeTab === "repairs"
+                  className={`px-3 py-2 font-semibold transition-all duration-200 whitespace-nowrap text-sm flex items-center gap-2 rounded-lg ${activeTab === "repairs"
                       ? "bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400"
                       : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  }`}
+                    }`}
                 >
                   <ClipboardList size={16} />
                   <span>{t("repairs")}</span>
@@ -2069,7 +2064,6 @@ export default function LaporanPekerjaan() {
                     {getThemeIcon()}
                     <ChevronDown size={14} className="hidden sm:block" />
                   </button>
-
                   {/* Theme Dropdown Menu */}
                   {showThemeDropdown && (
                     <>
@@ -2083,18 +2077,20 @@ export default function LaporanPekerjaan() {
                             setTheme("light");
                             setShowThemeDropdown(false);
                           }}
-                          className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
-                            theme === "light"
+                          className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${theme === "light"
                               ? "bg-gray-50 dark:bg-gray-700/50"
                               : ""
-                          }`}
+                            }`}
                         >
                           <Sun size={18} className="text-yellow-500" />
                           <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
                             {language === "id" ? "Terang" : "Light"}
                           </span>
                           {theme === "light" && (
-                            <Check size={16} className="ml-auto text-green-600" />
+                            <Check
+                              size={16}
+                              className="ml-auto text-green-600"
+                            />
                           )}
                         </button>
                         <button
@@ -2102,18 +2098,20 @@ export default function LaporanPekerjaan() {
                             setTheme("dark");
                             setShowThemeDropdown(false);
                           }}
-                          className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
-                            theme === "dark"
+                          className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${theme === "dark"
                               ? "bg-gray-50 dark:bg-gray-700/50"
                               : ""
-                          }`}
+                            }`}
                         >
                           <Moon size={18} className="text-indigo-500" />
                           <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
                             {language === "id" ? "Gelap" : "Dark"}
                           </span>
                           {theme === "dark" && (
-                            <Check size={16} className="ml-auto text-green-600" />
+                            <Check
+                              size={16}
+                              className="ml-auto text-green-600"
+                            />
                           )}
                         </button>
                         <button
@@ -2121,43 +2119,44 @@ export default function LaporanPekerjaan() {
                             setTheme("system");
                             setShowThemeDropdown(false);
                           }}
-                          className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
-                            theme === "system"
+                          className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${theme === "system"
                               ? "bg-gray-50 dark:bg-gray-700/50"
                               : ""
-                          }`}
+                            }`}
                         >
                           <Monitor size={18} className="text-gray-500" />
                           <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
                             {language === "id" ? "Sistem" : "System"}
                           </span>
                           {theme === "system" && (
-                            <Check size={16} className="ml-auto text-green-600" />
+                            <Check
+                              size={16}
+                              className="ml-auto text-green-600"
+                            />
                           )}
                         </button>
                       </div>
                     </>
                   )}
+                </div>
 
                 {/* Language Selector - SPIL Style */}
                 <div className="hidden sm:flex items-center gap-1 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
                   <button
                     onClick={() => setLanguage("id")}
-                    className={`px-2 py-1 rounded text-xs font-semibold transition-colors ${
-                      language === "id"
+                    className={`px-2 py-1 rounded text-xs font-semibold transition-colors ${language === "id"
                         ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm"
                         : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
-                    }`}
+                      }`}
                   >
                     ID
                   </button>
                   <button
                     onClick={() => setLanguage("en")}
-                    className={`px-2 py-1 rounded text-xs font-semibold transition-colors ${
-                      language === "en"
+                    className={`px-2 py-1 rounded text-xs font-semibold transition-colors ${language === "en"
                         ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm"
                         : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
-                    }`}
+                      }`}
                   >
                     EN
                   </button>
@@ -2201,11 +2200,10 @@ export default function LaporanPekerjaan() {
                       setShowTaskForm(false);
                       setShowMobileMenu(false);
                     }}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold transition-colors ${
-                      activeTab === "dashboard"
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold transition-colors ${activeTab === "dashboard"
                         ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
                         : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                    }`}
+                      }`}
                   >
                     <BarChart3 size={20} />
                     <span>{t("dashboard")}</span>
@@ -2217,11 +2215,10 @@ export default function LaporanPekerjaan() {
                       setShowTaskForm(false);
                       setShowMobileMenu(false);
                     }}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold transition-colors ${
-                      activeTab === "laporan"
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold transition-colors ${activeTab === "laporan"
                         ? "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
                         : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                    }`}
+                      }`}
                   >
                     <FileText size={20} />
                     <span>{t("reports")}</span>
@@ -2233,11 +2230,10 @@ export default function LaporanPekerjaan() {
                       setShowForm(false);
                       setShowMobileMenu(false);
                     }}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold transition-colors ${
-                      activeTab === "tasks"
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold transition-colors ${activeTab === "tasks"
                         ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
                         : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                    }`}
+                      }`}
                   >
                     <ListTodo size={20} />
                     <span>{t("tasks")}</span>
@@ -2250,11 +2246,10 @@ export default function LaporanPekerjaan() {
                       setShowTaskForm(false);
                       setShowMobileMenu(false);
                     }}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold transition-colors ${
-                      activeTab === "spareparts"
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold transition-colors ${activeTab === "spareparts"
                         ? "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400"
                         : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                    }`}
+                      }`}
                   >
                     <Wrench size={20} />
                     <span>{t("spareparts")}</span>
@@ -2304,11 +2299,10 @@ export default function LaporanPekerjaan() {
                           setTheme("light");
                           setShowMobileMenu(false);
                         }}
-                        className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium transition-colors ${
-                          theme === "light"
+                        className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium transition-colors ${theme === "light"
                             ? "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
                             : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
-                        }`}
+                          }`}
                       >
                         <Sun size={18} className="text-yellow-500" />
                         <span>{language === "id" ? "Terang" : "Light"}</span>
@@ -2321,11 +2315,10 @@ export default function LaporanPekerjaan() {
                           setTheme("dark");
                           setShowMobileMenu(false);
                         }}
-                        className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium transition-colors ${
-                          theme === "dark"
+                        className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium transition-colors ${theme === "dark"
                             ? "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
                             : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
-                        }`}
+                          }`}
                       >
                         <Moon size={18} className="text-indigo-500" />
                         <span>{language === "id" ? "Gelap" : "Dark"}</span>
@@ -2338,11 +2331,10 @@ export default function LaporanPekerjaan() {
                           setTheme("system");
                           setShowMobileMenu(false);
                         }}
-                        className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium transition-colors ${
-                          theme === "system"
+                        className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium transition-colors ${theme === "system"
                             ? "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
                             : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
-                        }`}
+                          }`}
                       >
                         <Monitor size={18} className="text-gray-500" />
                         <span>{language === "id" ? "Sistem" : "System"}</span>
@@ -2364,11 +2356,10 @@ export default function LaporanPekerjaan() {
                           setLanguage("id");
                           setShowMobileMenu(false);
                         }}
-                        className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium transition-colors ${
-                          language === "id"
+                        className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium transition-colors ${language === "id"
                             ? "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
                             : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
-                        }`}
+                          }`}
                       >
                         <span className="text-xl">🇮🇩</span>
                         <span>Bahasa Indonesia</span>
@@ -2381,11 +2372,10 @@ export default function LaporanPekerjaan() {
                           setLanguage("en");
                           setShowMobileMenu(false);
                         }}
-                        className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium transition-colors ${
-                          language === "en"
+                        className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium transition-colors ${language === "en"
                             ? "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
                             : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
-                        }`}
+                          }`}
                       >
                         <span className="text-xl">🇬🇧</span>
                         <span>English</span>
@@ -2819,8 +2809,8 @@ export default function LaporanPekerjaan() {
                                   {task.prioritas === "high"
                                     ? "Tinggi"
                                     : task.prioritas === "medium"
-                                    ? "Sedang"
-                                    : "Rendah"}
+                                      ? "Sedang"
+                                      : "Rendah"}
                                 </span>
                               </div>
                             </div>
@@ -2904,8 +2894,8 @@ export default function LaporanPekerjaan() {
                                   {task.prioritas === "high"
                                     ? "Tinggi"
                                     : task.prioritas === "medium"
-                                    ? "Sedang"
-                                    : "Rendah"}
+                                      ? "Sedang"
+                                      : "Rendah"}
                                 </span>
                               </div>
                             </div>
@@ -3061,19 +3051,18 @@ export default function LaporanPekerjaan() {
                               </p>
                             </div>
                             <span
-                              className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
-                                part.status === "arrived"
+                              className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${part.status === "arrived"
                                   ? "bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300"
                                   : part.status === "ordered"
-                                  ? "bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300"
-                                  : "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300"
-                              }`}
+                                    ? "bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300"
+                                    : "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300"
+                                }`}
                             >
                               {part.status === "arrived"
                                 ? t("arrived")
                                 : part.status === "ordered"
-                                ? t("ordered")
-                                : t("pending")}
+                                  ? t("ordered")
+                                  : t("pending")}
                             </span>
                           </div>
                         ))}
@@ -3155,19 +3144,18 @@ export default function LaporanPekerjaan() {
                             </div>
                             <div className="flex items-center gap-2">
                               <span
-                                className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
-                                  repair.status === "completed"
+                                className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${repair.status === "completed"
                                     ? "bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300"
                                     : repair.status === "in-progress"
-                                    ? "bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300"
-                                    : "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300"
-                                }`}
+                                      ? "bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300"
+                                      : "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300"
+                                  }`}
                               >
                                 {repair.status === "completed"
                                   ? t("statusCompleted")
                                   : repair.status === "in-progress"
-                                  ? t("statusInProgress")
-                                  : t("statusReceived")}
+                                    ? t("statusInProgress")
+                                    : t("statusReceived")}
                               </span>
                               <button
                                 onClick={(e) => {
@@ -3732,17 +3720,16 @@ export default function LaporanPekerjaan() {
                                   className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-3"
                                   style={{
                                     background: `linear-gradient(to right, 
-                              ${
-                                taskFormData.progress >= 100
-                                  ? "#10b981"
-                                  : taskFormData.progress >= 75
-                                  ? "#3b82f6"
-                                  : taskFormData.progress >= 50
-                                  ? "#f59e0b"
-                                  : taskFormData.progress >= 25
-                                  ? "#ef4444"
-                                  : "#9ca3af"
-                              } ${taskFormData.progress}%, 
+                              ${taskFormData.progress >= 100
+                                        ? "#10b981"
+                                        : taskFormData.progress >= 75
+                                          ? "#3b82f6"
+                                          : taskFormData.progress >= 50
+                                            ? "#f59e0b"
+                                            : taskFormData.progress >= 25
+                                              ? "#ef4444"
+                                              : "#9ca3af"
+                                      } ${taskFormData.progress}%, 
                               #e5e7eb ${taskFormData.progress}%)`,
                                   }}
                                 ></div>
@@ -3774,11 +3761,10 @@ export default function LaporanPekerjaan() {
                         {false && editingTaskId && (
                           <>
                             <div
-                              className={`p-4 rounded-lg ${
-                                editingLogId
+                              className={`p-4 rounded-lg ${editingLogId
                                   ? "bg-blue-50 dark:bg-blue-900/20"
                                   : "bg-gray-50 dark:bg-gray-700/50"
-                              }`}
+                                }`}
                             >
                               <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
                                 {editingLogId
@@ -3881,7 +3867,7 @@ export default function LaporanPekerjaan() {
                                 </h3>
                               </div>
                               {taskFormData.progressLogs &&
-                              taskFormData.progressLogs.length > 0 ? (
+                                taskFormData.progressLogs.length > 0 ? (
                                 <div className="space-y-3 max-h-60 overflow-y-auto">
                                   {taskFormData.progressLogs
                                     .sort(
@@ -3892,11 +3878,10 @@ export default function LaporanPekerjaan() {
                                     .map((log) => (
                                       <div
                                         key={log.id}
-                                        className={`p-4 rounded-lg border transition-colors group ${
-                                          editingLogId === log.id
+                                        className={`p-4 rounded-lg border transition-colors group ${editingLogId === log.id
                                             ? "bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-700"
                                             : "bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
-                                        }`}
+                                          }`}
                                       >
                                         <div className="flex justify-between items-start">
                                           <div className="flex-1">
@@ -4019,8 +4004,8 @@ export default function LaporanPekerjaan() {
                               {task.prioritas === "high"
                                 ? "Tinggi"
                                 : task.prioritas === "medium"
-                                ? "Sedang"
-                                : "Rendah"}
+                                  ? "Sedang"
+                                  : "Rendah"}
                             </span>
                             {task.progress >= 100 && (
                               <span className="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300 flex items-center gap-1">
@@ -4078,17 +4063,16 @@ export default function LaporanPekerjaan() {
                         </div>
                         <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4 shadow-inner">
                           <div
-                            className={`h-4 rounded-full transition-all duration-500 ${
-                              task.progress >= 100
+                            className={`h-4 rounded-full transition-all duration-500 ${task.progress >= 100
                                 ? "bg-gradient-to-r from-green-500 to-emerald-600"
                                 : task.progress >= 75
-                                ? "bg-gradient-to-r from-blue-500 to-indigo-600"
-                                : task.progress >= 50
-                                ? "bg-gradient-to-r from-yellow-400 to-orange-500"
-                                : task.progress >= 25
-                                ? "bg-gradient-to-r from-orange-400 to-red-500"
-                                : "bg-gradient-to-r from-gray-400 to-gray-600"
-                            } shadow-sm`}
+                                  ? "bg-gradient-to-r from-blue-500 to-indigo-600"
+                                  : task.progress >= 50
+                                    ? "bg-gradient-to-r from-yellow-400 to-orange-500"
+                                    : task.progress >= 25
+                                      ? "bg-gradient-to-r from-orange-400 to-red-500"
+                                      : "bg-gradient-to-r from-gray-400 to-gray-600"
+                              } shadow-sm`}
                             style={{ width: `${task.progress}%` }}
                           >
                             {task.progress > 10 && (
@@ -4161,11 +4145,10 @@ export default function LaporanPekerjaan() {
               <div className="p-4 sm:p-6">
                 {/* Add/Edit Progress Form */}
                 <div
-                  className={`mb-4 sm:mb-6 p-3 sm:p-4 rounded-lg ${
-                    editingLogId
+                  className={`mb-4 sm:mb-6 p-3 sm:p-4 rounded-lg ${editingLogId
                       ? "bg-blue-50 dark:bg-blue-900/20"
                       : "bg-gray-50 dark:bg-gray-700/50"
-                  }`}
+                    }`}
                 >
                   <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-gray-900 dark:text-white">
                     {editingLogId ? "Edit Progress" : "Tambah Progress"}
@@ -4264,7 +4247,7 @@ export default function LaporanPekerjaan() {
                     Riwayat Progress
                   </h3>
                   {!selectedTask.progressLogs ||
-                  selectedTask.progressLogs.length === 0 ? (
+                    selectedTask.progressLogs.length === 0 ? (
                     <p className="text-gray-500 dark:text-gray-400 text-center py-4">
                       Belum ada riwayat progress
                     </p>
@@ -4277,11 +4260,10 @@ export default function LaporanPekerjaan() {
                         .map((log) => (
                           <div
                             key={log.id}
-                            className={`p-3 sm:p-4 rounded-lg border transition-colors group ${
-                              editingLogId === log.id
+                            className={`p-3 sm:p-4 rounded-lg border transition-colors group ${editingLogId === log.id
                                 ? "bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-700"
                                 : "bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
-                            }`}
+                              }`}
                           >
                             <div className="flex justify-between items-start gap-2">
                               <div className="flex-1 min-w-0">
@@ -4433,19 +4415,18 @@ export default function LaporanPekerjaan() {
                               {part.namaPart}
                             </h3>
                             <span
-                              className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                                part.status === "arrived"
+                              className={`px-3 py-1 rounded-full text-xs font-semibold ${part.status === "arrived"
                                   ? "bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300"
                                   : part.status === "ordered"
-                                  ? "bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300"
-                                  : "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300"
-                              }`}
+                                    ? "bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300"
+                                    : "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300"
+                                }`}
                             >
                               {part.status === "arrived"
                                 ? t("arrived")
                                 : part.status === "ordered"
-                                ? t("ordered")
-                                : t("pending")}
+                                  ? t("ordered")
+                                  : t("pending")}
                             </span>
                           </div>
                           {part.deskripsi && (
@@ -4959,19 +4940,18 @@ export default function LaporanPekerjaan() {
                               {repair.itemRepair}
                             </h3>
                             <span
-                              className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                                repair.status === "completed"
+                              className={`px-3 py-1 rounded-full text-xs font-semibold ${repair.status === "completed"
                                   ? "bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300"
                                   : repair.status === "in-progress"
-                                  ? "bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300"
-                                  : "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300"
-                              }`}
+                                    ? "bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300"
+                                    : "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300"
+                                }`}
                             >
                               {repair.status === "completed"
                                 ? t("statusCompleted")
                                 : repair.status === "in-progress"
-                                ? t("statusInProgress")
-                                : t("statusReceived")}
+                                  ? t("statusInProgress")
+                                  : t("statusReceived")}
                             </span>
                           </div>
                           <div className="grid grid-cols-2 gap-2 text-sm text-gray-600 dark:text-gray-400 mb-2">
@@ -5301,8 +5281,8 @@ export default function LaporanPekerjaan() {
                     {saving
                       ? t("saving")
                       : language === "id"
-                      ? "Perbarui Status"
-                      : "Update Status"}
+                        ? "Perbarui Status"
+                        : "Update Status"}
                   </button>
                   <button
                     onClick={() => {
@@ -5483,34 +5463,34 @@ export default function LaporanPekerjaan() {
 
                       {(repairFormData.status === "in-progress" ||
                         repairFormData.status === "completed") && (
-                        <div>
-                          <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                            {language === "id"
-                              ? "Tanggal Mulai Dikerjakan"
-                              : "Start Date"}
-                            {repairFormData.status === "in-progress" && (
-                              <span className="text-red-500"> *</span>
-                            )}
-                          </label>
-                          <input
-                            type="date"
-                            value={repairFormData.tanggalMulai || ""}
-                            onChange={(e) =>
-                              setRepairFormData({
-                                ...repairFormData,
-                                tanggalMulai: e.target.value,
-                              })
-                            }
-                            className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                            required={repairFormData.status === "in-progress"}
-                          />
-                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                            {language === "id"
-                              ? "Masukkan tanggal ketika perbaikan dimulai"
-                              : "Enter the date when repair work started"}
-                          </p>
-                        </div>
-                      )}
+                          <div>
+                            <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                              {language === "id"
+                                ? "Tanggal Mulai Dikerjakan"
+                                : "Start Date"}
+                              {repairFormData.status === "in-progress" && (
+                                <span className="text-red-500"> *</span>
+                              )}
+                            </label>
+                            <input
+                              type="date"
+                              value={repairFormData.tanggalMulai || ""}
+                              onChange={(e) =>
+                                setRepairFormData({
+                                  ...repairFormData,
+                                  tanggalMulai: e.target.value,
+                                })
+                              }
+                              className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                              required={repairFormData.status === "in-progress"}
+                            />
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                              {language === "id"
+                                ? "Masukkan tanggal ketika perbaikan dimulai"
+                                : "Enter the date when repair work started"}
+                            </p>
+                          </div>
+                        )}
 
                       {repairFormData.status === "completed" && (
                         <div>
@@ -5552,8 +5532,8 @@ export default function LaporanPekerjaan() {
                     {saving
                       ? t("saving")
                       : editingRepairId
-                      ? t("update")
-                      : t("save")}
+                        ? t("update")
+                        : t("save")}
                   </button>
                   <button
                     type="button"

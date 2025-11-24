@@ -1,0 +1,7 @@
+﻿
+> laporan-pekerjaan@1.0.0 build
+> vite build 2\u003e\u00261
+
+[36mvite v4.5.14 [32mbuilding for production...[36m[39m
+[32mΓ£ô[39m 0 modules transformed.
+[32mΓ£ô built in 8ms[39m
