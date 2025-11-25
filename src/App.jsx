@@ -1910,8 +1910,8 @@ export default function LaporanPekerjaan() {
                     );
                   }}
                   className={`px-3 py-2 font-semibold transition-all duration-200 whitespace-nowrap text-sm flex items-center gap-2 rounded-lg ${activeTab === "dashboard"
-                      ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
-                      : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
+                    : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                     }`}
                 >
                   <BarChart3 size={16} />
@@ -1929,8 +1929,8 @@ export default function LaporanPekerjaan() {
                     );
                   }}
                   className={`px-3 py-2 font-semibold transition-all duration-200 whitespace-nowrap text-sm flex items-center gap-2 rounded-lg ${activeTab === "laporan"
-                      ? "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
-                      : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    ? "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
+                    : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                     }`}
                 >
                   <FileText size={16} />
@@ -1944,8 +1944,8 @@ export default function LaporanPekerjaan() {
                     window.history.pushState({ tab: "tasks" }, "", "#tasks");
                   }}
                   className={`px-3 py-2 font-semibold transition-all duration-200 whitespace-nowrap text-sm flex items-center gap-2 rounded-lg ${activeTab === "tasks"
-                      ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
-                      : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
+                    : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                     }`}
                 >
                   <ListTodo size={16} />
@@ -1964,8 +1964,8 @@ export default function LaporanPekerjaan() {
                     );
                   }}
                   className={`px-3 py-2 font-semibold transition-all duration-200 whitespace-nowrap text-sm flex items-center gap-2 rounded-lg ${activeTab === "spareparts"
-                      ? "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400"
-                      : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    ? "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400"
+                    : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                     }`}
                 >
                   <Wrench size={16} />
@@ -1985,8 +1985,8 @@ export default function LaporanPekerjaan() {
                     );
                   }}
                   className={`px-3 py-2 font-semibold transition-all duration-200 whitespace-nowrap text-sm flex items-center gap-2 rounded-lg ${activeTab === "repairs"
-                      ? "bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400"
-                      : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    ? "bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400"
+                    : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                     }`}
                 >
                   <ClipboardList size={16} />
@@ -2078,8 +2078,8 @@ export default function LaporanPekerjaan() {
                             setShowThemeDropdown(false);
                           }}
                           className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${theme === "light"
-                              ? "bg-gray-50 dark:bg-gray-700/50"
-                              : ""
+                            ? "bg-gray-50 dark:bg-gray-700/50"
+                            : ""
                             }`}
                         >
                           <Sun size={18} className="text-yellow-500" />
@@ -2099,8 +2099,8 @@ export default function LaporanPekerjaan() {
                             setShowThemeDropdown(false);
                           }}
                           className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${theme === "dark"
-                              ? "bg-gray-50 dark:bg-gray-700/50"
-                              : ""
+                            ? "bg-gray-50 dark:bg-gray-700/50"
+                            : ""
                             }`}
                         >
                           <Moon size={18} className="text-indigo-500" />
@@ -2120,8 +2120,8 @@ export default function LaporanPekerjaan() {
                             setShowThemeDropdown(false);
                           }}
                           className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${theme === "system"
-                              ? "bg-gray-50 dark:bg-gray-700/50"
-                              : ""
+                            ? "bg-gray-50 dark:bg-gray-700/50"
+                            : ""
                             }`}
                         >
                           <Monitor size={18} className="text-gray-500" />
@@ -2145,8 +2145,8 @@ export default function LaporanPekerjaan() {
                   <button
                     onClick={() => setLanguage("id")}
                     className={`px-2 py-1 rounded text-xs font-semibold transition-colors ${language === "id"
-                        ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm"
-                        : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                      ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm"
+                      : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
                       }`}
                   >
                     ID
@@ -2154,8 +2154,8 @@ export default function LaporanPekerjaan() {
                   <button
                     onClick={() => setLanguage("en")}
                     className={`px-2 py-1 rounded text-xs font-semibold transition-colors ${language === "en"
-                        ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm"
-                        : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                      ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm"
+                      : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
                       }`}
                   >
                     EN
@@ -2201,8 +2201,8 @@ export default function LaporanPekerjaan() {
                       setShowMobileMenu(false);
                     }}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold transition-colors ${activeTab === "dashboard"
-                        ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
-                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
+                      : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                       }`}
                   >
                     <BarChart3 size={20} />
@@ -2216,8 +2216,8 @@ export default function LaporanPekerjaan() {
                       setShowMobileMenu(false);
                     }}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold transition-colors ${activeTab === "laporan"
-                        ? "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
-                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      ? "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
+                      : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                       }`}
                   >
                     <FileText size={20} />
@@ -2231,8 +2231,8 @@ export default function LaporanPekerjaan() {
                       setShowMobileMenu(false);
                     }}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold transition-colors ${activeTab === "tasks"
-                        ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
-                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
+                      : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                       }`}
                   >
                     <ListTodo size={20} />
@@ -2247,8 +2247,8 @@ export default function LaporanPekerjaan() {
                       setShowMobileMenu(false);
                     }}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold transition-colors ${activeTab === "spareparts"
-                        ? "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400"
-                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      ? "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400"
+                      : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                       }`}
                   >
                     <Wrench size={20} />
@@ -2300,8 +2300,8 @@ export default function LaporanPekerjaan() {
                           setShowMobileMenu(false);
                         }}
                         className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium transition-colors ${theme === "light"
-                            ? "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
-                            : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                          ? "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
+                          : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
                           }`}
                       >
                         <Sun size={18} className="text-yellow-500" />
@@ -2316,8 +2316,8 @@ export default function LaporanPekerjaan() {
                           setShowMobileMenu(false);
                         }}
                         className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium transition-colors ${theme === "dark"
-                            ? "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
-                            : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                          ? "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
+                          : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
                           }`}
                       >
                         <Moon size={18} className="text-indigo-500" />
@@ -2332,8 +2332,8 @@ export default function LaporanPekerjaan() {
                           setShowMobileMenu(false);
                         }}
                         className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium transition-colors ${theme === "system"
-                            ? "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
-                            : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                          ? "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
+                          : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
                           }`}
                       >
                         <Monitor size={18} className="text-gray-500" />
@@ -2357,8 +2357,8 @@ export default function LaporanPekerjaan() {
                           setShowMobileMenu(false);
                         }}
                         className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium transition-colors ${language === "id"
-                            ? "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
-                            : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                          ? "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
+                          : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
                           }`}
                       >
                         <span className="text-xl">🇮🇩</span>
@@ -2373,8 +2373,8 @@ export default function LaporanPekerjaan() {
                           setShowMobileMenu(false);
                         }}
                         className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium transition-colors ${language === "en"
-                            ? "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
-                            : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                          ? "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
+                          : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
                           }`}
                       >
                         <span className="text-xl">🇬🇧</span>
@@ -3019,53 +3019,59 @@ export default function LaporanPekerjaan() {
                       </div>
                     </div>
 
-                    {/* Recent Spareparts */}
+                    {/* All Spareparts Sorted by Status */}
                     <div>
                       <h3 className="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
-                        Sparepart Terbaru
+                        {language === "id" ? "Semua Sparepart" : "All Spareparts"}
                       </h3>
                       <div className="space-y-2">
-                        {spareparts.slice(0, 5).map((part) => (
-                          <div
-                            key={part.id}
-                            onClick={() => {
-                              setSelectedSparepart(part);
-                              setShowSparepartDateModal(true);
-                              window.history.pushState(
-                                {
-                                  tab: "spareparts",
-                                  modal: "sparepartDateModal",
-                                },
-                                "",
-                                "#spareparts"
-                              );
-                            }}
-                            className="p-2 sm:p-3 bg-gray-50 dark:bg-gray-700 rounded-lg flex items-center justify-between gap-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
-                          >
-                            <div className="flex-1 min-w-0">
-                              <p className="font-semibold text-gray-800 dark:text-white text-xs sm:text-sm truncate">
-                                {part.namaPart}
-                              </p>
-                              <p className="text-xs text-gray-600 dark:text-gray-400">
-                                {part.jumlah} {part.unit}
-                              </p>
-                            </div>
-                            <span
-                              className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${part.status === "arrived"
+                        {spareparts
+                          .sort((a, b) => {
+                            // Sort by status: pending -> ordered -> arrived
+                            const statusOrder = { pending: 1, ordered: 2, arrived: 3 };
+                            return (statusOrder[a.status] || 0) - (statusOrder[b.status] || 0);
+                          })
+                          .map((part) => (
+                            <div
+                              key={part.id}
+                              onClick={() => {
+                                setSelectedSparepart(part);
+                                setShowSparepartDateModal(true);
+                                window.history.pushState(
+                                  {
+                                    tab: "spareparts",
+                                    modal: "sparepartDateModal",
+                                  },
+                                  "",
+                                  "#spareparts"
+                                );
+                              }}
+                              className="p-2 sm:p-3 bg-gray-50 dark:bg-gray-700 rounded-lg flex items-center justify-between gap-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+                            >
+                              <div className="flex-1 min-w-0">
+                                <p className="font-semibold text-gray-800 dark:text-white text-xs sm:text-sm truncate">
+                                  {part.namaPart}
+                                </p>
+                                <p className="text-xs text-gray-600 dark:text-gray-400">
+                                  {part.jumlah} {part.unit}
+                                </p>
+                              </div>
+                              <span
+                                className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${part.status === "arrived"
                                   ? "bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300"
                                   : part.status === "ordered"
                                     ? "bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300"
                                     : "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300"
-                                }`}
-                            >
-                              {part.status === "arrived"
-                                ? t("arrived")
-                                : part.status === "ordered"
-                                  ? t("ordered")
-                                  : t("pending")}
-                            </span>
-                          </div>
-                        ))}
+                                  }`}
+                              >
+                                {part.status === "arrived"
+                                  ? t("arrived")
+                                  : part.status === "ordered"
+                                    ? t("ordered")
+                                    : t("pending")}
+                              </span>
+                            </div>
+                          ))}
                       </div>
                     </div>
                   </div>
@@ -3145,10 +3151,10 @@ export default function LaporanPekerjaan() {
                             <div className="flex items-center gap-2">
                               <span
                                 className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${repair.status === "completed"
-                                    ? "bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300"
-                                    : repair.status === "in-progress"
-                                      ? "bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300"
-                                      : "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300"
+                                  ? "bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300"
+                                  : repair.status === "in-progress"
+                                    ? "bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300"
+                                    : "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300"
                                   }`}
                               >
                                 {repair.status === "completed"
@@ -3762,8 +3768,8 @@ export default function LaporanPekerjaan() {
                           <>
                             <div
                               className={`p-4 rounded-lg ${editingLogId
-                                  ? "bg-blue-50 dark:bg-blue-900/20"
-                                  : "bg-gray-50 dark:bg-gray-700/50"
+                                ? "bg-blue-50 dark:bg-blue-900/20"
+                                : "bg-gray-50 dark:bg-gray-700/50"
                                 }`}
                             >
                               <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
@@ -3879,8 +3885,8 @@ export default function LaporanPekerjaan() {
                                       <div
                                         key={log.id}
                                         className={`p-4 rounded-lg border transition-colors group ${editingLogId === log.id
-                                            ? "bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-700"
-                                            : "bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
+                                          ? "bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-700"
+                                          : "bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
                                           }`}
                                       >
                                         <div className="flex justify-between items-start">
@@ -4064,14 +4070,14 @@ export default function LaporanPekerjaan() {
                         <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4 shadow-inner">
                           <div
                             className={`h-4 rounded-full transition-all duration-500 ${task.progress >= 100
-                                ? "bg-gradient-to-r from-green-500 to-emerald-600"
-                                : task.progress >= 75
-                                  ? "bg-gradient-to-r from-blue-500 to-indigo-600"
-                                  : task.progress >= 50
-                                    ? "bg-gradient-to-r from-yellow-400 to-orange-500"
-                                    : task.progress >= 25
-                                      ? "bg-gradient-to-r from-orange-400 to-red-500"
-                                      : "bg-gradient-to-r from-gray-400 to-gray-600"
+                              ? "bg-gradient-to-r from-green-500 to-emerald-600"
+                              : task.progress >= 75
+                                ? "bg-gradient-to-r from-blue-500 to-indigo-600"
+                                : task.progress >= 50
+                                  ? "bg-gradient-to-r from-yellow-400 to-orange-500"
+                                  : task.progress >= 25
+                                    ? "bg-gradient-to-r from-orange-400 to-red-500"
+                                    : "bg-gradient-to-r from-gray-400 to-gray-600"
                               } shadow-sm`}
                             style={{ width: `${task.progress}%` }}
                           >
@@ -4146,8 +4152,8 @@ export default function LaporanPekerjaan() {
                 {/* Add/Edit Progress Form */}
                 <div
                   className={`mb-4 sm:mb-6 p-3 sm:p-4 rounded-lg ${editingLogId
-                      ? "bg-blue-50 dark:bg-blue-900/20"
-                      : "bg-gray-50 dark:bg-gray-700/50"
+                    ? "bg-blue-50 dark:bg-blue-900/20"
+                    : "bg-gray-50 dark:bg-gray-700/50"
                     }`}
                 >
                   <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-gray-900 dark:text-white">
@@ -4261,8 +4267,8 @@ export default function LaporanPekerjaan() {
                           <div
                             key={log.id}
                             className={`p-3 sm:p-4 rounded-lg border transition-colors group ${editingLogId === log.id
-                                ? "bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-700"
-                                : "bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
+                              ? "bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-700"
+                              : "bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
                               }`}
                           >
                             <div className="flex justify-between items-start gap-2">
@@ -4416,10 +4422,10 @@ export default function LaporanPekerjaan() {
                             </h3>
                             <span
                               className={`px-3 py-1 rounded-full text-xs font-semibold ${part.status === "arrived"
-                                  ? "bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300"
-                                  : part.status === "ordered"
-                                    ? "bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300"
-                                    : "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300"
+                                ? "bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300"
+                                : part.status === "ordered"
+                                  ? "bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300"
+                                  : "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300"
                                 }`}
                             >
                               {part.status === "arrived"
@@ -4941,10 +4947,10 @@ export default function LaporanPekerjaan() {
                             </h3>
                             <span
                               className={`px-3 py-1 rounded-full text-xs font-semibold ${repair.status === "completed"
-                                  ? "bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300"
-                                  : repair.status === "in-progress"
-                                    ? "bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300"
-                                    : "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300"
+                                ? "bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300"
+                                : repair.status === "in-progress"
+                                  ? "bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300"
+                                  : "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300"
                                 }`}
                             >
                               {repair.status === "completed"
