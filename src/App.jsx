@@ -2682,7 +2682,7 @@ export default function LaporanPekerjaan() {
                       {t("noReportsYet")}
                     </p>
                   ) : (
-                    <div className="space-y-3">
+                    <div className="max-h-[400px] overflow-y-auto space-y-3 pr-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
                       {recentReports.map((report) => (
                         <div
                           key={report.id}
@@ -2716,7 +2716,7 @@ export default function LaporanPekerjaan() {
                       {t("noDataYet")}
                     </p>
                   ) : (
-                    <div className="space-y-3">
+                    <div className="max-h-[400px] overflow-y-auto space-y-3 pr-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
                       {topLokasi.map((item, index) => (
                         <div
                           key={item.lokasi}
@@ -2772,7 +2772,7 @@ export default function LaporanPekerjaan() {
                       {t("noOngoingTasks")}
                     </p>
                   ) : (
-                    <div className="space-y-3">
+                    <div className="max-h-[400px] overflow-y-auto space-y-3 pr-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
                       {tasks
                         .filter((t) => t.progress < 100)
                         .sort((a, b) => {
@@ -2782,7 +2782,6 @@ export default function LaporanPekerjaan() {
                             (priorityOrder[a.prioritas] || 0)
                           );
                         })
-                        .slice(0, 5)
                         .map((task) => (
                           <div
                             key={task.id}
@@ -2861,13 +2860,12 @@ export default function LaporanPekerjaan() {
                       {t("noTasksWithDeadline")}
                     </p>
                   ) : (
-                    <div className="space-y-3">
+                    <div className="max-h-[400px] overflow-y-auto space-y-3 pr-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
                       {tasks
                         .filter((t) => t.progress < 100 && t.deadline)
                         .sort(
                           (a, b) => new Date(a.deadline) - new Date(b.deadline)
                         )
-                        .slice(0, 5)
                         .map((task) => (
                           <div
                             key={task.id}
@@ -2943,10 +2941,9 @@ export default function LaporanPekerjaan() {
                       {t("noCompletedTasks")}
                     </p>
                   ) : (
-                    <div className="space-y-3">
+                    <div className="max-h-[400px] overflow-y-auto space-y-3 pr-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
                       {tasks
                         .filter((t) => t.progress >= 100)
-                        .slice(0, 5)
                         .map((task) => (
                           <div
                             key={task.id}
@@ -3019,15 +3016,15 @@ export default function LaporanPekerjaan() {
                       </div>
                     </div>
 
-                    {/* All Spareparts Sorted by Status */}
+                    {/* Recent Spareparts */}
                     <div>
                       <h3 className="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
-                        {language === "id" ? "Semua Sparepart" : "All Spareparts"}
+                        Sparepart Terbaru
                       </h3>
-                      <div className="space-y-2">
+                      <div className="max-h-[300px] overflow-y-auto space-y-2 pr-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
                         {spareparts
                           .sort((a, b) => {
-                            // Sort by status: pending -> ordered -> arrived
+                            // Sort order: pending (1) -> ordered (2) -> arrived (3)
                             const statusOrder = { pending: 1, ordered: 2, arrived: 3 };
                             return (statusOrder[a.status] || 0) - (statusOrder[b.status] || 0);
                           })
@@ -3131,51 +3128,57 @@ export default function LaporanPekerjaan() {
                       <h3 className="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
                         {t("recentRepairs")}
                       </h3>
-                      <div className="space-y-2">
-                        {repairs.slice(0, 5).map((repair) => (
-                          <div
-                            key={repair.id}
-                            className="p-2 sm:p-3 bg-gray-50 dark:bg-gray-700 rounded-lg flex items-center justify-between gap-2 group"
-                          >
+                      <div className="max-h-[300px] overflow-y-auto space-y-2 pr-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
+                        {repairs
+                          .sort((a, b) => {
+                            // Sort order: received (1) -> in-progress (2) -> completed (3)
+                            const statusOrder = { received: 1, "in-progress": 2, completed: 3 };
+                            return (statusOrder[a.status] || 0) - (statusOrder[b.status] || 0);
+                          })
+                          .map((repair) => (
                             <div
-                              onClick={() => handleRepairCardClick(repair)}
-                              className="flex-1 min-w-0 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors rounded p-2 -m-2"
+                              key={repair.id}
+                              className="p-2 sm:p-3 bg-gray-50 dark:bg-gray-700 rounded-lg flex items-center justify-between gap-2 group"
                             >
-                              <p className="font-semibold text-gray-800 dark:text-white text-xs sm:text-sm truncate">
-                                {repair.itemRepair}
-                              </p>
-                              <p className="text-xs text-gray-600 dark:text-gray-400">
-                                {repair.unitAlat} - {repair.lokasiOperasi}
-                              </p>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <span
-                                className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${repair.status === "completed"
-                                  ? "bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300"
-                                  : repair.status === "in-progress"
-                                    ? "bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300"
-                                    : "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300"
-                                  }`}
+                              <div
+                                onClick={() => handleRepairCardClick(repair)}
+                                className="flex-1 min-w-0 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors rounded p-2 -m-2"
                               >
-                                {repair.status === "completed"
-                                  ? t("statusCompleted")
-                                  : repair.status === "in-progress"
-                                    ? t("statusInProgress")
-                                    : t("statusReceived")}
-                              </span>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleEditRepair(repair);
-                                }}
-                                className="p-1.5 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded"
-                                title="Edit"
-                              >
-                                <Edit2 className="w-4 h-4" />
-                              </button>
+                                <p className="font-semibold text-gray-800 dark:text-white text-xs sm:text-sm truncate">
+                                  {repair.itemRepair}
+                                </p>
+                                <p className="text-xs text-gray-600 dark:text-gray-400">
+                                  {repair.unitAlat} - {repair.lokasiOperasi}
+                                </p>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span
+                                  className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${repair.status === "completed"
+                                    ? "bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300"
+                                    : repair.status === "in-progress"
+                                      ? "bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300"
+                                      : "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300"
+                                    }`}
+                                >
+                                  {repair.status === "completed"
+                                    ? t("statusCompleted")
+                                    : repair.status === "in-progress"
+                                      ? t("statusInProgress")
+                                      : t("statusReceived")}
+                                </span>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleEditRepair(repair);
+                                  }}
+                                  className="p-1.5 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded"
+                                  title="Edit"
+                                >
+                                  <Edit2 className="w-4 h-4" />
+                                </button>
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          ))}
                       </div>
                     </div>
                   </div>
