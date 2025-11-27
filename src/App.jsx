@@ -122,7 +122,7 @@ const translations = {
     sparepartSummary: "Ringkasan Suku Cadang",
 
     // Field Reports
-    searchReports: "Cari proyek, lokasi, kegiatan, atau unit alat...",
+    searchReports: "Cari proyek, lokasi, kegiatan, atau nama unit...",
     noReports: "Belum ada laporan lapangan",
     noReportsFound: "Tidak ada laporan lapangan yang sesuai",
     createFirstReport:
@@ -134,7 +134,7 @@ const translations = {
     location: "Lokasi",
     projectName: "Nama Proyek",
     activityType: "Jenis Kegiatan",
-    equipment: "Unit Alat",
+    equipment: "Nama Unit",
     description: "Deskripsi",
     startTime: "Jam Mulai",
     endTime: "Jam Selesai",
@@ -439,6 +439,12 @@ export default function LaporanPekerjaan() {
   const [sparepartSortBy, setSparepartSortBy] = useState("name"); // 'name', 'order-date', 'arrival-date'
   const [repairSortBy, setRepairSortBy] = useState("date-newest"); // 'date-newest', 'date-oldest', 'location'
 
+  // State untuk autocomplete nama unit dan jenis kegiatan
+  const [unitNames, setUnitNames] = useState([]);
+  const [activityTypes, setActivityTypes] = useState([]);
+  const [showUnitSuggestions, setShowUnitSuggestions] = useState(false);
+  const [showActivitySuggestions, setShowActivitySuggestions] = useState(false);
+
   // Language: 'id' | 'en'
   const LANGUAGE_KEY = "language";
   const [language, setLanguage] = useState(() => {
@@ -646,6 +652,19 @@ export default function LaporanPekerjaan() {
       const data = await reportsAPI.getAll();
       const displayData = data.map(reportToDisplay);
       setReports(displayData);
+
+      // Extract unique unit names and activity types for autocomplete
+      const units = new Set();
+      const activities = new Set();
+
+      data.forEach(report => {
+        const formData = reportToFormData(report);
+        if (formData.unitAlat) units.add(formData.unitAlat);
+        if (formData.jenisKegiatan) activities.add(formData.jenisKegiatan);
+      });
+
+      setUnitNames(Array.from(units).sort());
+      setActivityTypes(Array.from(activities).sort());
     } catch (error) {
       console.error("Error memuat data:", error);
     } finally {
@@ -1765,18 +1784,17 @@ export default function LaporanPekerjaan() {
 
   const lokasiStats = reports.reduce((acc, report) => {
     if (!acc[report.lokasi]) {
-      acc[report.lokasi] = { count: 0, totalHours: 0, units: [] };
+      acc[report.lokasi] = { count: 0, totalHours: 0, units: {} };
     }
+    const duration = calculateDuration(report.jamMulai, report.jamSelesai);
     acc[report.lokasi].count += 1;
-    acc[report.lokasi].totalHours += calculateDuration(
-      report.jamMulai,
-      report.jamSelesai
-    );
-    if (
-      report.unitAlat &&
-      !acc[report.lokasi].units.includes(report.unitAlat)
-    ) {
-      acc[report.lokasi].units.push(report.unitAlat);
+    acc[report.lokasi].totalHours += duration;
+
+    if (report.unitAlat) {
+      if (!acc[report.lokasi].units[report.unitAlat]) {
+        acc[report.lokasi].units[report.unitAlat] = 0;
+      }
+      acc[report.lokasi].units[report.unitAlat] += duration;
     }
     return acc;
   }, {});
@@ -1786,7 +1804,9 @@ export default function LaporanPekerjaan() {
       lokasi,
       count: stats.count,
       totalHours: stats.totalHours,
-      units: stats.units,
+      units: Object.entries(stats.units)
+        .map(([name, duration]) => ({ name, duration }))
+        .sort((a, b) => b.duration - a.duration),
     }))
     .sort((a, b) => b.count - a.count)
     .slice(0, 5);
@@ -2745,9 +2765,11 @@ export default function LaporanPekerjaan() {
                                   <span
                                     key={idx}
                                     className="px-2 py-1 bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-300 text-xs rounded-full flex items-center gap-1"
+                                    title={`${unit.duration.toFixed(1)} jam`}
                                   >
                                     <Wrench size={12} />
-                                    {unit}
+                                    <span className="font-medium">{unit.name}</span>
+                                    <span className="opacity-75 text-[10px]">({unit.duration.toFixed(1)} jam)</span>
                                   </span>
                                 ))}
                               </div>
@@ -3343,7 +3365,7 @@ export default function LaporanPekerjaan() {
                               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                             />
                           </div>
-                          <div>
+                          <div className="relative">
                             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
                               {t("activityType")} *
                             </label>
@@ -3352,11 +3374,17 @@ export default function LaporanPekerjaan() {
                               name="jenisKegiatan"
                               value={formData.jenisKegiatan}
                               onChange={handleInputChange}
+                              list="activityTypeList"
                               placeholder="Contoh: Survey, Instalasi, Maintenance"
                               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                             />
+                            <datalist id="activityTypeList">
+                              {activityTypes.map((type, index) => (
+                                <option key={index} value={type} />
+                              ))}
+                            </datalist>
                           </div>
-                          <div>
+                          <div className="relative">
                             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
                               {t("equipment")} *
                             </label>
@@ -3365,9 +3393,15 @@ export default function LaporanPekerjaan() {
                               name="unitAlat"
                               value={formData.unitAlat}
                               onChange={handleInputChange}
+                              list="unitNameList"
                               placeholder="Contoh: Generator, Trafo, Panel"
                               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                             />
+                            <datalist id="unitNameList">
+                              {unitNames.map((name, index) => (
+                                <option key={index} value={name} />
+                              ))}
+                            </datalist>
                           </div>
                           <div></div>
                           <div>
@@ -3473,55 +3507,56 @@ export default function LaporanPekerjaan() {
                     <div
                       key={report.id}
                       onClick={() => handleEdit(report)}
-                      className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow card-transition hover-lift cursor-pointer"
+                      className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 hover:shadow-xl transition-all card-transition hover-lift cursor-pointer border-l-4 border-indigo-500"
                     >
                       <div className="flex justify-between items-start mb-4">
                         <div className="flex-1">
-                          <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">
-                            {report.namaProyek}
-                          </h3>
-                          <p className="text-sm text-gray-600 dark:text-gray-300 font-medium">
-                            {report.jenisKegiatan}
-                          </p>
-                          {report.unitAlat && (
-                            <div className="flex items-center gap-1 mt-1">
-                              <Wrench
-                                size={14}
-                                className="text-orange-600 dark:text-orange-400"
-                              />
-                              <span className="text-sm text-gray-600 dark:text-gray-300">
-                                {report.unitAlat}
-                              </span>
+                          <div className="flex items-start justify-between gap-3 mb-2">
+                            <div className="flex-1">
+                              <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-1">
+                                {report.namaProyek}
+                              </h3>
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300">
+                                  {report.jenisKegiatan || 'Tidak ada jenis kegiatan'}
+                                </span>
+                                {report.unitAlat && (
+                                  <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-300">
+                                    <Wrench size={12} />
+                                    {report.unitAlat}
+                                  </span>
+                                )}
+                              </div>
                             </div>
-                          )}
-                        </div>
-                        <div className="flex gap-2">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleEdit(report);
-                            }}
-                            disabled={saving}
-                            className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 disabled:opacity-50 rounded-lg transition-colors"
-                          >
-                            <Edit2 size={18} />
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDelete(report.id);
-                            }}
-                            disabled={saving}
-                            className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 disabled:opacity-50 rounded-lg transition-colors"
-                          >
-                            <Trash2 size={18} />
-                          </button>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleEdit(report);
+                                }}
+                                disabled={saving}
+                                className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 disabled:opacity-50 rounded-lg transition-colors"
+                              >
+                                <Edit2 size={18} />
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDelete(report.id);
+                                }}
+                                disabled={saving}
+                                className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 disabled:opacity-50 rounded-lg transition-colors"
+                              >
+                                <Trash2 size={18} />
+                              </button>
+                            </div>
+                          </div>
                         </div>
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
                         <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                          <Calendar size={16} />
+                          <Calendar size={16} className="flex-shrink-0" />
                           <span className="text-sm">
                             {new Date(report.tanggal).toLocaleDateString(
                               "id-ID",
@@ -3535,12 +3570,12 @@ export default function LaporanPekerjaan() {
                           </span>
                         </div>
                         <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                          <MapPin size={16} />
+                          <MapPin size={16} className="flex-shrink-0" />
                           <span className="text-sm">{report.lokasi}</span>
                         </div>
                         {report.jamMulai && report.jamSelesai && (
                           <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                            <Clock size={16} />
+                            <Clock size={16} className="flex-shrink-0" />
                             <span className="text-sm">
                               {report.jamMulai} - {report.jamSelesai}
                             </span>

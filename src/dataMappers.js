@@ -1,4 +1,4 @@
-// Data Mappers untuk konversi antara format UI dan Supabase
+﻿// Data Mappers untuk konversi antara format UI dan Supabase
 
 // ============================================
 // REPORTS MAPPERS
@@ -15,7 +15,6 @@ export const formDataToReport = (formData) => ({
 });
 
 export const reportToFormData = (report) => {
-  // Parse description untuk ambil jenisKegiatan dan unitAlat
   const descParts = report.description.split('\n\n');
   const firstLine = descParts[0] || '';
   const [jenisKegiatan = '', unitAlat = ''] = firstLine.split(' - ');
@@ -34,18 +33,27 @@ export const reportToFormData = (report) => {
   };
 };
 
-export const reportToDisplay = (report) => ({
-  id: report.id,
-  tanggal: report.date,
-  jamMulai: report.start_time,
-  jamSelesai: report.end_time,
-  lokasi: report.location,
-  namaProyek: report.project,
-  deskripsi: report.description,
-  catatan: report.notes,
-  createdAt: report.created_at,
-  updatedAt: report.updated_at,
-});
+export const reportToDisplay = (report) => {
+  const descParts = report.description.split('\n\n');
+  const firstLine = descParts[0] || '';
+  const [jenisKegiatan = '', unitAlat = ''] = firstLine.split(' - ');
+  const deskripsi = descParts[1] || report.description;
+
+  return {
+    id: report.id,
+    tanggal: report.date,
+    jamMulai: report.start_time,
+    jamSelesai: report.end_time,
+    lokasi: report.location,
+    namaProyek: report.project,
+    jenisKegiatan,
+    unitAlat,
+    deskripsi,
+    catatan: report.notes,
+    createdAt: report.created_at,
+    updatedAt: report.updated_at,
+  };
+};
 
 // ============================================
 // TASKS MAPPERS
@@ -67,7 +75,7 @@ export const taskToFormData = (task) => ({
   deadline: task.deadline,
   progress: task.progress,
   status: task.status,
-  progressLogs: [], // Will be loaded separately
+  progressLogs: [],
 });
 
 export const taskToDisplay = (task) => ({
@@ -78,7 +86,7 @@ export const taskToDisplay = (task) => ({
   status: task.status,
   progress: task.progress,
   deadline: task.deadline,
-  progressLogs: [], // Will be populated from progress_logs table
+  progressLogs: [],
   createdAt: task.created_at,
   updatedAt: task.updated_at,
 });
@@ -123,7 +131,7 @@ export const sparepartToFormData = (sparepart) => ({
   status: sparepart.status.toLowerCase(),
   tanggalDipesan: sparepart.order_date || '',
   tanggalDatang: sparepart.arrival_date || '',
-  createdBy: '', // Not stored in new schema
+  createdBy: '',
 });
 
 export const sparepartToDisplay = (sparepart) => ({
@@ -147,19 +155,15 @@ export const repairFormDataToRepair = (formData) => ({
   equipment: `${formData.itemRepair} - ${formData.unitAlat}`,
   issue: `${formData.deskripsiKerusakan}\n\nLokasi: ${formData.lokasiOperasi}\nTanggal Masuk: ${formData.tanggalMasuk}\nTanggal Mulai: ${formData.tanggalMulai}\nTanggal Selesai: ${formData.tanggalSelesai}`,
   status: capitalizeStatus(formData.status),
-  priority: 'Medium', // Default, bisa di-customize
+  priority: 'Medium',
   technician: null,
   notes: null,
 });
 
 export const repairToFormData = (repair) => {
-  // Parse equipment
   const [itemRepair = '', unitAlat = ''] = repair.equipment.split(' - ');
-  
-  // Parse issue untuk ambil detail
   const lines = repair.issue.split('\n');
   const deskripsiKerusakan = lines[0] || '';
-  
   const lokasiMatch = repair.issue.match(/Lokasi: ([^\n]+)/);
   const tanggalMasukMatch = repair.issue.match(/Tanggal Masuk: ([^\n]+)/);
   const tanggalMulaiMatch = repair.issue.match(/Tanggal Mulai: ([^\n]+)/);
@@ -182,7 +186,7 @@ export const repairToDisplay = (repair) => {
   return {
     id: repair.id,
     ...formData,
-    status: formData.status, // Explicitly include status
+    status: formData.status,
     createdAt: repair.created_at,
     updatedAt: repair.updated_at,
   };
