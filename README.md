@@ -1,9 +1,5 @@
-# HVE Electrical SPIL - Field Work Report System
+# Field Work Report System
 
-<div align="center">
-  <img src="public/logo-spil.png" alt="SPIL Logo" width="120" height="120">
-  
-  ### Heavy Equipment Electrical PT. Salam Pasific Indonesia Lines
   
   A modern, professional field work management system powered by **Supabase**
 
@@ -23,8 +19,6 @@ This application has been **migrated from Google Sheets to Supabase** for:
 - 📈 **Scalable for 5+ years** of data
 - 🔒 **Enterprise-grade security**
 - 🆓 **Free unlimited usage**
-
-> See [SUPABASE_MIGRATION.md](./SUPABASE_MIGRATION.md) for full migration details.
 
 ---
 
@@ -113,25 +107,8 @@ This application has been **migrated from Google Sheets to Supabase** for:
 
 ---
 
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome!
-
-1. Fork the project
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
----
-
 ## 👨‍💻 Author
 
 **Sahik Jaman**
 - GitHub: [@sahikjaman](https://github.com/sahikjaman)
-
----
-  Made with ❤️ for HVE Electrical SPIL
-  
-  **Heavy Equipment Electrical PT. Salam Pasific Indonesia Lines**
 </div>
