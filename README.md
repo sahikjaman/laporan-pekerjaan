@@ -11,17 +11,6 @@
 
 ---
 
-## 🚀 **NEW: Powered by Supabase!**
-
-This application has been **migrated from Google Sheets to Supabase** for:
-- ⚡ **10-50x faster performance**
-- 🔄 **Real-time data synchronization**
-- 📈 **Scalable for 5+ years** of data
-- 🔒 **Enterprise-grade security**
-- 🆓 **Free unlimited usage**
-
----
-
 ## 🌟 Features
 
 ### 📊 **Dashboard Analytics**
